@@ -1,0 +1,20 @@
+img{
+    width: 75%;
+}
+/* div{
+    height: 10%
+} */
+footer{
+    background-color: #595959;
+    color: white;
+}
+#NavImg{
+    width: 10%;
+}
+nav{
+    background-color: orange;
+}
+.footerLinks{
+    color: white;
+    text-decoration: none;
+}
