@@ -8,7 +8,7 @@ function Home(){
                 <Slides />
             </div>
             <div>
-                <h3 className='text-center mt-3'>Upcoming School Events!</h3>
+                <h3 className='text-center mt-3'>This can be school events, pictures of machines, how it works, will discuss this</h3>
             </div>
         </>
     )
