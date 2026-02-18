@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 from typing import Annotated
 
@@ -19,8 +19,6 @@ def get_session():
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
-app = FastAPI()
-
 @router.get("/")
 def get_users(session: SessionDep):
     try:
@@ -28,3 +26,14 @@ def get_users(session: SessionDep):
         return users
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving users: {e}")
+    
+@router.get("/{user_id}")
+def get_user(user_id: int, session: SessionDep):
+    try:
+        statement = select(Users).where(Users.userId == user_id)
+        user = session.exec(statement).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving user: {e}")
