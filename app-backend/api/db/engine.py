@@ -20,8 +20,7 @@ DATABASE_URL = URL.create(
     port=port,
     database=databaseName
 )
-# DATABASE_URL=f"mysql+pymysql://{user}:{password}@{host}:{port}/{databaseName}"
-print(DATABASE_URL)
+
 
 try:
     engine = create_engine(DATABASE_URL, echo=True)
