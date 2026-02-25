@@ -4,7 +4,7 @@ import '../../App.css'
 function Navbar() {
 
     return (
-        <nav className="navbar navbar-expand-lg">
+        <nav className="navbar navbar-expand-sm">
             <div className="container-fluid">
                 <NavLink id='NavImg' to='/' end>
                     <img src={WoMM}/>

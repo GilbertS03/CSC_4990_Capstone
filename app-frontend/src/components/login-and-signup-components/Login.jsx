@@ -48,8 +48,9 @@ function Login(){
   }
   
     return (
-      <div className='d-flex justify-content-center'>
-        <form className='md-w-25' onSubmit={handleSubmit}>
+      <div className='d-flex flex-column align-items-center w-100'>
+        <h2 className='mb-3'>Login</h2>
+        <form className='w-50' onSubmit={handleSubmit}>
           <EmailField sendDataToLogin={handleEmail} />
           <PasswordField sendDataToLogin={handlePassword} />
 
