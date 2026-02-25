@@ -13,13 +13,38 @@ function Login(){
     setEmailError(data[1]);
     console.log(data);
   }
-  const handlePassword = (data) => {
-    setPassword(data);
-  }
+  const handlePassword = (data) => {setPassword(data);}
 
-  const handleSubmit = async () => {
+  //todo work on the fecth and logging in, need backend endpoint before can complete this.
+  const handleSubmit = async (event) => {
     e.preventDefault();
-    const response = fetch('')
+    try{
+      const response = await fetch('loginroute', {
+        method: 'POST',
+        headers: {
+          //This is for fastapi, change when this is figured out
+          'Content-Type' : 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          //Change as needed
+          username: emailAddress,
+          password: password,
+        })
+      });
+
+      if(!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Login failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('token', data.access_token);
+      console.log('Login successful');
+
+    }
+    catch (e){
+      console.log(e.message);
+    }
   }
   
     return (

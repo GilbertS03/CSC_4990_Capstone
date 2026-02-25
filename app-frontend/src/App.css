@@ -5,17 +5,16 @@ img{
     height: 10%
 } */
 footer{
-    background-color: #595959;
-    color: white;
+    background-color: #dcdba8;
 }
 #NavImg{
     width: 10%;
 }
 nav{
-    background-color: orange;
+    background-color: #75dbcd;
 }
 .footerLinks{
-    color: white;
+    color: black;
     text-decoration: none;
 }
 .loginPageError{

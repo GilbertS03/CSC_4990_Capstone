@@ -23,14 +23,14 @@ function Navbar() {
                         </NavLink>
                         <NavLink
                             className='nav-link'
-                            to='/'
+                            to='/reserve'
                             end
                         >
                             Reserve a Computer
                         </NavLink>
                         <NavLink 
                             className='nav-link' 
-                            to='/' 
+                            to='/about' 
                             end
                         >
                             About Us
@@ -40,6 +40,12 @@ function Navbar() {
                         to='/login'
                         end>
                             Login
+                        </NavLink>
+                        <NavLink
+                        className='nav-link'
+                        to='/signup'
+                        end>
+                            Signup
                         </NavLink>
                     </div>
                 </div>
