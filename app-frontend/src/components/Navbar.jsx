@@ -37,7 +37,7 @@ function Navbar() {
                         </NavLink>
                         <NavLink
                         className='nav-link'
-                        to='/'
+                        to='/login'
                         end>
                             Login
                         </NavLink>

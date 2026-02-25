@@ -18,3 +18,7 @@ nav{
     color: white;
     text-decoration: none;
 }
+.loginPageError{
+    color: red;
+    display: none;
+}

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './components/Home'
+import Login from './components/Login'
 
 function App() {
 
@@ -11,7 +12,7 @@ function App() {
       <div className='flex-grow-1 py-4'>
         <Routes>
           <Route path='/' element={<Home />}></Route>
-          {/* <Route path='login' element={<Login />}></Route> */}
+          <Route path='login' element={<Login />}></Route>
         </Routes>
       </div>
       <Footer />
