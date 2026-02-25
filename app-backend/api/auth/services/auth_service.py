@@ -25,9 +25,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 def authenticate_user(email: str, password: str, session: SessionDep):
     user = fetch_user_by_email(session, email)
     if not user:
+        print("user not found")
         return False
     if not verify_pw(password, user.password):
+        print("pw not verified")
         return False
+    print("Authenticated user:", user.email)
     return user
 
 #create access token
