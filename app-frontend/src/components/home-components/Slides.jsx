@@ -1,7 +1,7 @@
-import chud from '../assets/ex1.jpg'
-import pic1 from '../assets/ex2.jpg'
-import pic2 from '../assets/ex3.jpg'
-import '../App.css'
+import chud from '../../assets/ex1.jpg'
+import pic1 from '../../assets/ex2.jpg'
+import pic2 from '../../assets/ex3.jpg'
+import '../../App.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 

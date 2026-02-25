@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import WoMM from '../assets/WoMM.jpg'
-import '../App.css'
+import WoMM from '../../assets/WoMM.jpg'
+import '../../App.css'
 function Navbar() {
 
     return (
-        <nav className="navbar navbar-expand-lg">
+        <nav className="navbar navbar-expand-sm">
             <div className="container-fluid">
                 <NavLink id='NavImg' to='/' end>
                     <img src={WoMM}/>
@@ -23,23 +23,29 @@ function Navbar() {
                         </NavLink>
                         <NavLink
                             className='nav-link'
-                            to='/'
+                            to='/reserve'
                             end
                         >
                             Reserve a Computer
                         </NavLink>
                         <NavLink 
                             className='nav-link' 
-                            to='/' 
+                            to='/about' 
                             end
                         >
                             About Us
                         </NavLink>
                         <NavLink
                         className='nav-link'
-                        to='/'
+                        to='/login'
                         end>
                             Login
+                        </NavLink>
+                        <NavLink
+                        className='nav-link'
+                        to='/signup'
+                        end>
+                            Signup
                         </NavLink>
                     </div>
                 </div>
