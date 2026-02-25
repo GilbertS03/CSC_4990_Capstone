@@ -21,7 +21,7 @@ async def login_for_token(
     if not user:
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
-            detail="route error",
+            detail="incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"}
         )
     access_token = create_access_token(data={"sub": user.email})
