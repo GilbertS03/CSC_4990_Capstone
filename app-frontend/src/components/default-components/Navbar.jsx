@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import WoMM from '../assets/WoMM.jpg'
-import '../App.css'
+import WoMM from '../../assets/WoMM.jpg'
+import '../../App.css'
 function Navbar() {
 
     return (
