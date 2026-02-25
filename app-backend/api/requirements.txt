@@ -5,4 +5,4 @@ sqlmodel==0.0.33
 pymysql==1.1.2
 python-dotenv==1.2.1
 pyjwt==2.11.0
-bcrypt
+bcrypt==5.0.0

@@ -8,5 +8,5 @@ class User(SQLModel, table=True):
     lastName: str
     email: str
     password: str
-    role: str = Field(index=True)
     weeklyHoursRemaining: float
+    roleId: int
