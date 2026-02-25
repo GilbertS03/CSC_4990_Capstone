@@ -1,27 +1,8 @@
-import os
-from urllib.parse import quote_plus
-from dotenv import load_dotenv
-from sqlalchemy.engine import URL
+from ..core.config_loader import settings
 from sqlmodel import create_engine
 
-load_dotenv()
 
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD")
-host = os.getenv("DB_HOST")
-port = os.getenv("DB_PORT")
-databaseName = os.getenv("DB_NAME")
-
-DATABASE_URL = URL.create(
-    drivername="mysql+pymysql",
-    username=user,
-    password=password,
-    host=host,
-    port=port,
-    database=databaseName
-)
-# DATABASE_URL=f"mysql+pymysql://{user}:{password}@{host}:{port}/{databaseName}"
-print(DATABASE_URL)
+DATABASE_URL = settings.DATABASE_URI
 
 try:
     engine = create_engine(DATABASE_URL, echo=True)
