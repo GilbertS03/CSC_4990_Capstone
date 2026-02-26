@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../../App.css';
 import PasswordField from './PasswordField'
 import EmailField from './EmailField';
+import { NavLink } from 'react-router-dom';
 
 function Login(){ 
   const [ emailAddress, setEmailAddress ] = useState('');
@@ -59,6 +60,7 @@ function Login(){
             Email or password incorrect. Try again.
           </div>
         </form>
+        <div className='mt-3 w-50'><NavLink to='/signup' end>Create Account</NavLink></div>
       </div>
     )
 }
