@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field
-import time
+from datetime import datetime
 
 class Reservations(SQLModel, table=True):
     __tablename__="Reservations"
@@ -8,5 +8,5 @@ class Reservations(SQLModel, table=True):
     userId: int = Field(index=True, foreign_key="Users.userId")
     deviceId: int = Field(index=True, foreign_key="Devices.deviceId")
     reservationStatusId: int = Field(index=True, foreign_key="ReservationStatuses.reservationStatusId")
-    startTime: time
-    endTime: time
+    startTime: datetime
+    endTime: datetime
