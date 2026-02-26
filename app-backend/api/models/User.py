@@ -9,4 +9,4 @@ class User(SQLModel, table=True):
     email: str
     password: str
     weeklyHoursRemaining: float
-    roleId: int
+    roleId: int = Field(index=True, foreign_key="Roles.roleId")

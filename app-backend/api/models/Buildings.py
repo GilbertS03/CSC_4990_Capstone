@@ -7,5 +7,3 @@ class Buildings(SQLModel, table=True):
     openTime: str
     closeTime: str
     buildingName: str 
-    layoutHeight: int
-    layoutWidth: int

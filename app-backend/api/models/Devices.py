@@ -4,8 +4,8 @@ class Devices(SQLModel, table=True):
     __tablename__="Devices"
 
     deviceId: int = Field(default=None, primary_key=True)
-    buildingId: int = Field(index=True, foreign_key="Buildings.buildingId")
+    roomId: int = Field(index=True, foreign_key="Rooms.roomId")
     deviceTypeId: str 
-    status: str = Field(index=True)
+    deviceStatusId: str = Field(index=True, foreign_key="DeviceTypes.deviceTypeId")
     positionX: int 
     positionY: int
