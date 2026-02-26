@@ -1,3 +1,4 @@
+from .. services import users
 import smtplib
 import ssl
 from dotenv import load_dotenv
@@ -5,12 +6,15 @@ from email.message import EmailMessage
 import os
 load_dotenv()
 
-def EmailDroppedReservation():
-    subject = "Beans"
-    body = "Game of Thrones describes a long struggle for power between noble families while a threat" 
-    " looms over their kingdoms, an external enemy that destroys everything in its path: the White Walkers"
-    receiver_email = "alejandronino999@gmail.com"
-    SendEmail(subject, body, receiver_email)
+def EmailDroppedReservation(reason):
+    userinfo = users.fetch_users_by_id(1)
+
+    print(userinfo)
+    subject = "Computer reservation has been canceled"
+    body = "Your reservation for" + "date" + " at " + "time" + "has been canceled for" + reason
+    receiver_email = "empty" 
+    ##SendEmail(subject, body, receiver_email)
+
 
 def SendEmail(subject, body, receiver_email):
     sender_email ="csc4990librarysmtp@gmail.com"
