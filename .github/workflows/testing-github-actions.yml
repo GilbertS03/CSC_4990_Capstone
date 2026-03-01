@@ -1,84 +1,70 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 name: Integration Tests
+
 on: push
+
 jobs:
   integration:
     runs-on: ubuntu-latest
-     services:
+
+    services:
       mysql:
         image: mysql:8.0.29
         env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_HOST }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
         ports:
           - "3306:3306"
         options: >-
-          --health-cmd "mysqladmin ping -ppass"
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }}"
           --health-interval 10s
           --health-start-period 10s
           --health-timeout 5s
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4 # Check out your code
-      - name: Install dependencies
-        run: # Command to install project dependencies
-      - name: Run integration tests
-        run: |
-=======
-name: Integration Tests
-on: push
-jobs:
-  integration:
-    runs-on: ubuntu-latest
-     services:
-      mysql:
-        image: mysql:8.0.29
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_HOST }}
-        ports:
-          - "3306:3306"
-        options: >-
-          --health-cmd "mysqladmin ping -ppass"
-          --health-interval 10s
-          --health-start-period 10s
-          --health-timeout 5s
-          --health-retries 10
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4 # Check out your code
-      - name: Install dependencies
-        run: # Command to install project dependencies
-      - name: Run integration tests
-        run: |
->>>>>>> 489dd6818d397074a24fb3fd50b2ff0dbd883b70
-=======
-name: Integration Tests
-on: push
-jobs:
-  integration:
-    runs-on: ubuntu-latest
-     services:
-      mysql:
-        image: mysql:8.0.29
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_HOST }}
-        ports:
-          - "3306:3306"
-        options: >-
-          --health-cmd "mysqladmin ping -ppass"
-          --health-interval 10s
-          --health-start-period 10s
-          --health-timeout 5s
-          --health-retries 10
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    steps:
-      - uses: actions/checkout@v4 # Check out your code
       - name: Install dependencies
-        run: # Command to install project dependencies
-      - name: Run integration tests
         run: |
->>>>>>> 489dd6818d397074a24fb3fd50b2ff0dbd883b70
+          python -m pip install --upgrade pip
+          pip install pymysql
+
+      - name: Wait for MySQL to be ready
+        run: |
+          echo "Waiting for MySQL..."
+          until mysqladmin ping -h 127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} --silent; do
+            echo "MySQL not ready yet, retrying in 3s..."
+            sleep 3
+          done
+          echo "MySQL is up!"
+
+      - name: Test MySQL connectivity (Python)
+        run: |
+          python - <<'EOF'
+          import pymysql
+          import sys
+
+          try:
+              conn = pymysql.connect(
+                  host="127.0.0.1",
+                  port=3306,
+                  user="root",
+                  password="${{ secrets.DB_PASSWORD }}",
+                  database="${{ secrets.DB_NAME }}",
+              )
+              print("Connected to MySQL successfully!")
+              cursor = conn.cursor()
+              cursor.execute("SELECT VERSION();")
+              version = cursor.fetchone()
+              print(f"   MySQL version: {version[0]}")
+              conn.close()
+          except Exception as e:
+              print(f" Connection failed: {e}")
+              sys.exit(1)
+          EOF
