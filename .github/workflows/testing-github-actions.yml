@@ -6,21 +6,6 @@ jobs:
   integration:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0.29
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-        ports:
-          - "3306:3306"
-        options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }}"
-          --health-interval 10s
-          --health-start-period 10s
-          --health-timeout 5s
-          --health-retries 10
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -35,36 +20,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install pymysql
 
-      - name: Wait for MySQL to be ready
-        run: |
-          echo "Waiting for MySQL..."
-          until mysqladmin ping -h 127.0.0.1 -uroot -p${{ secrets.DB_PASSWORD }} --silent; do
-            echo "MySQL not ready yet, retrying in 3s..."
-            sleep 3
-          done
-          echo "MySQL is up!"
-
       - name: Test MySQL connectivity (Python)
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           python - <<'EOF'
           import pymysql
+          import os
           import sys
 
           try:
               conn = pymysql.connect(
-                  host="127.0.0.1",
-                  port=3306,
-                  user="root",
-                  password="${{ secrets.DB_PASSWORD }}",
-                  database="${{ secrets.DB_NAME }}",
+                  host=os.environ["DB_HOST"],
+                  port=int(os.environ["DB_PORT"]),
+                  user=os.environ["DB_USER"],
+                  password=os.environ["DB_PASSWORD"],
+                  database=os.environ["DB_NAME"],
               )
-              print("Connected to MySQL successfully!")
+              print("Connected to cloud database successfully!")
               cursor = conn.cursor()
               cursor.execute("SELECT VERSION();")
               version = cursor.fetchone()
               print(f"   MySQL version: {version[0]}")
               conn.close()
           except Exception as e:
-              print(f" Connection failed: {e}")
+              print(f"Connection failed: {e}")
               sys.exit(1)
           EOF
