@@ -1,31 +1,90 @@
-import { useState } from 'react'
-import EmailField from "./EmailField";
-import PasswordField from './PasswordField';
+//functions
+import { useState } from 'react';
+import { login } from '../../services/api/auth'
+import { validateLogin } from '../../utils/validation';
+import { useNavigate } from 'react-router-dom';
+//components
+import PasswordField from './PasswordField'
+import EmailField from './EmailField';
+import FirstNameField from './FirstNameField'
+import LastNameField from './LastNameField'
+import { NavLink } from 'react-router-dom';
+//CSS
 import '../../App.css';
-function Signup(){
-    const [ emailAddress, setEmailAddress ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const [ emailError, setEmailError ] = useState(false);
 
-    const handleEmail = (data) => {
-    setEmailAddress(data[0]); 
-    setEmailError(data[1]);
-    console.log(data);
+function Signup(){
+    const navigate = useNavigate();
+    const [ form, setForm ] = useState( {
+        firstName: '',
+        lastName: '',
+        emailAddress: '',
+        password: ''
+    });
+    const [ errors, setErrors ] = useState({});
+
+    const handleSubmit = async (event) => {
+        //Prevent refresh
+        event.preventDefault();
+
+        //Validating email and password fields
+        const validationErrors = validateLogin(form)
+
+        //Checks if any keys exist and if it does then no logging in
+        if(Object.keys(validationErrors).length > 0){
+            setErrors(validationErrors);
+            return;
+        }
+
+        try{
+            await login(form.emailAddress, form.password);
+            //redirecting
+            navigate('/')
+        }
+        catch(error){
+            setErrors ({ general: error.message });
+        }
     }
-    const handlePassword = (data) => {setPassword(data);}
-    
-    return(
-        <div className='d-flex flex-column align-items-center w-100'>
-            <h2 className='mb-3'>Signup</h2>
-            <form className='w-50'>
-            <EmailField sendDataToLogin={handleEmail} />
-            <PasswordField sendDataToLogin={handlePassword} />
+
+    const handleChange = (field, value) => {
+        setForm( prev => ({
+        ...prev,
+        [field]: value
+        }));
+    };
+
+    return (
+      <div className='d-flex flex-column align-items-center w-100'>
+        <h2 className='mb-3'>Sign Up</h2>
+        <form className='w-50' onSubmit={handleSubmit}>
+            <FirstNameField
+                value={form.firstName}
+                onChange={(value) => handleChange('firstName', value)}
+                error={errors.firstName}
+            />
+            <LastNameField
+                value={form.lastName}
+                onChange={(value) => handleChange('lastName', value)}
+                error={errors.lastName}   
+            /> 
+            <EmailField
+                value={form.emailAddress}
+                onChange={(value) => handleChange('emailAddress', value)}
+                error={errors.emailAddress}
+            />
+            <PasswordField 
+                value={form.password}
+                onChange={(value) => handleChange('password', value)}
+                error={errors.password}
+            />
+
             <button type="submit" className="btn btn-primary mt-3">Submit</button>
-            <div className='loginPageError mt-3'>
-                Email or password incorrect. Try again.
-            </div>
-            </form>
-        </div>
+            {errors.general && (
+                <div className='loginPageError mt-3'>
+                {errors.general}
+                </div>
+            )}
+        </form>
+      </div>
     )
 }
 export default Signup;
