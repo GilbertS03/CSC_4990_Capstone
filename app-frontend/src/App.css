@@ -19,5 +19,5 @@ nav{
 }
 .loginPageError{
     color: red;
-    display: none;
+    /* display: none; */
 }

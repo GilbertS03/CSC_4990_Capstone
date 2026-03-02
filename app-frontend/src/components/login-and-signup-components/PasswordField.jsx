@@ -1,26 +1,23 @@
-import {useState} from 'react'
-function Password({sendDataToLogin}){
+function PasswordField ({ value, onChange, error }) {
+    return(
+        <div className='mb-3'>
+            <label className='form-label'>Password:</label>
 
-    const handlePasswordChange = (e) => {
-        setPasswordInputValue(e.target.value);
-        sendDataToLogin(e.target.value);
-    }
+            <input
+                type='password'
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                onPaste={(e) => e.preventDefault()}
+                className='form-control'
+            />
 
-
-    const [ passwordInputValue, setPasswordInputValue ] = useState('');
-
-    return (
-        <div>
-            <label className="form-label">Password:</label>
-            <input 
-            type='password'
-            value={passwordInputValue} 
-            onChange={handlePasswordChange} 
-            className="form-control" 
-            onPaste={(e) => e.preventDefault()}
-            onCopy={(e) => e.preventDefault()}/>
+            {error && (
+                <div className='loginPageError'>
+                    {error}
+                </div>
+            )}
         </div>
-    )
+    );
 }
 
-export default Password;
+export default PasswordField;
