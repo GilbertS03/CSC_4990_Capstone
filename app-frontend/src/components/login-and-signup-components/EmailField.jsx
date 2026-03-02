@@ -6,7 +6,7 @@ function EmailField({ sendDataToLogin }){
     const [ renderError, setRenderError ] = useState(false);
 
     useEffect(()=>{
-        if(!emailInputValue.includes('@') || !emailInputValue.includes('.edu'))
+        if(!emailInputValue.includes('@') || !emailInputValue.includes('.edu') || emailInputValue.charAt(0) === '@')
             setRenderError(true);
         else
             setRenderError(false);
