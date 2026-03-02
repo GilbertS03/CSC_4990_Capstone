@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { login } from '../../services/api/auth'
 import { validateLogin } from '../../utils/validation';
+import { useNavigate } from 'react-router-dom';
 //components
 import PasswordField from './PasswordField'
 import EmailField from './EmailField';
@@ -11,6 +12,7 @@ import '../../App.css';
 
 
 function Login(){
+  const navigate = useNavigate();
   const [ form, setForm ] = useState( {
     emailAddress: '',
     password: ''
@@ -33,6 +35,7 @@ function Login(){
     try{
       await login(form.emailAddress, form.password);
       //redirecting
+      navigate('/')
     }
     catch(error){
       setErrors ({ general: error.message });
