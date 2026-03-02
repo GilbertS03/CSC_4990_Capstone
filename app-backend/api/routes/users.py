@@ -10,14 +10,14 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )  
 
-@router.get("/")
+@router.get("/", response_model=list[UserPublic])
 def get_users(session: SessionDep):
     try:
         return fetch_users(session)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving users: {e}")
     
-@router.get("/{user_id}")
+@router.get("/{user_id}", response_model=UserPublic)
 def get_user(user_id: int, session: SessionDep):
     try:
         user = fetch_users_by_id(user_id, session)

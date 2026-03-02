@@ -1,4 +1,7 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+from .DeviceType import DeviceType
+from .DeviceStatus import DeviceStatus
 
 class Devices(SQLModel, table=True):
     __tablename__="Devices"
@@ -9,3 +12,6 @@ class Devices(SQLModel, table=True):
     deviceStatusId: int = Field(index=True, foreign_key="DeviceStatuses.deviceStatusId")
     positionX: int 
     positionY: int
+
+    deviceType: "DeviceType" = Relationship()
+    deviceStatus: "DeviceStatus" = Relationship()
