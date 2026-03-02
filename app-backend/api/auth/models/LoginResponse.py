@@ -1,4 +1,4 @@
-from .token import Token
+from .Token import Token
 
 class LoginResponse(Token):
     firstName: str

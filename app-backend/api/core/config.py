@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     DB_PORT: str    
     DB_NAME: str
 
+    DEFAULT_ROLE: int
+    DEFAULT_WEEKLY_HOURS: int
+
     @computed_field
     @property
     def DATABASE_URI(self) -> URL:
