@@ -8,8 +8,8 @@ export async function login(email, password){
             'Content-Type' : 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            email,
-            password,
+            username : email,
+            password : password,
         }),
     });
 
