@@ -1,16 +1,30 @@
 from sqlmodel import Session, select
 
 from ..models.User import User
+from ..schema.user_schema import UserPublic
+from ..models.Roles import Roles
 
 def fetch_users(session: Session):
     statement = select(User)
     users = session.exec(statement).all()
-    return users
+    return [UserPublic.model_validate(user) for user in users]
+
+
+def fetch_user_role(session: Session, email: str):
+    statement = select(User).where(User.email == email)
+    user = session.exec(statement).first()
+    if not user:
+        return None
+    role_statement = select(Roles).where(Roles.roleId == user.roleId)
+    role = session.exec(role_statement).first()
+    return role
+        
+    
 
 def fetch_users_by_id(userId: int, session: Session):
     statement = select(User).where(User.userId == userId)
     user = session.exec(statement).first()
-    return user
+    return UserPublic.model_validate(user) if user else None
 
 def fetch_user_by_email(session: Session, email: str):
     statement = select(User).where(User.email == email)
