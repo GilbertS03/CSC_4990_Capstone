@@ -1,64 +1,77 @@
+//functions
 import { useState } from 'react';
-import '../../App.css';
+import { login } from '../../services/api/auth'
+import { validateLogin } from '../../utils/validation';
+import { useNavigate } from 'react-router-dom';
+//components
 import PasswordField from './PasswordField'
 import EmailField from './EmailField';
+import { NavLink } from 'react-router-dom';
+//CSS
+import '../../App.css';
 
-function Login(){ 
-  const [ emailAddress, setEmailAddress ] = useState('');
-  const [ password, setPassword ] = useState('');
-  const [ emailError, setEmailError ] = useState(false);
 
-  const handleEmail = (data) => {
-    setEmailAddress(data[0]); 
-    setEmailError(data[1]);
-    console.log(data);
-  }
-  const handlePassword = (data) => {setPassword(data);}
+function Login(){
+  const navigate = useNavigate();
+  const [ form, setForm ] = useState( {
+    emailAddress: '',
+    password: ''
+  });
+  const [ errors, setErrors ] = useState({});
 
-  //todo work on the fecth and logging in, need backend endpoint before can complete this.
   const handleSubmit = async (event) => {
-    e.preventDefault();
-    try{
-      const response = await fetch('loginroute', {
-        method: 'POST',
-        headers: {
-          //This is for fastapi, change when this is figured out
-          'Content-Type' : 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          //Change as needed
-          username: emailAddress,
-          password: password,
-        })
-      });
+    //Prevent refresh
+    event.preventDefault();
 
-      if(!response.ok){
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Login failed');
-      }
+    //Validating email and password fields
+    const validationErrors = validateLogin(form)
 
-      const data = await response.json();
-      localStorage.setItem('token', data.access_token);
-      console.log('Login successful');
-
+    //Checks if any keys exist and if it does then no logging in
+    if(Object.keys(validationErrors).length > 0){
+      setErrors(validationErrors);
+      return;
     }
-    catch (e){
-      console.log(e.message);
+
+    try{
+      await login(form.emailAddress, form.password);
+      //redirecting
+      navigate('/')
+    }
+    catch(error){
+      setErrors ({ general: error.message });
     }
   }
-  
+
+  const handleChange = (field, value) => {
+    setForm( prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
     return (
       <div className='d-flex flex-column align-items-center w-100'>
         <h2 className='mb-3'>Login</h2>
         <form className='w-50' onSubmit={handleSubmit}>
-          <EmailField sendDataToLogin={handleEmail} />
-          <PasswordField sendDataToLogin={handlePassword} />
+          <EmailField
+            value={form.emailAddress}
+            onChange={(value) => handleChange('emailAddress', value)}
+            error={errors.emailAddress}
+          />
+          <PasswordField 
+            value={form.password}
+            onChange={(value) => handleChange('password', value)}
+            error={errors.password}
+          />
 
           <button type="submit" className="btn btn-primary mt-3">Submit</button>
-          <div className='loginPageError mt-3'>
-            Email or password incorrect. Try again.
-          </div>
+          {errors.general && (
+            <div className='loginPageError mt-3'>
+              {errors.general}
+            </div>
+          )}
         </form>
+        <div className='mt-3 w-50'><NavLink to='/signup' end>Create Account</NavLink></div>
       </div>
     )
 }

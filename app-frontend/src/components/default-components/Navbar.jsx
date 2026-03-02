@@ -41,12 +41,6 @@ function Navbar() {
                         end>
                             Login
                         </NavLink>
-                        <NavLink
-                        className='nav-link'
-                        to='/signup'
-                        end>
-                            Signup
-                        </NavLink>
                     </div>
                 </div>
             </div>
