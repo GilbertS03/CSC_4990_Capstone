@@ -10,9 +10,9 @@ from datetime import datetime, timezone, timedelta
 from ..utils.auth_utils import verify_pw
 from ..models.token import TokenData
 
-from ...models.User import User
+from ...schema.user_schema import UserPublic
 from ...db.session import SessionDep
-from ...services.users import fetch_user_by_email
+from ...services.users import fetch_user_by_email, fetch_user_role
 
 load_dotenv()
 # secret key and hash alg vars
@@ -52,21 +52,22 @@ async def get_current_user(
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"}
+        headers={"WWW-Authenticate": "bearer"}
     )
 
     try:
         payload = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
-        email = payload.get("sub")
+        email = payload.get("email")
+        role = payload.get("role")
         if email is None:
             raise credentials_exception
-        token_data = TokenData(email=email)
+        token_data = TokenData(email=email, role=role)
     except InvalidTokenError:
         raise credentials_exception
     user = fetch_user_by_email(session, email=token_data.email)
     if user is None:
         raise credentials_exception
-    return user
+    return UserPublic.model_validate(user)
 #async get current active user
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+async def get_current_active_user(current_user: UserPublic = Depends(get_current_user)):
     return current_user

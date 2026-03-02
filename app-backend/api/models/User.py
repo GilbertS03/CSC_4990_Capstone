@@ -1,4 +1,6 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+from .Roles import Roles
 
 class User(SQLModel, table=True):
     __tablename__ = "Users"
@@ -10,3 +12,4 @@ class User(SQLModel, table=True):
     password: str
     weeklyHoursRemaining: float
     roleId: int = Field(index=True, foreign_key="Roles.roleId")
+    role: "Roles" = Relationship()

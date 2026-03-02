@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import Annotated
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..models.token import Token
+from ..models.LoginResponse import LoginResponse
 from ...db.session import SessionDep
 from ..services.auth_service import authenticate_user, create_access_token
 
@@ -12,18 +12,24 @@ router = APIRouter (
     tags=['auth']
 )
 
-@router.post('/token')
+@router.post('/login')
 async def login_for_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep
-) -> Token:
+) -> LoginResponse:
     user = authenticate_user(form_data.username, form_data.password, session)
     if not user:
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail="incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"}
+            headers={"WWW-Authenticate": "bearer"}
         )
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(data={"email": user.email, "role": user.role.role})
 
-    return Token(access_token=access_token, token_type="Bearer")
+    return LoginResponse(
+            access_token=access_token, 
+            token_type="Bearer", 
+            firstName=user.firstName, 
+            lastName=user.lastName, 
+            weeklyHoursRemaining=user.weeklyHoursRemaining
+        )
