@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timezone, timedelta
 
 from ..utils.auth_utils import verify_pw
-from ..models.token import TokenData
+from ..models.Token import TokenData
 
 from ...schema.user_schema import UserPublic
 from ...db.session import SessionDep
@@ -68,6 +68,7 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     return UserPublic.model_validate(user)
+
 #async get current active user
 async def get_current_active_user(current_user: UserPublic = Depends(get_current_user)):
     return current_user
