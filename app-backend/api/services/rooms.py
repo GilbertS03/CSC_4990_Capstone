@@ -8,3 +8,8 @@ def fetch_rooms(session: Session):
     statement = select(Rooms)
     rooms = session.exec(statement).all()
     return [RoomPublic.model_validate(room) for room in rooms]
+
+def fetch_roomLayouts(session: Session, limit: int):
+    statement = select(Rooms).limit(limit)
+    layouts = session.exec(statement).all()
+    return [RoomLayout.model_validate(room) for room in layouts]
