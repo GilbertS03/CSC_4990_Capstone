@@ -1,4 +1,4 @@
-name: Test database connection
+name: Integration Tests
 
 on:
   push:
@@ -38,8 +38,14 @@ jobs:
               "localPortNumber": ["13306"]
             }' &
           echo "Waiting for tunnel to establish..."
-          sleep 5
-          echo "Tunnel is up!"
+          for i in $(seq 1 15); do
+            if nc -z 127.0.0.1 13306; then
+              echo "Tunnel is up"
+              break
+            fi
+            echo "Attempt $i: tunnel not ready yet, retrying in 2s..."
+            sleep 2
+          done
 
       - name: Set up Python
         uses: actions/setup-python@v5
