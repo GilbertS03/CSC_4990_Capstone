@@ -1,4 +1,4 @@
-name: Integration Tests
+name: Database Connection
 
 on:
   push:
@@ -64,7 +64,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pymysql
 
-      - name: Test MySQL connectivity via SSM tunnel (Python)
+      - name: Test MySQL connectivity via SSM tunnel (Python)`
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 13306
