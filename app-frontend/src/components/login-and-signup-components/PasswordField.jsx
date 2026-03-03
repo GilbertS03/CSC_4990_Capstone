@@ -10,15 +10,18 @@ function PasswordField ({ value, onChange, error }) {
     return(
         <div className='mb-3'>
             <label className='form-label'>Password:</label>
-            <div>
+            <div className='input-group'>
                 <input
-                type={showPassword ? 'text' : 'password'}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                onPaste={(e) => e.preventDefault()}
-                className='form-control'
-                > </input>
-                <button type='button' onClick={handleTogglePassword}>
+                    type={showPassword ? 'text' : 'password'}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    onPaste={(e) => e.preventDefault()}
+                    className='form-control'
+                />
+                <button 
+                    type='button' 
+                    onClick={handleTogglePassword}
+                    className='btn btn-light'>
                     {showPassword ? 'Hide' : 'Show'} Password
                 </button>
             </div>

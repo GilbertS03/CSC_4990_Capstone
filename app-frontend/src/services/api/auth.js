@@ -32,6 +32,37 @@ export async function login(email, password){
     return data;
 }
 
+//signup and gaining token
+export async function signup(firstName, lastName, email, password){
+    const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+        },
+        body: new URLSearchParams({
+            username : email,
+            firstName : firstName,
+            lastName : lastName,
+            password : password,
+        }),
+    });
+
+    if(!response.ok){
+        const errorData = await response.json().catch(() => null);
+
+        if(response.status === 401){
+            throw new Error("Invalid email or password");
+        }
+        throw new Error(errorData?.detail || 'login failed');
+    }
+
+    const data = await response.json();
+
+    //Storing the token
+    localStorage.setItem('access_token', data.access_token);
+
+    return data;
+}
+
 //logout
 export function logout(){
     localStorage.removeItem('access_token');

@@ -12,7 +12,6 @@ export function validateLogin( { emailAddress, password }) {
         errors.password = 'Password is required';
     }
     
-    console.log(errors)
     return errors;
 }
 

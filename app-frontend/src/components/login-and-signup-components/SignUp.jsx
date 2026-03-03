@@ -1,14 +1,13 @@
 //functions
 import { useState } from 'react';
-import { login } from '../../services/api/auth'
-import { validateLogin } from '../../utils/validation';
+import { signup } from '../../services/api/auth'
+import { validateSignUp } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
 //components
 import PasswordField from './PasswordField'
 import EmailField from './EmailField';
 import FirstNameField from './FirstNameField'
 import LastNameField from './LastNameField'
-import { NavLink } from 'react-router-dom';
 //CSS
 import '../../App.css';
 
@@ -27,16 +26,16 @@ function Signup(){
         event.preventDefault();
 
         //Validating email and password fields
-        const validationErrors = validateLogin(form)
+        const validationErrors = validateSignUp(form)
 
-        //Checks if any keys exist and if it does then no logging in
+        //Checks if any keys exist and if it does then no signing up
         if(Object.keys(validationErrors).length > 0){
             setErrors(validationErrors);
             return;
         }
 
         try{
-            await login(form.emailAddress, form.password);
+            await signup(form.emailAddress, form.firstName, form.lastName, form.password);
             //redirecting
             navigate('/')
         }
