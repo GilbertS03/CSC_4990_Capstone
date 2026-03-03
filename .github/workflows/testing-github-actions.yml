@@ -59,8 +59,8 @@ jobs:
 
       - name: Test MySQL connectivity via SSM tunnel (Python)
         env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 13306
+          DB_HOST: ${{ secrets.DB_HOST}}
+          DB_PORT: ${{secrets.DB_PORT}}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
