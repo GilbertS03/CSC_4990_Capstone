@@ -27,7 +27,7 @@ jobs:
           curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
           sudo dpkg -i session-manager-plugin.deb
 
-      - name: Open SSM tunnel to RDS via EC2
+      - - name: Open SSM tunnel to RDS via EC2
         run: |
           aws ssm start-session \
             --target ${{ secrets.EC2_INSTANCE_ID }} \
@@ -37,13 +37,21 @@ jobs:
               "portNumber": ["3306"],
               "localPortNumber": ["13306"]
             }' &
+          TUNNEL_PID=$!
+          echo "Tunnel process PID: $TUNNEL_PID"
           echo "Waiting for tunnel to establish..."
-          for i in $(seq 1 15); do
-            if nc -z 127.0.0.1 13306; then
-              echo "Tunnel is up"
+          for i in $(seq 1 20); do
+            echo "Attempt $i: checking port 13306..."
+            if bash -c 'echo > /dev/tcp/127.0.0.1/13306' 2>/dev/null; then
+              echo " Tunnel is up on attempt $i!"
               break
             fi
-            echo "Attempt $i: tunnel not ready yet, retrying in 2s..."
+            if [ $i -eq 20 ]; then
+              echo " Tunnel failed to establish after 40 seconds"
+              echo "SSM process status:"
+              ps -p $TUNNEL_PID || echo "Process no longer running"
+              exit 1
+            fi
             sleep 2
           done
 
