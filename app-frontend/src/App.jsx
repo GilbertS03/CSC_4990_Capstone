@@ -1,4 +1,7 @@
+//Router
 import { Routes, Route } from 'react-router-dom'
+
+//Componenets
 import Navbar from './components/default-components/Navbar'
 import Footer from './components/default-components/Footer'
 import Home from './components/home-components/Home'
@@ -7,8 +10,13 @@ import About from './components/home-components/About'
 import Reserve from './components/Reserve'
 import SignUp from './components/login-and-signup-components/SignUp'
 import Contact from './components/home-components/Contact'
-import ProtectedRoute from './components/helper-routes/ProtectedRoute'
+import ProtectedRoute from './components/route-types/ProtectedRoute'
+import Forbidden from './components/default-components/Forbidden'
 import NotFound from './components/default-components/NotFound'
+
+//Role based protection of routes
+import RoleBasedRoute from './components/route-types/RoleBasedRoute'
+
 
 function App() {
 
@@ -23,6 +31,7 @@ function App() {
           <Route path='/about' element={<About />}></Route>
           <Route path='/reserve' element={<ProtectedRoute><Reserve/></ProtectedRoute>}></Route>
           <Route path='/contact' element={<Contact />}></Route>
+          <Route path='/forbidden' element={<Forbidden />}></Route>
           <Route path='*' element={<NotFound />}></Route>
         </Routes>
       </div>

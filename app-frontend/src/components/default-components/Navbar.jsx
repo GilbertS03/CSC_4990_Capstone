@@ -42,15 +42,11 @@ function Navbar() {
                         >
                             About Us
                         </NavLink>
-                        <NavLink
-                        className='nav-link'
-                        to='/login'
-                        end>
-                            Login
-                        </NavLink>
-
+                        {!isAuthenticated() &&
+                            <NavLink className='nav-link' to='login' end>Login</NavLink>
+                        }
                         {isAuthenticated() &&(
-                            <button className='btn btn-primary' onClick={handleLogout}>Logout</button>
+                            <button className='btn nav-link' onClick={handleLogout}>Logout</button>
                         )}
                     </div>
                 </div>
