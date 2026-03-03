@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import WoMM from '../../assets/WoMM.jpg'
 import '../../App.css'
-import { isAuthenticated, logout } from '../../services/api/auth';
+import { isAuthenticated, logout } from '../../services/auth';
 function Navbar() {
     const navigate = useNavigate();
     const handleLogout = () => {

@@ -1,6 +1,6 @@
 //functions
 import { useState } from 'react';
-import { login } from '../../services/api/auth'
+import { login } from '../../services/auth'
 import { validateLogin } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
 //components

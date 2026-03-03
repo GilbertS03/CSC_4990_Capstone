@@ -1,6 +1,6 @@
 //functions
 import { useState } from 'react';
-import { signup } from '../../services/api/auth'
+import { signup } from '../../services/auth'
 import { validateSignUp } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
 //components
