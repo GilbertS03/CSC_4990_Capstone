@@ -1,7 +1,14 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import WoMM from '../../assets/WoMM.jpg'
 import '../../App.css'
+import { isAuthenticated, logout } from '../../services/api/auth';
 function Navbar() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        if(!isAuthenticated()) return;
+        logout();
+        navigate('/', {replace : true});
+    }
 
     return (
         <nav className="navbar navbar-expand-sm">
@@ -41,6 +48,10 @@ function Navbar() {
                         end>
                             Login
                         </NavLink>
+
+                        {isAuthenticated() &&(
+                            <button className='btn btn-primary' onClick={handleLogout}>Logout</button>
+                        )}
                     </div>
                 </div>
             </div>

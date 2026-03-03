@@ -22,11 +22,11 @@ export function validateSignUp( { firstName, lastName, emailAddress, password })
     }
 
     if(!lastName?.trim()){
-        'Last name field must not be left blank';
+        errors.lastName = 'Last name field must not be left blank';
     }
 
     if(!emailAddress?.trim()){
-        errors.email = 'Email is required';
+        errors.emailAddress = 'Email is required';
     }
 
     else if(!/\S+@\S+\.\S+/.test(emailAddress)){
@@ -37,8 +37,8 @@ export function validateSignUp( { firstName, lastName, emailAddress, password })
         errors.password = 'Password is required';
     }
 
-    else if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8}$/.test(password)){
-        errors.password = `Password must be at least ${MIN_CHARS_PW} characters, one upper and one lower`;
+    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)){
+        errors.password = `Password must be at least ${MIN_CHARS_PW} characters, one upper, one lower and one special`;
     }
 
     return errors;

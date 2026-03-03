@@ -4,7 +4,7 @@ import { isAuthenticated } from "../auth";
 function PublicRoute({ children }) {
     if (isAuthenticated()) {
         // User is logged in → redirect them to dashboard or home
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return children;

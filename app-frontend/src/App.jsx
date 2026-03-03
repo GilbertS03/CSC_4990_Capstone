@@ -7,7 +7,7 @@ import About from './components/home-components/About'
 import Reserve from './components/Reserve'
 import SignUp from './components/login-and-signup-components/SignUp'
 import Contact from './components/home-components/Contact'
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedRoute from './components/helper-routes/ProtectedRoute'
 import NotFound from './components/default-components/NotFound'
 
 function App() {
