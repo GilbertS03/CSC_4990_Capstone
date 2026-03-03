@@ -19,6 +19,7 @@ export async function login(email, password){
 
     //Storing the token
     localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('role', data.role);
 
     return data;
 
@@ -53,6 +54,13 @@ export async function signup(firstName, lastName, email, password){
                 },
             }
         );
+        const data = await response.json();
+
+        //Storing the token
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('role', data.role);
+
+    return data;
     }
     catch(error){
         if(error.response){
@@ -65,13 +73,6 @@ export async function signup(firstName, lastName, email, password){
         }
         throw new Error('Network error. Please try again.');
     }
-    
-    const data = await response.json();
-
-    //Storing the token
-    localStorage.setItem('access_token', data.access_token);
-
-    return data;
 }
 
 //logout
@@ -87,4 +88,8 @@ export function getToken() {
 //check auth
 export function isAuthenticated() {
     return !!getToken();
+}
+
+export function getRole() {
+    return localStorage.getItem('role');
 }
