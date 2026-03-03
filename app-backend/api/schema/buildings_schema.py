@@ -3,10 +3,10 @@ from pydantic import BaseModel, ConfigDict
 class BuildingBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    buildingId: int
+    buildingName: str
 
 class BuildingPublic(BuildingBase):
-    buildingName: str
+    buildingId: int
 
 class BuildingTime(BuildingBase):
     openTime: str
