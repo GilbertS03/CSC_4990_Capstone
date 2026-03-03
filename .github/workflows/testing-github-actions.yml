@@ -1,9 +1,11 @@
-name: Integration Tests
+name: Test database connection
 
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 permissions:
-  id-token: write   # required for OIDC
+  id-token: write
   contents: read
 
 jobs:
@@ -20,6 +22,25 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
+      - name: Install SSM Session Manager plugin
+        run: |
+          curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
+          sudo dpkg -i session-manager-plugin.deb
+
+      - name: Open SSM tunnel to RDS via EC2
+        run: |
+          aws ssm start-session \
+            --target ${{ secrets.EC2_INSTANCE_ID }} \
+            --document-name AWS-StartPortForwardingSessionToRemoteHost \
+            --parameters '{
+              "host": ["${{ secrets.DB_HOST }}"],
+              "portNumber": ["3306"],
+              "localPortNumber": ["13306"]
+            }' &
+          echo "Waiting for tunnel to establish..."
+          sleep 5
+          echo "Tunnel is up!"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -30,10 +51,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pymysql
 
-      - name: Test MySQL connectivity (Python)
+      - name: Test MySQL connectivity via SSM tunnel (Python)
         env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_HOST: 127.0.0.1
+          DB_PORT: 13306
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -51,7 +72,7 @@ jobs:
                   password=os.environ["DB_PASSWORD"],
                   database=os.environ["DB_NAME"],
               )
-              print("Connected to cloud database successfully!")
+              print("Connected to RDS via SSM tunnel successfully!")
               cursor = conn.cursor()
               cursor.execute("SELECT VERSION();")
               version = cursor.fetchone()
