@@ -1,0 +1,44 @@
+name: Integration Tests
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install SSM Session Manager plugin
+        run: |
+          curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
+          sudo dpkg -i session-manager-plugin.deb
+
+      - name: Debug SSM tunnel
+        env:
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+        run: |
+          echo "Testing SSM access to instance..."
+          aws ssm describe-instance-information --query "InstanceInformationList[*].{ID:InstanceId,Status:PingStatus}" --output table
+
+          echo "Starting tunnel with full output..."
+          aws ssm start-session \
+            --target "$EC2_INSTANCE_ID" \
+            --document-name AWS-StartPortForwardingSessionToRemoteHost \
+            --parameters "{\"host\":[\"$DB_HOST\"],\"portNumber\":[\"3306\"],\"localPortNumber\":[\"13306\"]}" 2>&1 | head -20 &
+          sleep 10
+          echo "Done waiting"
