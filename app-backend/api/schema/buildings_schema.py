@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict
 
 class BuildingBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)

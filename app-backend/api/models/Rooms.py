@@ -7,3 +7,4 @@ class Room(SQLModel, table=True):
     buildingId: int = Field(index=True, foreign_key="Buildings.buildingId")
     layoutHeight: int
     layoutWidth: int
+    roomName: str
