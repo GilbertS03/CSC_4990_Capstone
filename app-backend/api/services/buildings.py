@@ -1,6 +1,10 @@
 from sqlmodel import Session, select
-from ..models.Buildings import Buildings
+from ..core.config_loader import settings
 
-# def fetch_buildings(session: Session):
-#     statement = select(Buildings)
-#     buildings = session.exec(statement).all()
+from ..models.Buildings import Buildings
+from ..schema.buildings_schema import BuildingPublic
+
+def fetch_buildings(session: Session):
+    statement = select(Buildings)
+    buildings = session.exec(statement).all()
+    return [BuildingPublic.model_validate(building) for building in buildings]
