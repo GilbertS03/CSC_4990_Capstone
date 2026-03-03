@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field
 
-class Room(SQLModel, table=True):
+class Rooms(SQLModel, table=True):
     __tablename__="Rooms"
 
     roomId: int = Field(default=None, primary_key=True)
