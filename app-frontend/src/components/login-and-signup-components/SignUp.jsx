@@ -39,9 +39,9 @@ function Signup(){
         }
         
         const result = await signup(
-            form.emailAddress,
             form.firstName,
             form.lastName,
+            form.emailAddress,
             form.password
         );
 
@@ -51,7 +51,7 @@ function Signup(){
         }
 
         //signup succeeded, navigate to success
-        navigate('/success');
+        navigate('/');
     }
 
     const handleChange = (field, value) => {

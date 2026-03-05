@@ -1,5 +1,5 @@
 import api from './api/api';
-import { decodeToken, getRole } from '../utils/jwt';
+import { decodeToken } from '../utils/jwt';
 //Logins
 export async function login(email, password){
     try{
@@ -43,15 +43,15 @@ export async function signup(firstName, lastName, email, password){
     try{
         const response = api.post(
             '/auth/signup',
-            new URLSearchParams({
-                username : email,
+            {
+                email : email,
                 firstName : firstName,
                 lastName : lastName,
                 password : password
-            }),
+            },
             {
                 headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded',
+                    'Content-Type' : 'application/json',
                 },
             }
         );
@@ -63,6 +63,7 @@ export async function signup(firstName, lastName, email, password){
         return data;
     }
     catch(error){
+        console.log(error)
         if(error.response){
             if(error.response.status === 401){
                 throw new Error('Invalid email or password');
