@@ -1,18 +1,22 @@
 //functions
 import { useState } from 'react';
-import { signup } from '../../services/auth'
-import { validateSignUp } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
+import { validateSignUp } from '../../utils/validation';
+import { useAuth } from '../../context/AuthContext';
+
 //components
 import PasswordField from './PasswordField'
 import EmailField from './EmailField';
 import FirstNameField from './FirstNameField'
 import LastNameField from './LastNameField'
+
 //CSS
 import '../../App.css';
 
 function Signup(){
     const navigate = useNavigate();
+    const { signup } = useAuth();
+
     const [ form, setForm ] = useState( {
         firstName: '',
         lastName: '',
@@ -33,15 +37,21 @@ function Signup(){
             setErrors(validationErrors);
             return;
         }
+        
+        const result = await signup(
+            form.emailAddress,
+            form.firstName,
+            form.lastName,
+            form.password
+        );
 
-        try{
-            await signup(form.emailAddress, form.firstName, form.lastName, form.password);
-            //redirecting
-            navigate('/')
+        if(!result.success) {
+            setErrors({ general: result.message });
+            return;
         }
-        catch(error){
-            setErrors ({ general: error.message });
-        }
+
+        //signup succeeded, navigate to success
+        navigate('/success');
     }
 
     const handleChange = (field, value) => {

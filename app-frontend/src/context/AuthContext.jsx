@@ -42,7 +42,7 @@ export function AuthProvider({ children }){
         try{
             const data = await authService.login(email, password);
 
-            if(!data?.accessToken){
+            if(!data?.access_token){
                 return { success: false, message: 'Invalid Login response'};
             }
             setAccessToken(data.access_token);
