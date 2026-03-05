@@ -1,22 +1,26 @@
 //functions
 import { useState } from 'react';
-import { login } from '../../services/api/auth'
-import { validateLogin } from '../../utils/validation';
 import { useNavigate } from 'react-router-dom';
+import { validateLogin } from '../../utils/validation';
+import { useAuth } from '../../context/AuthContext';
+
 //components
 import PasswordField from './PasswordField'
 import EmailField from './EmailField';
 import { NavLink } from 'react-router-dom';
+
 //CSS
 import '../../App.css';
 
-
 function Login(){
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [ form, setForm ] = useState( {
     emailAddress: '',
     password: ''
   });
+
   const [ errors, setErrors ] = useState({});
 
   const handleSubmit = async (event) => {
@@ -32,14 +36,17 @@ function Login(){
       return;
     }
 
-    try{
-      await login(form.emailAddress, form.password);
-      //redirecting
-      navigate('/')
+    //performing login
+    const result = await login(form.emailAddress, form.password);
+
+    if(!result.success){
+      setErrors({ general: result.message });
+      return;
     }
-    catch(error){
-      setErrors ({ general: error.message });
-    }
+    
+    //success means redirect
+    navigate('/')
+    
   }
 
   const handleChange = (field, value) => {

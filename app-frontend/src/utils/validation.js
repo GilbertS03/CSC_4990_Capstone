@@ -1,4 +1,4 @@
-const MIN_CHARS_PW = 10;
+const MIN_CHARS_PW = 8;
 export function validateLogin( { emailAddress, password }) {
     const errors = {};
 
@@ -12,24 +12,35 @@ export function validateLogin( { emailAddress, password }) {
         errors.password = 'Password is required';
     }
     
-    console.log(errors)
     return errors;
 }
 
-export function validateSignUp( { emailAddress, password }) {
+export function validateSignUp( { firstName, lastName, emailAddress, password }) {
     const errors = {};
+    if(!firstName?.trim()){
+        errors.firstName = 'First name field must not be left blank';
+    }
+
+    if(!lastName?.trim()){
+        errors.lastName = 'Last name field must not be left blank';
+    }
 
     if(!emailAddress?.trim()){
-        errors.email = 'Email is required';
+        errors.emailAddress = 'Email is required';
     }
+
     else if(!/\S+@\S+\.\S+/.test(emailAddress)){
         errors.emailAddress = "Invalid email format"
     }
-    if(!password){
+    
+    if(!password?.trim()){
         errors.password = 'Password is required';
     }
-    else if (password.length < MIN_CHARS_PW){
-        errors.password = `Password must be at least ${MIN_CHARS_PW} characters`;
+
+    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)){
+        errors.password = `Password must be at least ${MIN_CHARS_PW} characters, one upper, one lower and one special`;
     }
+
+    return errors;
 
 }
