@@ -15,3 +15,11 @@ def get_rooms(session: SessionDep):
         return fetch_rooms(session)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving rooms: {e}")
+    
+@router.get("/room-layouts", response_model=list[RoomLayout])
+def get_room_layouts(session: SessionDep, limit: int = 100):
+    try:
+        positions = fetch_room_layouts(session, limit)
+        return positions
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving room layouts: {e}")
