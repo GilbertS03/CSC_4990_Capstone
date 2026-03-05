@@ -1,5 +1,5 @@
 //Router
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Router } from 'react-router-dom'
 
 //Componenets
 import Navbar from './components/default-components/Navbar'
@@ -10,7 +10,6 @@ import About from './components/home-components/About'
 import Reserve from './components/Reserve'
 import SignUp from './components/login-and-signup-components/SignUp'
 import Contact from './components/home-components/Contact'
-import ProtectedRoute from './components/route-types/ProtectedRoute'
 import Forbidden from './components/default-components/Forbidden'
 import NotFound from './components/default-components/NotFound'
 
@@ -26,10 +25,10 @@ function App() {
       <div className='flex-grow-1 py-4'>
         <Routes>
           <Route path='/' element={<Home />}></Route>
-          <Route path='/login' element={<Login />}></Route>
-          <Route path='/signup' element={<SignUp />}></Route>
+          <Route path='/login' element={<RoleBasedRoute publicOnly={true} ><Login /></RoleBasedRoute>}></Route>
+          <Route path='/signup' element={<RoleBasedRoute publicOnly={true}><SignUp /></RoleBasedRoute>}></Route>
           <Route path='/about' element={<About />}></Route>
-          <Route path='/reserve' element={<ProtectedRoute><Reserve/></ProtectedRoute>}></Route>
+          <Route path='/reserve' element={<Reserve/>}></Route>
           <Route path='/contact' element={<Contact />}></Route>
           <Route path='/forbidden' element={<Forbidden />}></Route>
           <Route path='*' element={<NotFound />}></Route>

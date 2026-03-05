@@ -1,5 +1,6 @@
-import api from './api/api'
-//Login
+import api from './api/api';
+import { decodeToken, getRole } from '../utils/jwt';
+//Logins
 export async function login(email, password){
     try{
         const response = await api.post(
@@ -18,8 +19,8 @@ export async function login(email, password){
     const data = response.data;
 
     //Storing the token
-    localStorage.setItem('access_token', data.access_token);
-    localStorage.setItem('role', data.role);
+    const token = data.access_token;
+    localStorage.setItem('access_token', token);
 
     return data;
 
@@ -54,13 +55,12 @@ export async function signup(firstName, lastName, email, password){
                 },
             }
         );
-        const data = await response.json();
+        const data = (await response).data;
 
         //Storing the token
         localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('role', data.role);
 
-    return data;
+        return data;
     }
     catch(error){
         if(error.response){
@@ -90,6 +90,7 @@ export function isAuthenticated() {
     return !!getToken();
 }
 
-export function getRole() {
-    return localStorage.getItem('role');
+export function getExpirationTime(token){
+    const decodedToken = decodeToken(token);
+    return decodedToken.exp * 1000;
 }

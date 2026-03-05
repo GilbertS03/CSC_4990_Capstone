@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated, getRole } from '../../services/auth';
+import { isAuthenticated } from '../../services/auth';
 
 /**
  * @param children: React component to render
@@ -9,17 +9,16 @@ import { isAuthenticated, getRole } from '../../services/auth';
 
 function RoleBasedRoute({ children, allowedRoles = [], publicOnly = false }){
     const loggedIn = isAuthenticated();
-    const role = getRole();
 
     //Public-only route (login/signup)
     if(publicOnly && loggedIn){
         return <Navigate to='/' replace />
     }
 
-    if(!allowedRoles.includes(role)) {
-        //Logged in but role not allowed -> show forbidden or redirect to home
-        return <Navigate to='/forbidden' replace />
-    }
+    // if(allowedRoles.length > 0 && loggedIn) {
+    //     //Logged in but role not allowed -> show forbidden or redirect to home
+    //     return <Navigate to='/forbidden' replace />
+    // }
 
     //No restrictions -> render component
     return children;
