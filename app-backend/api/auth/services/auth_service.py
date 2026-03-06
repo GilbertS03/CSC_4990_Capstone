@@ -15,13 +15,12 @@ from ...db.session import SessionDep
 from ...services.users import fetch_user_by_email, fetch_user_role
 
 load_dotenv()
-# secret key and hash alg vars
+
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-# authenticate user
 def authenticate_user(email: str, password: str, session: SessionDep):
     user = fetch_user_by_email(session, email)
     if not user:
@@ -33,7 +32,6 @@ def authenticate_user(email: str, password: str, session: SessionDep):
     print("Authenticated user:", user.email)
     return user
 
-#create access token
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
@@ -44,7 +42,16 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-#async get current user
+def require_roles(*allowed_roles: str):
+    async def verify_role(user: UserPublic = Depends(get_current_active_user)):
+        if user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Unauthorized User"
+            )
+        return user
+    return verify_role
+
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: SessionDep
@@ -69,6 +76,5 @@ async def get_current_user(
         raise credentials_exception
     return UserPublic.model_validate(user)
 
-#async get current active user
 async def get_current_active_user(current_user: UserPublic = Depends(get_current_user)):
     return current_user

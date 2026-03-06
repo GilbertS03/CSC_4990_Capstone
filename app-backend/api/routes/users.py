@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
+from ..auth.services.auth_service import require_roles
 from ..db.session import SessionDep
-from..services.users import *
+from ..services.users import *
 
 
 router = APIRouter(
@@ -11,7 +12,7 @@ router = APIRouter(
 )  
 
 @router.get("/", response_model=list[UserPublic])
-def get_users(session: SessionDep):
+def get_users(session: SessionDep, user: UserPublic = Depends(require_roles("admin")), ):
     try:
         return fetch_users(session)
     except Exception as e:
