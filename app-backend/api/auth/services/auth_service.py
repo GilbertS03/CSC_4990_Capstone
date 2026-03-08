@@ -12,7 +12,7 @@ from ..models.Token import TokenData
 
 from ...schema.user_schema import UserPublic
 from ...db.session import SessionDep
-from ...services.users import fetch_user_by_email, fetch_user_role
+from ...services.users import fetch_user_by_email
 
 load_dotenv()
 
