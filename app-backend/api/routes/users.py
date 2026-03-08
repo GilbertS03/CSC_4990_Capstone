@@ -11,7 +11,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )  
 
-@router.get("/", response_model=list[UserPublic])
+@router.get("/all", response_model=list[UserPublic])
 def get_users(session: SessionDep, user: UserPublic = Depends(require_roles("admin")), ):
     try:
         return fetch_users(session)
