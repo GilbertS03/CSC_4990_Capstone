@@ -18,8 +18,6 @@ def get_users(session: SessionDep, user: UserPublic = Depends(require_roles("adm
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving users: {e}")
     
-
-    
 @router.get("/me", response_model=UserPublic)
 def get_active_user(user: UserPublic = Depends(get_current_active_user)):
     try:
