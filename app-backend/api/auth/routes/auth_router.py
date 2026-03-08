@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..services.auth_service import authenticate_user, create_access_token
 from ..models.LoginResponse import LoginResponse
 
-from ...schema.user_schema import UserCreate
+from ...schema.user_schema import UserCreate, UserPublic
 from ...db.session import SessionDep
 from ...services.users import create_user, fetch_user_by_email
 
@@ -15,6 +15,16 @@ router = APIRouter (
     prefix='/auth',
     tags=['auth']
 )
+
+def create_login_response(token: str, user: UserPublic):
+    response = LoginResponse(
+        access_token=token,
+        token_type="Bearer", 
+        firstName=user.firstName, 
+        lastName=user.lastName, 
+        weeklyHoursRemaining=user.weeklyHoursRemaining
+    )
+    return response
 
 @router.post('/login')
 async def login_for_token(
@@ -30,13 +40,7 @@ async def login_for_token(
         )
     access_token = create_access_token(data={"email": user.email, "role": user.role.role})
 
-    return LoginResponse(
-        access_token=access_token, 
-        token_type="Bearer", 
-        firstName=user.firstName, 
-        lastName=user.lastName, 
-        weeklyHoursRemaining=user.weeklyHoursRemaining
-    )
+    return create_login_response(access_token, user)
 
 @router.post("/signup")
 async def user_signup(user: UserCreate, session: SessionDep):
@@ -46,10 +50,4 @@ async def user_signup(user: UserCreate, session: SessionDep):
     new_user = create_user(user, session)
     access_token = create_access_token(data={"email": new_user.email, "role": new_user.role.role})
 
-    return LoginResponse(
-        access_token=access_token, 
-        token_type="Bearer", 
-        firstName=new_user.firstName, 
-        lastName=new_user.lastName, 
-        weeklyHoursRemaining=new_user.weeklyHoursRemaining
-    )
+    return create_login_response(access_token, user)
