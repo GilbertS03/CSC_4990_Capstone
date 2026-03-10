@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Home,
@@ -8,10 +7,12 @@ import {
   Menu,
   UserRoundSearch,
   Users,
+  MonitorSmartphone,
+  UserRound,
 } from "lucide-react";
 
-function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+function Sidebar({ collapsed, setCollapsed }) {
+  const width = collapsed ? "80px" : "250px";
   const iconSize = 24;
 
   const linkClass = ({ isActive }) =>
@@ -23,10 +24,10 @@ function Sidebar() {
     <div
       className="bg-dark text-white d-flex flex-column p-3"
       style={{
-        width: collapsed ? "80px" : "250px",
+        width: width,
         height: "100vh",
         position: "fixed",
-        transition: "width 0.3s",
+        transition: "width 0.3s ease",
       }}
     >
       {/* Toggle Button */}
@@ -72,9 +73,9 @@ function Sidebar() {
         </li>
 
         <li>
-          <NavLink to="/messages" className={linkClass}>
-            <MessageCircle size={iconSize} className="me-2" />
-            {!collapsed && "Messages"}
+          <NavLink to="/admin/devices" className={linkClass}>
+            <MonitorSmartphone size={iconSize} className="me-2" />
+            {!collapsed && "Devices"}
           </NavLink>
         </li>
 
@@ -85,6 +86,13 @@ function Sidebar() {
           </NavLink>
         </li>
       </ul>
+      <div className="mt-auto">
+        <hr />
+        <button className="btn btn-outline-primary">
+          {/* todo add user name here and add modal with settings, logout, etc. */}
+          <UserRound /> {collapsed ? "" : "User: "}
+        </button>
+      </div>
     </div>
   );
 }

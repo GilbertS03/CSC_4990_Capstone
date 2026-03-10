@@ -48,6 +48,7 @@ function Navbar() {
                 Logout
               </NavLink>
             )}
+            {/* todo Use a float right maybe and have use the <CircleUser /> from lucide-react */}
           </div>
         </div>
       </div>
