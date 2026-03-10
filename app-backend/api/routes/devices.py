@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
+from ..auth.services.auth_service import require_roles
 from ..schema.devices_schema import DevicePosition, DevicePublic
+from ..schema.user_schema import UserPublic
 from ..db.session import SessionDep
 from ..services.devices import *
 
@@ -12,9 +14,9 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[DevicePublic])
-def get_devices(session: SessionDep):
+def get_devices(session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
     try:
-        devices = fetch_devices(session)
+        devices = fetch_all_devices(session)
         return devices
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving devices: {e}")
