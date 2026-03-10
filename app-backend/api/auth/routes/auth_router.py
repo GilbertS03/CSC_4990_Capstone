@@ -50,4 +50,4 @@ async def user_signup(user: UserCreate, session: SessionDep):
     new_user = create_user(user, session)
     access_token = create_access_token(data={"email": new_user.email, "role": new_user.role.role})
 
-    return create_login_response(access_token, user)
+    return create_login_response(access_token, new_user)
