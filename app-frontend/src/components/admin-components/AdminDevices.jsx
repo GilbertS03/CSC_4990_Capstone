@@ -1,8 +1,11 @@
 import { getAllDevices } from "../../services/api/admin";
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import DevicesSearchBar from "./DevicesSearchBar";
 
 function AdminDevices() {
   const [devices, setDevices] = useState({});
+  const [filteredDevices, setFilteredDevices] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -10,6 +13,7 @@ function AdminDevices() {
       try {
         const data = await getAllDevices();
         setDevices(data);
+        setFilteredDevices(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -41,6 +45,10 @@ function AdminDevices() {
 
   return (
     <div className="container d-flex flex-column justify-content-center">
+      <DevicesSearchBar
+        devices={devices}
+        setFilteredDevices={setFilteredDevices}
+      />
       <h1 className="text-center">All Devices</h1>
       <table className="table table-dark table-striped">
         <thead>
@@ -53,21 +61,36 @@ function AdminDevices() {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(devices).map((key) => (
-            <tr key={key}>
-              <td>{devices[key].deviceId}</td>
-              <td>{devices[key].deviceType}</td>
-              <td>{devices[key].roomId}</td>
-              <td>
-                <span
-                  className={`badge rounded-pill ${getStatusColor(devices[key].deviceStatus)}`}
-                >
-                  {devices[key].deviceStatus}
-                </span>
+          {Object.keys(filteredDevices).length === 0 ? (
+            <tr>
+              <td colSpan={5} className="text-center">
+                No Devices Found.
               </td>
-              <td>Edit Device: {devices[key].deviceId}</td>
             </tr>
-          ))}
+          ) : (
+            Object.values(filteredDevices).map((device) => (
+              <tr key={device.deviceId}>
+                <td>{device.deviceId}</td>
+                <td>{device.deviceType}</td>
+                <td>{device.roomId}</td>
+                <td>
+                  <span
+                    className={`badge rounded-pill ${getStatusColor(device.deviceStatus)}`}
+                  >
+                    {device.deviceStatus}
+                  </span>
+                </td>
+                <td>
+                  <NavLink
+                    to={`/admin/devices/${devices.deviceId}`}
+                    className="btn btn-sm btn-primary"
+                  >
+                    Edit Device: {devices.deviceId}{" "}
+                  </NavLink>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

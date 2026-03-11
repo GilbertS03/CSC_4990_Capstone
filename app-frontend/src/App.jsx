@@ -18,6 +18,7 @@ import NotFound from "./components/default-components/NotFound";
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
 import AdminDevices from "./components/admin-components/AdminDevices";
+import EditDevice from "./components/admin-components/EditDevice";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -60,13 +61,13 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminHome />} />
         <Route path="devices" element={<AdminDevices />} />
+        <Route path="devices/:id" element={<EditDevice />} />
         <Route path="forbidden" element={<Forbidden />} />
 
         {/* Admin 404 */}
         <Route path="*" element={<NotFound />} />
       </Route>
 
-      {/* GLOBAL 404 (IMPORTANT) */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
