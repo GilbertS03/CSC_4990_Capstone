@@ -12,9 +12,9 @@ class ReservationBase(BaseModel):
 class UserReservation(ReservationBase):
     userId: int
     deviceId: int
-    reservationStatus: str
+    status: str
 
-    @field_validator("reservationStatus",mode="before")
+    @field_validator("status",mode="before")
     def extract_status(cls, v):
         if isinstance(v, ReservationStatuses):
             return v.reservationStatus

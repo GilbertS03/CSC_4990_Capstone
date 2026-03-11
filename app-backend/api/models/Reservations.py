@@ -9,6 +9,7 @@ class Reservations(SQLModel, table=True):
     reservationId: int = Field(default=None, primary_key=True)
     userId: int = Field(index=True, foreign_key="Users.userId")
     deviceId: int = Field(index=True, foreign_key="Devices.deviceId")
-    reservationStatusId: "ReservationStatuses" = Relationship()
+    reservationStatusId: int = Field(index=True, foreign_key="ReservationStatuses.reservationStatusId")
+    status: "ReservationStatuses" = Relationship()
     startTime: datetime
     endTime: datetime
