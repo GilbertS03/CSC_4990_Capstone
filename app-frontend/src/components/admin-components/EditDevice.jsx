@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 //todo enforce validation on fields
-function EditDevce() {
+function EditDevice() {
   const onSubmit = (e) => {
     e.preventDefault();
     return;
@@ -40,4 +40,4 @@ function EditDevce() {
   );
 }
 
-export default EditDevce;
+export default EditDevice;

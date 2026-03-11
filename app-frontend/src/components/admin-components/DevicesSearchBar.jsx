@@ -77,7 +77,7 @@ function DevicesSearchBar({ devices, setFilteredDevices }) {
             Search
           </button>
           <button
-            className="btn btn-secondary ms-2"
+            className="btn btn-secondary"
             type="button"
             onClick={handleReset}
           >

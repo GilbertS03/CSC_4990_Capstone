@@ -35,21 +35,15 @@ function AdminDevices() {
     }
   };
 
-  useEffect(() => {
-    Object.entries(devices).map(([key, device]) => {
-      console.log(key, device);
-    });
-  }, [loading]);
-
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="container d-flex flex-column justify-content-center">
+      <h1 className="text-center">All Devices</h1>
       <DevicesSearchBar
         devices={devices}
         setFilteredDevices={setFilteredDevices}
       />
-      <h1 className="text-center">All Devices</h1>
       <table className="table table-dark table-striped">
         <thead>
           <tr>
@@ -82,10 +76,10 @@ function AdminDevices() {
                 </td>
                 <td>
                   <NavLink
-                    to={`/admin/devices/${devices.deviceId}`}
+                    to={`/admin/devices/${device.deviceId}`}
                     className="btn btn-sm btn-primary"
                   >
-                    Edit Device: {devices.deviceId}{" "}
+                    Edit Device: {device.deviceId}
                   </NavLink>
                 </td>
               </tr>
