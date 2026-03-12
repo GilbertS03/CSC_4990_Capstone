@@ -1,9 +1,11 @@
 import { getAllUsers } from "../../services/api/admin";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 function AdminUsers() {
   const [users, setUsers] = useState({});
+  const [filteredUsers, setFilteredUsers] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -11,7 +13,7 @@ function AdminUsers() {
       try {
         const data = await getAllUsers();
         setUsers(data);
-        // setFilteredDevices(data);
+        setFilteredUsers(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -25,10 +27,25 @@ function AdminUsers() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="container d-flex flex-column justify-content-center">
+    <div className="container-fluid d-flex flex-column justify-content-center">
       <h1 className="text-center">All Users</h1>
+      <SearchBar
+        data={users}
+        setFilteredData={setFilteredUsers}
+        fields={[
+          { label: "First Name", key: "firstName", type: "text" },
+          { label: "Last Name", key: "lastName", type: "text" },
+          { label: "Email", key: "email", type: "text" },
+          {
+            label: "Role",
+            key: "role",
+            type: "select",
+            options: ["ADMIN", "USER"],
+          },
+        ]}
+      />
       <div className="table-responsive">
-        <table className="table table-dark table-striped">
+        <table className="table table-dark table-striped table-hover align-middle">
           <thead>
             <tr>
               <th>First Name</th>
@@ -40,20 +57,20 @@ function AdminUsers() {
             </tr>
           </thead>
           <tbody>
-            {Object.keys(users).length === 0 ? (
+            {Object.keys(filteredUsers).length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-center">
                   No Users Found.
                 </td>
               </tr>
             ) : (
-              Object.keys(users).map((key) => (
+              Object.keys(filteredUsers).map((key) => (
                 <tr key={key}>
-                  <td>{users[key].firstName}</td>
-                  <td>{users[key].lastName}</td>
-                  <td>{users[key].email}</td>
-                  <td>{users[key].weeklyHoursRemaining}</td>
-                  <td>{users[key].role}</td>
+                  <td>{filteredUsers[key].firstName}</td>
+                  <td>{filteredUsers[key].lastName}</td>
+                  <td>{filteredUsers[key].email}</td>
+                  <td>{filteredUsers[key].weeklyHoursRemaining}</td>
+                  <td>{filteredUsers[key].role}</td>
                   <td>
                     <NavLink
                       to={`/admin/users/${key}`}

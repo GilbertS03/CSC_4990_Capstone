@@ -12,7 +12,7 @@ function AdminLayout() {
       <div
         style={{
           marginLeft: sidebarWidth,
-          padding: "30px",
+          padding: "10px",
           width: "100%",
           minHeight: "100vh",
           transition: "margin-left 0.3 ease",

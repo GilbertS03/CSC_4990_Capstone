@@ -1,5 +1,5 @@
 import api from './api/api';
-import { decodeToken } from '../utils/jwt';
+import { decodeToken, getRole } from '../utils/jwt';
 //Logins
 export async function login(email, password){
     try{
@@ -89,6 +89,11 @@ export function getToken() {
 //check auth
 export function isAuthenticated() {
     return !!getToken();
+}
+
+export function getUserRole(){
+    const token = getToken();
+    return getRole(token);
 }
 
 export function getExpirationTime(token){

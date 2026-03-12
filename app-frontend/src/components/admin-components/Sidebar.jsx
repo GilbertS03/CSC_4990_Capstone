@@ -27,7 +27,7 @@ function Sidebar({ collapsed, setCollapsed }) {
         width: width,
         height: "100vh",
         position: "fixed",
-        transition: "width 0.3s ease",
+        transition: "width 0.5s ease",
       }}
     >
       {/* Toggle Button */}

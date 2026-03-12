@@ -1,7 +1,7 @@
 import { getAllDevices } from "../../services/api/admin";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import DevicesSearchBar from "./DevicesSearchBar";
+import SearchBar from "./SearchBar";
 
 function AdminDevices() {
   const [devices, setDevices] = useState({});
@@ -40,11 +40,22 @@ function AdminDevices() {
   return (
     <div className="container d-flex flex-column justify-content-center">
       <h1 className="text-center">All Devices</h1>
-      <DevicesSearchBar
-        devices={devices}
-        setFilteredDevices={setFilteredDevices}
+      <SearchBar
+        data={devices}
+        setFilteredData={setFilteredDevices}
+        fields={[
+          { label: "Device ID", key: "deviceId", type: "text" },
+          { label: "Device Type", key: "deviceType", type: "text" },
+          { label: "Room ID", key: "roomId", type: "text" },
+          {
+            label: "Device Status",
+            key: "deviceStatus",
+            type: "select",
+            options: ["available", "unavailable"],
+          },
+        ]}
       />
-      <table className="table table-dark table-striped">
+      <table className="table table-dark table-striped table-hover align-middle">
         <thead>
           <tr>
             <th>Device ID</th>
