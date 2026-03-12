@@ -7,3 +7,4 @@ python-dotenv==1.2.1
 pyjwt==2.11.0
 bcrypt==5.0.0
 pyotp==2.9.0
+pytest==9.0.2
