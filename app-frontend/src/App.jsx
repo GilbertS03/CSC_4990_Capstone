@@ -32,8 +32,15 @@ function App() {
       <Route path="/" element={<PublicLayout />}>
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
-        <Route path="reserve" element={<Reserve />} />
         <Route path="contact" element={<Contact />} />
+        <Route
+          path="reserve"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <Reserve />
+            </RoleBasedRoute>
+          }
+        />
 
         <Route
           path="login"
@@ -60,7 +67,14 @@ function App() {
       </Route>
 
       {/* Admin Routes */}
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route
+        path="/admin"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AdminLayout />
+          </RoleBasedRoute>
+        }
+      >
         <Route index element={<AdminHome />} />
         <Route path="devices" element={<AdminDevices />} />
         <Route path="devices/:id" element={<EditDevice />} />

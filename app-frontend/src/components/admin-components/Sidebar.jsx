@@ -5,7 +5,6 @@ import {
   MessageCircle,
   Settings,
   Menu,
-  UserRoundSearch,
   Users,
   MonitorSmartphone,
   UserRound,

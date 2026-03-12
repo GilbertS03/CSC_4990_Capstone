@@ -1,11 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import WoMM from "../../assets/WoMM.jpg";
 import "../../App.css";
-import { isAuthenticated, logout } from "../../services/auth";
+import { useAuth } from "../../context/AuthContext";
 function Navbar() {
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
-    if (!isAuthenticated()) return;
+    if (!isAuthenticated) return;
     logout();
     navigate("/", { replace: true });
   };
@@ -38,12 +39,12 @@ function Navbar() {
             <NavLink className="nav-link" to="/about" end>
               About Us
             </NavLink>
-            {!isAuthenticated() && (
-              <NavLink className="nav-link" to="login" end>
+            {!isAuthenticated && (
+              <NavLink className="nav-link" to="/login" end>
                 Login
               </NavLink>
             )}
-            {isAuthenticated() && (
+            {isAuthenticated && (
               <NavLink to="/" className="nav-link" onClick={handleLogout}>
                 Logout
               </NavLink>

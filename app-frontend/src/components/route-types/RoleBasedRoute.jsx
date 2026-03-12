@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
-import { isAuthenticated } from '../../services/auth';
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 /**
  * @param children: React component to render
@@ -7,21 +7,28 @@ import { isAuthenticated } from '../../services/auth';
  * @param publicOnly: boolean; true if route is for logged-out users only (login/signup)
  */
 
-function RoleBasedRoute({ children, allowedRoles = [], publicOnly = false }){
-    const loggedIn = isAuthenticated();
+function RoleBasedRoute({ children, allowedRoles = [], publicOnly = false }) {
+  const { user, isAuthenticated, loading } = useAuth();
 
-    //Public-only route (login/signup)
-    if(publicOnly && loggedIn){
-        return <Navigate to='/' replace />
-    }
+  if (loading) return null;
 
-    // if(allowedRoles.length > 0 && loggedIn) {
-    //     //Logged in but role not allowed -> show forbidden or redirect to home
-    //     return <Navigate to='/forbidden' replace />
-    // }
+  //Public-only route (login/signup)
+  if (publicOnly) {
+    return isAuthenticated ? <Navigate to="/" replace /> : children;
+  }
 
-    //No restrictions -> render component
-    return children;
+  //if route requires authentication
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  //If roles are specified, check permissions
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/forbidden" replace />;
+  }
+
+  //No restrictions -> render component
+  return children;
 }
 
 export default RoleBasedRoute;
