@@ -52,21 +52,14 @@ function Sidebar({ collapsed, setCollapsed }) {
         </li>
 
         <li>
-          <NavLink to="/user-search" end className={linkClass}>
-            <UserRoundSearch size={iconSize} className="me-2" />
-            {!collapsed && "Search Users"}
-          </NavLink>
-        </li>
-
-        <li>
-          <NavLink to="users" end className={linkClass}>
+          <NavLink to="/admin/users" end className={linkClass}>
             <Users size={iconSize} className="me-2" />
             {!collapsed && "All Users"}
           </NavLink>
         </li>
 
         <li>
-          <NavLink to="/dashboard" className={linkClass}>
+          <NavLink to="/admin/dashboard" className={linkClass}>
             <LayoutDashboard size={iconSize} className="me-2" />
             {!collapsed && "Dashboard"}
           </NavLink>
@@ -75,12 +68,12 @@ function Sidebar({ collapsed, setCollapsed }) {
         <li>
           <NavLink to="/admin/devices" className={linkClass}>
             <MonitorSmartphone size={iconSize} className="me-2" />
-            {!collapsed && "Devices"}
+            {!collapsed && "All Devices"}
           </NavLink>
         </li>
 
         <li>
-          <NavLink to="/settings" className={linkClass}>
+          <NavLink to="/admin/settings" className={linkClass}>
             <Settings size={iconSize} className="me-2" />
             {!collapsed && "Settings"}
           </NavLink>
