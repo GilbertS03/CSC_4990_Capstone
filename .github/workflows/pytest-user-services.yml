@@ -25,5 +25,5 @@ jobs:
     
     - name: Run User Endpoint tests
       run: |
-        cd app-backend
-        python -m unittest discover -s pytest -p "*.py"
+        cd ..
+        python -m unittest pytest.UserServices
