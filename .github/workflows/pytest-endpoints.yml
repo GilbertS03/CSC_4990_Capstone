@@ -38,4 +38,4 @@ jobs:
       run: python -m unittest pytest.user-services -v
 
     - name: Run Devices Endpoint tests
-      run: python -m unittest pytest.devices-services -v
+      run: python -m unittest pytest.device-services -v
