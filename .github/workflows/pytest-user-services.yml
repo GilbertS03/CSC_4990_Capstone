@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        ppip install -r api/requirements.txt
+        pip install -r api/requirements.txt
     
     - name: Run User Endpoint tests
       run: |
