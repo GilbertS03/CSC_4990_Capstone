@@ -5,14 +5,14 @@ from ..models.ReservationStatuses import ReservationStatuses
 class ReservationBase(BaseModel):
     model_config=ConfigDict(from_attributes=True)
 
-    reservationId: int 
+    deviceId: int
     startTime: datetime
     endTime: datetime
 
 class UserReservation(ReservationBase):
-    userId: int
-    deviceId: int
+    reservationId: int 
     status: str
+    userId: int
 
     @field_validator("status",mode="before")
     def extract_status(cls, v):
@@ -20,5 +20,6 @@ class UserReservation(ReservationBase):
             return v.reservationStatus
         return v
 
+class CreateReservation(ReservationBase):
+    pass
 
-# TODO: finish addind schema classes, start Api routes.
