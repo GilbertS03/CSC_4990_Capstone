@@ -15,7 +15,7 @@ class TestDeviceServices(unittest.TestCase):
         mockSession = Mock()
         mockDevices = [Mock(**devicedata) for devicedata in self.allDeviceValues]
         mockSession.exec.return_value.all.return_value = mockDevices
-        result = fetch_devices(mockSession)
+        result = fetch_all_devices(mockSession)
         print("fetchDevices_returnInfo result: ", result[1])
         assert result is not None
         assert result[1].deviceType == "GamingComputer"
@@ -24,7 +24,7 @@ class TestDeviceServices(unittest.TestCase):
     def test_fetchDevices_fetchNonExistingDevices_returnNothing(self):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
-        result = fetch_devices(mockSession)
+        result = fetch_all_devices(mockSession)
         print("fetchDevices_returnInfo result: ", result)
         assert result == []
         mockSession.exec.assert_called()
