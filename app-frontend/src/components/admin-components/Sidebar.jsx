@@ -47,9 +47,9 @@ function Sidebar({ collapsed, setCollapsed }) {
       <hr />
       <ul className="nav nav-pills flex-column gap-2">
         <li>
-          <NavLink to="/admin" end className={linkClass}>
-            <Home size={iconSize} className="me-2" />
-            {!collapsed && "Admin Home"}
+          <NavLink to="/admin" className={linkClass}>
+            <LayoutDashboard size={iconSize} className="me-2" />
+            {!collapsed && "Dashboard"}
           </NavLink>
         </li>
 
@@ -57,13 +57,6 @@ function Sidebar({ collapsed, setCollapsed }) {
           <NavLink to="/admin/users" end className={linkClass}>
             <Users size={iconSize} className="me-2" />
             {!collapsed && "All Users"}
-          </NavLink>
-        </li>
-
-        <li>
-          <NavLink to="/admin/dashboard" className={linkClass}>
-            <LayoutDashboard size={iconSize} className="me-2" />
-            {!collapsed && "Dashboard"}
           </NavLink>
         </li>
 
