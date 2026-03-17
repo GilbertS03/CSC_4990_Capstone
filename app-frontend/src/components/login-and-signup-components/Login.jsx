@@ -44,8 +44,17 @@ function Login() {
     }
 
     //success means redirect
-    if (user.role !== "admin") navigate("/");
-    else navigate("/admin");
+    console.log(result.user.role);
+    //Small timer to delay for states to update and allow correct routing.
+    setTimeout(() => {
+      if (result.user.role !== "admin") {
+        console.log("Going home");
+        navigate("/");
+      } else {
+        console.log("Going admin home");
+        navigate("/admin");
+      }
+    }, 50);
   };
 
   const handleChange = (field, value) => {

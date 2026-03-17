@@ -2,8 +2,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 import WoMM from "../../assets/WoMM.jpg";
 import "../../App.css";
 import { useAuth } from "../../context/AuthContext";
+import { UserCircle } from "lucide-react";
 function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     if (!isAuthenticated) return;
@@ -45,12 +46,17 @@ function Navbar() {
               </NavLink>
             )}
             {isAuthenticated && (
-              <NavLink to="/" className="nav-link" onClick={handleLogout}>
+              <NavLink className="nav-link" onClick={handleLogout}>
                 Logout
               </NavLink>
             )}
-            {/* todo Use a float right maybe and have use the <CircleUser /> from lucide-react */}
           </div>
+        </div>
+        <div className="float-right">
+          {/* todo Add functionality to this button and put the logout here and make a dropdown */}
+          <button className="btn " type="button">
+            {isAuthenticated && <UserCircle />}
+          </button>
         </div>
       </div>
     </nav>

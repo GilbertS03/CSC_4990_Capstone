@@ -9,10 +9,13 @@ import {
   MonitorSmartphone,
   UserRound,
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 function Sidebar({ collapsed, setCollapsed }) {
   const width = collapsed ? "80px" : "250px";
   const iconSize = 24;
+
+  const { logout } = useAuth();
 
   const linkClass = ({ isActive }) =>
     isActive
@@ -80,7 +83,7 @@ function Sidebar({ collapsed, setCollapsed }) {
       </ul>
       <div className="mt-auto">
         <hr />
-        <button className="btn btn-outline-primary">
+        <button className="btn btn-outline-primary" onClick={logout}>
           {/* todo add user name here and add modal with settings, logout, etc. */}
           <UserRound /> {collapsed ? "" : "User: "}
         </button>

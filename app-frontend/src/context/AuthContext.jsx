@@ -45,7 +45,8 @@ export function AuthProvider({ children }) {
         return { success: false, message: "Invalid Login response" };
       }
       setAccessToken(data.access_token);
-      return { success: true };
+      const decoded = decodeToken(data.access_token);
+      return { success: true, user: decoded };
     } catch (error) {
       return { success: false, message: error.message };
     }
@@ -94,6 +95,31 @@ export function AuthProvider({ children }) {
       api.interceptors.request.eject(reqInterceptor);
     };
   }, []);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const decoded = decodeToken(accessToken);
+    if (!decoded?.exp) return;
+
+    const expTime = decoded.exp * 1000;
+    const now = Date.now();
+    const timeUntilExpiry = expTime - now;
+
+    //If already expired -> logout immediately
+    if (timeUntilExpiry <= 0) {
+      logout();
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      logout();
+      alert("Session expired. You have been logged out.");
+    }, timeUntilExpiry);
+
+    //Cleanup if token changes or component unmounts
+    return () => clearTimeout(timer);
+  }, [accessToken]);
 
   //Value for components
 
