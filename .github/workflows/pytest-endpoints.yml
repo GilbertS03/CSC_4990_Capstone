@@ -1,8 +1,10 @@
 name: All Endpoint Tests
 
 on:
+  pull_request:
+    branches: [main]
   push:
-    branches: [main, production]
+    branches: [production]
 jobs:
   test:
     runs-on: ubuntu-latest
