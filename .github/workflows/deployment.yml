@@ -1,21 +1,40 @@
-name: Deploy to Production
+name: Deploy Backend to Production
 
 on:
-  push:
-    branches: [production]
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
       
-      - name: Build Docker image
-        run: docker build -t my-app:latest .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       
-      - name: Push to registry
-        run: echo "Image built successfully"
+      - name: Build Docker image
+        run: docker build -t my-app:latest app-backend/
+      
+      - name: Save image
+        run: docker save my-app:latest -o /tmp/image.tar
+      
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: /tmp/image.tar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          path: /tmp
       
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -24,6 +43,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/myapp/CSC_4990_Capstone
-            git pull origin production
+            cd /home/ubuntu/myapp
+            git clone https://github.com/yourusername/CSC_4990_Capstone.git --depth 1
+            cd CSC_4990_Capstone/app-backend
+            docker load -i /tmp/image.tar
             docker-compose up -d
