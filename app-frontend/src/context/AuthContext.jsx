@@ -96,30 +96,34 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!accessToken) return;
+  // useEffect(() => {
+  //   if (!accessToken) return;
 
-    const decoded = decodeToken(accessToken);
-    if (!decoded?.exp) return;
+  //   const decoded = decodeToken(accessToken);
+  //   if (!decoded?.exp) return;
 
-    const expTime = decoded.exp * 1000;
-    const now = Date.now();
-    const timeUntilExpiry = expTime - now;
+  //   const expTime = decoded.exp * 1000;
+  //   const now = Date.now();
+  //   const timeUntilExpiry = expTime - now;
 
-    //If already expired -> logout immediately
-    if (timeUntilExpiry <= 0) {
-      logout();
-      return;
-    }
+  //   //TODO fix, crashing for some reason when going to the admin pages
+  //   //If already expired -> logout immediately
+  //   if (timeUntilExpiry <= 0) {
+  //     logout();
+  //     return;
+  //   }
 
-    const timer = setTimeout(() => {
-      logout();
-      alert("Session expired. You have been logged out.");
-    }, timeUntilExpiry);
+  //   //claming the timer to a min of 1ms to avoid instant logout
+  //   timeUntilExpiry = Math.max(timeUntilExpiry, 1);
 
-    //Cleanup if token changes or component unmounts
-    return () => clearTimeout(timer);
-  }, [accessToken]);
+  //   const timer = setTimeout(() => {
+  //     logout();
+  //     alert("Session expired. You have been logged out.");
+  //   }, timeUntilExpiry);
+
+  //   //Cleanup if token changes or component unmounts
+  //   return () => clearTimeout(timer);
+  // }, [accessToken, logout]);
 
   //Value for components
 

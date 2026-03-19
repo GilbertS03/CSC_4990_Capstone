@@ -1,5 +1,7 @@
 function AdminHome() {
-  return <div className="d-flex"></div>;
+  return (
+    <h2 className="text-center">Admin Home: Select a tool from the sidebar!</h2>
+  );
 }
 
 export default AdminHome;

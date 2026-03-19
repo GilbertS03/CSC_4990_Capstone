@@ -10,7 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 function RoleBasedRoute({ children, allowedRoles = [], publicOnly = false }) {
   const { user, isAuthenticated, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading || (isAuthenticated && !user)) return null;
 
   //Public-only route (login/signup)
   if (publicOnly) {
@@ -18,7 +18,7 @@ function RoleBasedRoute({ children, allowedRoles = [], publicOnly = false }) {
   }
 
   //if route requires authentication
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
