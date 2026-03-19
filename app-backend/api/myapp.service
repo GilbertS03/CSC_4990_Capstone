@@ -1,0 +1,16 @@
+[Unit]
+Description=CSC 4990 Python Backend
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/myapp/CSC_4990_Capstone/app-backend/api
+EnvironmentFile=/home/ubuntu/myapp/CSC_4990_Capstone/app-backend/api/.env
+ExecStart=/home/ubuntu/myapp/CSC_4990_Capstone/app-backend/api/venv/bin/python main.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

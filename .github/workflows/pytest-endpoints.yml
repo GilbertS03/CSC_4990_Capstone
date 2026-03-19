@@ -1,0 +1,49 @@
+name: All Endpoint Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [production]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app-backend
+
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      DB_DEV_HOST: ${{ secrets.DB_DEV_HOST }}
+      DB_USER: ${{ secrets.DB_USER }}   
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DEFAULT_ROLE: ${{ secrets.DEFAULT_ROLE }}
+      DEFAULT_WEEKLY_HOURS: ${{ secrets.DEFAULT_WEEKLY_HOURS }}
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r api/requirements.txt
+    
+    - name: Run User Endpoint tests
+      run: python -m unittest pytest.user-services -v
+
+    - name: Run Devices Endpoint tests
+      run: python -m unittest pytest.device-services -v
+
+    - name: Run Building Endpoint tests
+      run: python -m unittest pytest.building-services -v
+
+    - name: Run roomEndpoint tests
+      run: python -m unittest pytest.room-services -v
