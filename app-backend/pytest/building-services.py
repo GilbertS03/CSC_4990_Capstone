@@ -7,7 +7,11 @@ class TestBuildingServices(unittest.TestCase):
                          {"buildingName": "CollaberationCenter", "buildingId": 3}, {"buildingName": "Library", "buildingId": 4}]
     BuildingValues = {"buildingName": "Stephens", "buildingId": 1}
 
-    def test_fetchBuildings_fetchExistingbuildings_returnInfo(self):
+    allBuildingTimeValues = [
+    {"buildingName": "Engineering Hall","openTime": "08:00","closeTime": "20:00"},
+    {"buildingName": "Science Center","openTime": "09:00","closeTime": "18:00"}]
+
+    def test_fetchBuildings_fetchExistingBuildings_returnInfo(self):
         mockSession = Mock()
         mockBuildings = [Mock(**buildingdata) for buildingdata in self.allBuildingValues]
         mockSession.exec.return_value.all.return_value = mockBuildings
@@ -17,10 +21,28 @@ class TestBuildingServices(unittest.TestCase):
         assert result[3].buildingName == "Library"
         mockSession.exec.assert_called()
 
-    def test_fetchBuildings_fetchNonExistingbuildings_returnNothing(self):
+    def test_fetchBuildings_fetchNonExistingBuildings_returnNothing(self):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_buildings(mockSession)
         print("fetchBuildings_returnInfo result: ", result)
+        assert result == []
+        mockSession.exec.assert_called()
+
+    def test_fetchBuildingtimes_fetchExistingBuildingTimes_returnInfo(self):
+        mockBuildings = [Mock(**data) for data in self.allBuildingTimeValues]
+        mockSession = Mock()
+        mockSession.exec.return_value.all.return_value = mockBuildings
+        result = fetch_building_times(mockSession, limit=10)
+        print("fetchBuildingTimes_returnInfo Result:", result)
+        assert result is not None
+        assert len(result) == 2
+        mockSession.exec.assert_called()
+
+    def test_fetchBuildingtimes_fetchNonExistingBuildingTimes_returnNothing(self):
+        mockSession = Mock()
+        mockSession.exec.return_value.all.return_value = []
+        result = fetch_building_times(mockSession, limit=10)
+        print("fetchBuildingTimes_returnInfo Result:", result)
         assert result == []
         mockSession.exec.assert_called()
