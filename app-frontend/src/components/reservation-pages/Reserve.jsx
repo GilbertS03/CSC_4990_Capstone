@@ -29,9 +29,9 @@ function Reserve() {
 
     return (
         <>
-            <div className="container">
+            <div className="container d-flex align-items-center">
                 <div className="row">
-                    <div className="btn-group col-2" id="bListDropdown">
+                    <div className="btn-group col-4" id="bListDropdown">
                         <button type="button" className="btn btn-info">Buildings</button>
                         <button type="button" className="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                             <span className="visually-hidden">Toggle Dropdown</span>
