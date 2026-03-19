@@ -1,5 +1,6 @@
+import datetime
 from sqlmodel import select, Session
-
+from sqlalchemy import cast, Date
 from ..models.Reservations import Reservations
 from ..models.ReservationStatuses import ReservationStatuses
 from ..schema.user_schema import UserPublic
@@ -36,6 +37,17 @@ def create_reservation(session: Session, reservation: CreateReservation, user: U
 
     return new_res
 
-def check_reservation_conflict(session: Session, reservation: UserReservation):
-    pass
-    #TODO: finish conflict chekcer and test with creating reservation
+def has_conflict(session: Session, reservation: UserReservation):
+    new_res_start = reservation.startTime.replace(second=0, microsecond=0)
+    new_res_end = reservation.endTime.replace(second=0, microsecond=0)
+
+    statement = select(Reservations).where(
+        Reservations.deviceId == reservation.deviceId,
+        Reservations.startTime < new_res_end,
+        Reservations.endTime > new_res_start
+    )
+    overlap = session.exec(statement).first()
+    return overlap is not None
+
+
+#TODO: check startTime !> endTime :: truncate sec and microsecs from all new reservations

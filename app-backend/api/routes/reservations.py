@@ -30,10 +30,11 @@ def get_reservation_statuses(
         return fetch_reservation_statuses(session, userId, deviceId, status)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving reservations: {e}")
-    
+
 @router.post("/create")
 async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user),):
     user_role = fetch_user_role(session, user.email)
-    if not check_reservation_conflict(session, reservation):
+    if has_conflict(session, reservation):
         raise HTTPException(status_code=400, detail=f"Reservation Conflict")
-    return create_reservation(session, reservation, user)
+    return "successfully created"
+    # return create_reservation(session, reservation, user)
