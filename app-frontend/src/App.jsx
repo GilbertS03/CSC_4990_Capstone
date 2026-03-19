@@ -1,32 +1,20 @@
 //Router
-import { Routes, Route, Router, BrowserRouter } from 'react-router-dom'
+import { Routes, Route, Router, BrowserRouter } from "react-router-dom";
 
-//Componenets
-import Navbar from './components/default-components/Navbar'
-import Footer from './components/default-components/Footer'
-import Home from './components/home-components/Home'
-import Login from './components/login-and-signup-components/Login'
-import About from './components/home-components/About'
-import Reserve from './components/reservation-pages/Reserve'
-import BuildingView from './components/reservation-pages/BuildingView'
-import SignUp from './components/login-and-signup-components/SignUp'
-import Contact from './components/home-components/Contact'
-import Forbidden from './components/default-components/Forbidden'
-import NotFound from './components/default-components/NotFound'
-
-//Layouts
-import PublicLayout from "./layouts/PublicLayout";
-import AdminLayout from "./layouts/AdminLayout";
-
-//Regular Componenets
+//Regular Components
 import Home from "./components/home-components/Home";
 import Login from "./components/login-and-signup-components/Login";
 import About from "./components/home-components/About";
-import Reserve from "./components/Reserve";
+import Reserve from "./components/reservation-pages/Reserve";
+import BuildingView from "./components/reservation-pages/BuildingView";
 import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
 import NotFound from "./components/default-components/NotFound";
+
+//Layouts
+import PublicLayout from "./layouts/PublicLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
@@ -57,11 +45,11 @@ function App() {
         <Route
           path="reserve/:buildingId"
           element={
-             <RoleBasedRoute publicOnly={false}>
-                <BuildingView />'
-              </RoleBasedRoute>
+            <RoleBasedRoute publicOnly={false}>
+              <BuildingView />'
+            </RoleBasedRoute>
           }
-        >
+        />
 
         <Route
           path="login"
