@@ -1,23 +1,27 @@
-img{
+img {
     width: 75%;
 }
+
 /* div{
     height: 10%
 } */
-footer{
+footer {
     background-color: #dcdba8;
 }
 #NavImg{
     width: 5%;
 }
-nav{
+
+nav {
     background-color: #75dbcd;
 }
-.footerLinks{
+
+.footerLinks {
     color: black;
     text-decoration: none;
 }
-.loginPageError{
+
+.loginPageError {
     color: red;
     /* display: none; */
 }
