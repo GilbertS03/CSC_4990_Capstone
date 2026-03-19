@@ -5,16 +5,16 @@ from api.schema.user_schema import UserCreate
 from api.services.users import *
 
 class TestUserServices(unittest.TestCase):
-    UserValues = {"UserID": 1, "firstName": "Gilbert", "lastName": "Salazar", 
+    UserValues = {"userId": 1, "firstName": "Gilbert", "lastName": "Salazar", 
               "email": "test@gmail.com", 
               "password": "$2b$12$KyhGkEPsS4WWGtDdp/zI/upCPCqG4P535QgYs2Hh1NFq6YZlt6HMe",
               "weeklyHoursRemaining": 6.5, "roleId": 1, "role": "admin"}
     
-    allUsersValues = [{"UserID": 1, "firstName": "Gilbert", "lastName": "Salazar", 
+    allUsersValues = [{"userId": 1, "firstName": "Gilbert", "lastName": "Salazar", 
               "email": "test@gmail.com", 
               "password": "$2b$12$KyhGkEPsS4WWGtDdp/zI/upCPCqG4P535QgYs2Hh1NFq6YZlt6HMe",
               "weeklyHoursRemaining": 3, "roleId": 2, "role": "student"}, 
-             {"UserID": 2, "firstName": "Chris", "lastName": "Maldonado", 
+             {"userId": 2, "firstName": "Chris", "lastName": "Maldonado", 
               "email": "test2@gmail.com", 
               "password": "$2b$12$KyhGkEPsS4WWGtDdp/zI/suwYTw4P535QgYs2HhfghGs73Fs6HMe",
               "weeklyHoursRemaining": 9, "roleId": 5, "role": "admin"}]
