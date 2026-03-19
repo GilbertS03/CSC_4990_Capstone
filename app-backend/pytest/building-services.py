@@ -16,7 +16,6 @@ class TestBuildingServices(unittest.TestCase):
         mockBuildings = [Mock(**buildingdata) for buildingdata in self.allBuildingValues]
         mockSession.exec.return_value.all.return_value = mockBuildings
         result = fetch_buildings(mockSession)
-        print("fetchBuildings_returnInfo result: ", result[1])
         assert result is not None
         assert result[3].buildingName == "Library"
         mockSession.exec.assert_called()
@@ -25,7 +24,6 @@ class TestBuildingServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_buildings(mockSession)
-        print("fetchBuildings_returnInfo result: ", result)
         assert result == []
         mockSession.exec.assert_called()
 
@@ -34,7 +32,6 @@ class TestBuildingServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = mockBuildings
         result = fetch_building_times(mockSession, limit=10)
-        print("fetchBuildingTimes_returnInfo Result:", result)
         assert result is not None
         assert len(result) == 2
         mockSession.exec.assert_called()
@@ -43,6 +40,5 @@ class TestBuildingServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_building_times(mockSession, limit=10)
-        print("fetchBuildingTimes_returnInfo Result:", result)
         assert result == []
         mockSession.exec.assert_called()

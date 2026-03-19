@@ -24,7 +24,6 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = mockUsers
         result = fetch_users(mockSession)
-        print("getAllUsers_returnInfo Result:", result)
         assert result is not None
         mockSession.exec.assert_called()
 
@@ -32,7 +31,6 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_users(mockSession)
-        print("getemptyUsers_returnNone Result:", result)
         assert result == []
         mockSession.exec.assert_called()
         
@@ -41,8 +39,7 @@ class TestUserServices(unittest.TestCase):
         mockUser = Mock(**self.UserValues)
         mockSession = Mock()
         mockSession.exec.return_value.first.return_value = mockUser
-        result = fetch_user_role(mockSession, "test@gmail.com")
-        print("fetchUserRole_returnRole Result:", result.role)
+        result =fetch_user_role(mockSession, "test@gmail.com")
         assert result is not None
         assert result.role == "admin"
         mockSession.exec.assert_called()
@@ -51,7 +48,6 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.first.return_value = None
         result = fetch_user_role(mockSession, "test@gmail.com")
-        print("fetchUserRole_returnRole Result:", result)
         assert result is None
         mockSession.exec.assert_called()
 
@@ -61,7 +57,6 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.first.return_value = mockUser
         result = fetch_users_by_id(userID, mockSession)
-        print("getExistingUserInfo_returnInfo Result:", result)
         assert result is not None
         assert result.email == "test@gmail.com"
         assert result.firstName == "Gilbert"
@@ -73,7 +68,6 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.first.return_value = None
         result = fetch_users_by_id(userId, mockSession)
-        print("getNonExistingUserInfo_returnNothing Result:", result)
         assert result is None
         mockSession.exec.assert_called()
 
@@ -81,7 +75,6 @@ class TestUserServices(unittest.TestCase):
         newUser = UserCreate(email ="test@gmail.com",firstName= "Niko",lastName= "Ruiz",password= "123CookieMonster")
         mockSession = Mock()
         result = create_user(newUser,mockSession)
-        print("createUserInfo_returnInfo Result:", result)
         assert result is not None
         assert result.email == "test@gmail.com"
         assert result.firstName == "Niko"
@@ -100,7 +93,6 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.first.return_value = mockUser
         result = fetch_user_by_email( mockSession,userEmail)
-        print("FetchExistingEmail_returnInfo result: " , result.firstName)
         assert result is not None
         assert result.firstName == "Gilbert"
         mockSession.exec.assert_called()
@@ -110,6 +102,5 @@ class TestUserServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.first.return_value = None
         result = fetch_user_by_email( mockSession,userEmail)
-        print("FetchNonExistingEmail_returnNone result: " , result)
         assert result is None
         mockSession.exec.assert_called()

@@ -24,7 +24,6 @@ class TestReservationServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_all_reservations(mockSession)
-        print("fetchAllReservations_returnInfo Result:", result)
         assert result == []
         mockSession.exec.assert_called()   
 
@@ -33,7 +32,6 @@ class TestReservationServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = mockReservations
         result = fetch_reservation_statuses(mockSession)
-        print("fetchReservationStatuses_returnInfo Result:", result[1].reservationId)
         assert result is not None
         assert result[1].reservationId == 2
         assert len(result) == 2
@@ -50,7 +48,6 @@ class TestReservationServices(unittest.TestCase):
         assert result[1].reservationId == 2
         assert len(result) == 2
         mockSession.exec.assert_called()
-        
 
     def test_fetchReservationStatuses_fetchEmptyReservations_returnEmpty(self):
         mockSession = Mock()

@@ -16,7 +16,6 @@ class TestDeviceServices(unittest.TestCase):
         mockDevices = [Mock(**devicedata) for devicedata in self.allDeviceValues]
         mockSession.exec.return_value.all.return_value = mockDevices
         result = fetch_all_devices(mockSession)
-        print("fetchExistingDevices_returnInfo result: ", result[1])
         assert result is not None
         assert result[1].deviceType == "GamingComputer"
         mockSession.exec.assert_called()
@@ -25,7 +24,6 @@ class TestDeviceServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_all_devices(mockSession)
-        print("fetchNonExistingDevices_returnNothing result: ", result)
         assert result == []
         mockSession.exec.assert_called()
     
@@ -35,7 +33,6 @@ class TestDeviceServices(unittest.TestCase):
         mockDevices = [Mock(**positionData) for positionData in self.allPositionValues]
         mockSession.exec.return_value.all.return_value = mockDevices
         result = fetch_device_positions(mockSession, postionlimit)
-        print("FetchExistingPostion_returnInfo Results: ", result)
         assert result is not None
         assert len(result) == 3
         mockSession.exec.assert_called()
@@ -45,7 +42,6 @@ class TestDeviceServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_device_positions(mockSession, postionlimit)
-        print("FetchExistingPostion_returnInfo Results: ", result)
         assert result == []
         assert len(result) == 0
         mockSession.exec.assert_called()
