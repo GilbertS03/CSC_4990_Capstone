@@ -22,12 +22,11 @@ def get_reservations(session: SessionDep):
 @router.get("/status/", response_model=list[UserReservation])
 def get_reservation_statuses(
     session: SessionDep, 
-    userId: int | None = None,
-    deviceId: int | None = None,
-    status: str | None = None
+    status: str,
+    userId: int | None = None
 ):
     try:
-        return fetch_reservation_statuses(session, userId, deviceId, status)
+        return fetch_reservation_statuses(session, status, userId)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving reservations: {e}")
 

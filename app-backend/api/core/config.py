@@ -30,7 +30,7 @@ class Settings(BaseSettings):
             drivername="mysql+pymysql",
             username=self.DB_USER,
             password=self.DB_PASSWORD,
-            host=self.DB_DEV_HOST,
+            host=self.DB_HOST,
             port=self.DB_PORT,
             database=self.DB_NAME
     )

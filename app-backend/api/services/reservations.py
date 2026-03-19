@@ -18,9 +18,7 @@ def fetch_reservation_statuses(
     deviceId: int | None = None,
     status: str | None = None
 ):
-    statement = select(Reservations)
-    if status:
-        statement = statement.join(ReservationStatuses).where(ReservationStatuses.reservationStatus == status)
+    statement = select(Reservations).join(ReservationStatuses).where(ReservationStatuses.reservationStatus == status)
     if userId:
         statement = statement.where(Reservations.userId == userId)
     reservations = session.exec(statement).all()
