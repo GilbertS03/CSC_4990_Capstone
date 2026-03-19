@@ -17,6 +17,7 @@ class UserCreate(UserBase):
 class UserPublic(UserBase):
     weeklyHoursRemaining: float
     role: str
+    userId: int
     
     @field_validator("role", mode="before")
     def extract_role(cls, v):
