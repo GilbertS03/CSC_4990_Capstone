@@ -1,7 +1,10 @@
 name: Database Connection
 
 on:
+  pull_request:
+    branches: [main]
   push:
+    branches: [production]
   workflow_dispatch:
 
 permissions:
