@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const API_HOST_URL = import.meta.env.VITE_API_URL;
 
@@ -28,17 +29,23 @@ function Reserve() {
 
     return (
         <>
-            <div>
-                <div className="btn-group">
-                    <button type="button" className="btn btn-secondary">Buildings</button>
-                    <button type="button" className="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span className="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <ul className="dropdown-menu">
-                        {buildingData.map(b => (
-                            <li key={b.buildingId}><a className="dropdown-item" href="#">{b.buildingName}</a></li>
-                        ))}
-                    </ul>
+            <div className="container">
+                <div className="row">
+                    <div className="btn-group col-2" id="bListDropdown">
+                        <button type="button" className="btn btn-info">Buildings</button>
+                        <button type="button" className="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span className="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul className="dropdown-menu">
+                            {buildingData.map(b => (
+                                <li key={b.buildingId}>
+                                    <Link className="dropdown-item" to={`/reserve/${b.buildingId}`}>
+                                        {b.buildingName}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </>
