@@ -29,11 +29,14 @@ def fetch_reservation_statuses(
 def create_reservation(session: Session, reservation: CreateReservation, user: UserPublic):
     new_res = Reservations.model_validate(reservation, update={
         "userId": user.userId,
+        "startTime": reservation.startTime.replace(second=0, microsecond=0),
+        "endTime": reservation.endTime.replace(second=0, microsecond=0),
         "reservationStatusId": 3
     })
     
     session.add(new_res)
     session.commit()
+    session.refresh(new_res)
 
     return new_res
 
@@ -48,6 +51,3 @@ def has_conflict(session: Session, reservation: UserReservation):
     )
     overlap = session.exec(statement).first()
     return overlap is not None
-
-
-#TODO: check startTime !> endTime :: truncate sec and microsecs from all new reservations

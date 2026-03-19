@@ -32,9 +32,7 @@ def get_reservation_statuses(
         raise HTTPException(status_code=500, detail=f"Error retrieving reservations: {e}")
 
 @router.post("/create")
-async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user),):
-    user_role = fetch_user_role(session, user.email)
+async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     if has_conflict(session, reservation):
         raise HTTPException(status_code=400, detail=f"Reservation Conflict")
-    return "successfully created"
-    # return create_reservation(session, reservation, user)
+    return create_reservation(session, reservation, user)
