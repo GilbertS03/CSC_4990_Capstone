@@ -20,7 +20,6 @@ class TestRoomServices(unittest.TestCase):
         mockRooms = [Mock(**roomdata) for roomdata in self.allRoomValues]
         mockSession.exec.return_value.all.return_value = mockRooms
         result = fetch_rooms(mockSession)
-        print("fetchRoom_returnInfo result: ", result[2])
         assert result is not None
         assert result[2].roomName == "TrueBlu"
         mockSession.exec.assert_called()
@@ -29,7 +28,6 @@ class TestRoomServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_rooms(mockSession)
-        print("fetchRoom_returnNothing result: ", result)
         assert result == []
         mockSession.exec.assert_called()
 
@@ -38,7 +36,6 @@ class TestRoomServices(unittest.TestCase):
         mockRooms = [Rooms(**roomdata) for roomdata in self.allLayoutValues]
         mockSession.exec.return_value.all.return_value = mockRooms
         result = fetch_room_layouts(mockSession, limit=3)
-        print("fetchExistingLayouts_returnInfo result: ", result[2])
         assert result is not None
         assert result[2].layoutHeight == 30
         assert result[2].roomName == "TrueBlu"
@@ -48,6 +45,5 @@ class TestRoomServices(unittest.TestCase):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
         result = fetch_room_layouts(mockSession, limit=1)
-        print("fetchExistingLayouts_returnInfo result: ", result)
         assert result == []
         mockSession.exec.assert_called()
