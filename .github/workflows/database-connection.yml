@@ -1,20 +1,40 @@
 name: Database Connection
-
 on:
   pull_request:
     branches: [main]
   push:
     branches: [production]
   workflow_dispatch:
-
 permissions:
   id-token: write
   contents: read
-
 jobs:
+  check-ec2-connection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install SSM plugin
+        run: |
+          curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
+          sudo dpkg -i session-manager-plugin.deb
+
+      - name: Ping EC2 via SSM
+        run: |
+          aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_FRONT_END_HOST }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{"commands":["echo ok"]}' \
+            --output text
+          echo "EC2 is reachable"
+
   integration:
     runs-on: ubuntu-latest
-
+    needs: check-ec2-connection
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -25,7 +45,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - name: Install SSM Session Manager plugin
+      - name: Install SSM plugin
         run: |
           curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
           sudo dpkg -i session-manager-plugin.deb
@@ -39,23 +59,7 @@ jobs:
             --target "$EC2_INSTANCE_ID" \
             --document-name AWS-StartPortForwardingSessionToRemoteHost \
             --parameters "{\"host\":[\"$DB_HOST\"],\"portNumber\":[\"3306\"],\"localPortNumber\":[\"13306\"]}" &
-          TUNNEL_PID=$!
-          echo "Tunnel process PID: $TUNNEL_PID"
-          echo "Waiting for tunnel to establish..."
-          for i in $(seq 1 20); do
-            echo "Attempt $i: checking port 13306..."
-            if bash -c 'echo > /dev/tcp/127.0.0.1/13306' 2>/dev/null; then
-              echo "Tunnel is up on attempt $i!"
-              break
-            fi
-            if [ $i -eq 20 ]; then
-              echo "Tunnel failed to establish after 40 seconds"
-              echo "SSM process status:"
-              ps -p $TUNNEL_PID || echo "Process no longer running"
-              exit 1
-            fi
-            sleep 2
-          done
+          sleep 10
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -63,11 +67,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pymysql
+        run: pip install pymysql
 
-      - name: Test MySQL connectivity via SSM tunnel (Python)`
+      - name: Test MySQL connectivity
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 13306
@@ -76,10 +78,7 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           python - <<'EOF'
-          import pymysql
-          import os
-          import sys
-
+          import pymysql, os, sys
           try:
               conn = pymysql.connect(
                   host=os.environ["DB_HOST"],
@@ -88,11 +87,7 @@ jobs:
                   password=os.environ["DB_PASSWORD"],
                   database=os.environ["DB_NAME"],
               )
-              print("Connected to RDS via SSM tunnel successfully!")
-              cursor = conn.cursor()
-              cursor.execute("SELECT VERSION();")
-              version = cursor.fetchone()
-              print(f"   MySQL version: {version[0]}")
+              conn.cursor().execute("SELECT VERSION();")
               conn.close()
           except Exception as e:
               print(f"Connection failed: {e}")
