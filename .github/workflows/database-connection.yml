@@ -65,6 +65,13 @@ jobs:
           echo "Port 13306 status:"
           nc -zv 127.0.0.1 13306
  
+      - name: Resolve DB_HOST DNS
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+        run: |
+          echo "DB_HOST resolves to:"
+          nslookup "$DB_HOST" || dig "$DB_HOST"
+ 
       - name: Test EC2 to RDS connectivity
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
@@ -96,8 +103,8 @@ jobs:
  
       - name: Test MySQL connectivity via SSM tunnel (Python)
         env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_HOST: 127.0.0.1
+          DB_PORT: 13306
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -139,3 +146,4 @@ jobs:
                       print("All attempts exhausted.")
                       sys.exit(1)
           EOF
+ 
