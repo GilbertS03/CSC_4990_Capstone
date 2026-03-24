@@ -29,15 +29,6 @@ jobs:
             --parameters commands=["echo ok"] \
             --output text
           echo "EC2 is reachable"
-          
-      - name: Ping EC2-Front-end via SSM
-        run: |
-          aws ssm send-command \
-            --instance-ids "${{ secrets.EC2_HOST }}" \
-            --document-name "AWS-RunShellScript" \
-            --parameters commands=["echo ok"] \
-            --output text
-          echo "EC2 is reachable"
 
       - name: Open SSM tunnel to RDS via EC2
         env:
