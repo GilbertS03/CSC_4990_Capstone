@@ -1,0 +1,56 @@
+name: Front-end deployment
+on:
+  pull_request:
+    branches: [production]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Sparse checkout app-frontend only
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            app-frontend
+          sparse-checkout-cone-mode: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: app-frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app-frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: app-frontend
+        run: npm run build
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install SSM plugin
+        run: |
+          curl -sO "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb"
+          sudo dpkg -i session-manager-plugin.deb
+
+      - name: Deploy to EC2 via SSM
+        run: |
+          aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_FRONT_END_HOST }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands=["cd /var/www/html && sudo git pull origin production -- app-frontend && cd app-frontend && npm ci && npm run build && sudo systemctl restart nginx"] \
+            --output text
+          echo "Deployment triggered"
