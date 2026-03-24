@@ -28,7 +28,7 @@ jobs:
           aws ssm send-command \
             --instance-ids "${{ secrets.EC2_FRONT_END_HOST }}" \
             --document-name "AWS-RunShellScript" \
-            --parameters '{"commands":["echo ok"]}' \
+            --parameters commands:["echo ok"] \
             --output text
           echo "EC2 is reachable"
 
