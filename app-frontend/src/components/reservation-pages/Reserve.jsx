@@ -31,21 +31,19 @@ function Reserve() {
         <>
             <div className="container d-flex align-items-center">
                 <div className="row">
-                    <div className="btn-group col-4" id="bListDropdown">
-                        <button type="button" className="btn btn-info">Buildings</button>
-                        <button type="button" className="btn btn-info dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span className="visually-hidden">Toggle Dropdown</span>
-                        </button>
-                        <ul className="dropdown-menu">
-                            {buildingData.map(b => (
-                                <li key={b.buildingId}>
-                                    <Link className="dropdown-item" to={`/reserve/${b.buildingId}`}>
-                                        {b.buildingName}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {buildingData.map(b => (
+                        <div className="col-sm-6 mb-3 mb-sm-0 p-2" key={b.buildingId} >
+                            <div className="card text-bg-dark">
+                                <div className="card-body">
+                                    <h5 className="card-title">{b.buildingName}</h5>
+                                    <p className="card-text">Remaining Available Devices: X</p>
+                                    <button className="btn btn-secondary">
+                                        <Link className="no-underline-link text-light" to={`/reserve/${b.buildingId}`}>Reserve</Link>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </>
