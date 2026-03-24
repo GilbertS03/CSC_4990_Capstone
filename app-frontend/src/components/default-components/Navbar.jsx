@@ -53,7 +53,9 @@ function Navbar() {
           </div>
         </div>
         <div className="float-right">
-          {/* todo Add functionality to this button and put the logout here and make a dropdown */}
+          {/* todo Add functionality to this button and put the logout here and make a dropdown or 
+          take them to a page that displays their information such as user/information/:id or something
+          so they can know their role and such*/}
           <button className="btn " type="button">
             {isAuthenticated && <UserCircle />}
           </button>
