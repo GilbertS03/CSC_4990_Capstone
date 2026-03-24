@@ -40,7 +40,6 @@ jobs:
             --document-name AWS-StartPortForwardingSessionToRemoteHost \
             --parameters "{\"host\":[\"$DB_HOST\"],\"portNumber\":[\"3306\"],\"localPortNumber\":[\"13306\"]}" &
           TUNNEL_PID=$!
-          echo "Tunnel process PID: $TUNNEL_PID"
           echo "Waiting for tunnel to establish..."
           for i in $(seq 1 20); do
             echo "Attempt $i: checking port 13306..."
@@ -54,7 +53,7 @@ jobs:
               ps -p $TUNNEL_PID || echo "Process no longer running"
               exit 1
             fi
-            sleep 2
+            sleep 20
           done
 
       - name: Set up Python
