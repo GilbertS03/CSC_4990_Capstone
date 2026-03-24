@@ -1,34 +1,31 @@
 name: Database Connection
-
 on:
   pull_request:
     branches: [main]
   push:
     branches: [production]
   workflow_dispatch:
-
 permissions:
   id-token: write
   contents: read
-
 jobs:
   integration:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
+ 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-
+ 
       - name: Install SSM Session Manager plugin
         run: |
           curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
           sudo dpkg -i session-manager-plugin.deb
+ 
       - name: Open SSM tunnel to RDS via EC2
         env:
           EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
@@ -39,7 +36,9 @@ jobs:
             --document-name AWS-StartPortForwardingSessionToRemoteHost \
             --parameters "{\"host\":[\"$DB_HOST\"],\"portNumber\":[\"3306\"],\"localPortNumber\":[\"13306\"]}" &
           TUNNEL_PID=$!
+          echo "TUNNEL_PID=$TUNNEL_PID" >> $GITHUB_ENV
           echo "Tunnel process PID: $TUNNEL_PID"
+ 
           echo "Waiting for tunnel to establish..."
           for i in $(seq 1 20); do
             echo "Attempt $i: checking port 13306..."
@@ -55,16 +54,28 @@ jobs:
             fi
             sleep 2
           done
+ 
+          # Keep tunnel alive with a background heartbeat
+          while kill -0 $TUNNEL_PID 2>/dev/null; do sleep 5; done &
+ 
+      - name: Verify tunnel is still alive
+        run: |
+          echo "Tunnel PID status:"
+          ps -p $TUNNEL_PID || echo "WARNING: Tunnel process is dead"
+          echo "Port 13306 status:"
+          nc -zv 127.0.0.1 13306
+ 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
+ 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pymysql
-      - name: Test MySQL connectivity via SSM tunnel (Python)`
+ 
+      - name: Test MySQL connectivity via SSM tunnel (Python)
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 13306
@@ -76,21 +87,37 @@ jobs:
           import pymysql
           import os
           import sys
-          try:
-              conn = pymysql.connect(
-                  host=os.environ["DB_HOST"],
-                  port=int(os.environ["DB_PORT"]),
-                  user=os.environ["DB_USER"],
-                  password=os.environ["DB_PASSWORD"],
-                  database=os.environ["DB_NAME"],
-              )
-              print("Connected to RDS via SSM tunnel successfully!")
-              cursor = conn.cursor()
-              cursor.execute("SELECT VERSION();")
-              version = cursor.fetchone()
-              print(f"   MySQL version: {version[0]}")
-              conn.close()
-          except Exception as e:
-              print(f"Connection failed: {e}")
-              sys.exit(1)
+          import time
+ 
+          MAX_RETRIES = 3
+ 
+          for attempt in range(1, MAX_RETRIES + 1):
+              try:
+                  print(f"Connection attempt {attempt}...")
+                  conn = pymysql.connect(
+                      host=os.environ["DB_HOST"],
+                      port=int(os.environ["DB_PORT"]),
+                      user=os.environ["DB_USER"],
+                      password=os.environ["DB_PASSWORD"],
+                      database=os.environ["DB_NAME"],
+                      connect_timeout=30,
+                      read_timeout=60,
+                      write_timeout=60,
+                  )
+                  print("Connected to RDS via SSM tunnel successfully!")
+                  cursor = conn.cursor()
+                  cursor.execute("SELECT VERSION();")
+                  version = cursor.fetchone()
+                  print(f"   MySQL version: {version[0]}")
+                  conn.close()
+                  sys.exit(0)
+              except Exception as e:
+                  print(f"Attempt {attempt} failed: {e}")
+                  if attempt < MAX_RETRIES:
+                      print("Retrying in 5 seconds...")
+                      time.sleep(5)
+                  else:
+                      print("All attempts exhausted.")
+                      sys.exit(1)
           EOF
+ 
