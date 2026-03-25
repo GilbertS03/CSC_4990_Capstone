@@ -45,12 +45,12 @@ function Reserve() {
             <ul className="dropdown-menu">
               {buildingData.map((b) => (
                 <li key={b.buildingId}>
-                  <Link
+                  <NavLink
                     className="dropdown-item"
                     to={`/reserve/${b.buildingId}`}
                   >
                     {b.buildingName}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
