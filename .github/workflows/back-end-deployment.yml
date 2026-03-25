@@ -1,37 +1,68 @@
-name: Deploy to Back-End
-
+name: Back-end Deployment
 on:
-  pull_request:
-    branches:
-      - production
-
+  push:
+    branches: [production]
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    env:
+      ECR_BACK_REGISTRY: ${{secrets.ECR_BACK_REGISTRY}}
+      ECR_BACK_REPOSITORY: ${{secrets.ECR_BACK_REPOSITORY}}
+      IMAGE_TAG: ${{ github.sha }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.0
+        uses: actions/checkout@v4
+ 
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ubuntu/myapp/CSC_4990_Capstone
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+ 
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin $ECR_BACK_REGISTRY
+ 
+      - name: Build Docker image
+        run: |
+          docker build \
+            -f backend.Dockerfile \
+            -t $ECR_BACK_REGISTRY/$ECR_BACK_REPOSITORY:$IMAGE_TAG \
+            .
+ 
+      - name: Push image to ECR
+        run: |
+          docker push $ECR_BACK_REGISTRY/$ECR_BACK_REPOSITORY:$IMAGE_TAG
+ 
+      - name: Deploy to EC2 via SSM
+        env:
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+        run: |
+          CMD_ID=$(aws ssm send-command \
+          --instance-ids "$EC2_INSTANCE_ID" \
+          --document-name "AWS-RunShellScript" \
+          --query "Command.CommandId" \
+          --output text \
+          --parameters "{\"commands\":[
+          \"aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BACK_REGISTRY\",
+          \"docker pull $FULL_IMAGE\",
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend\",
+          \"echo SUCCESS\"
+          ]}" \
 
-            git fetch origin
-            git sparse-checkout set app-backend
-            git reset --hard origin/production
+          echo "Waiting for Command ID: $CMD_ID"
 
-            cd app-backend/api
+          aws ssm wait command-executed \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID"
 
-            source venv/bin/activate
-            pip install -r requirements.txt
-
-            sudo cp /home/ubuntu/myapp/CSC_4990_Capstone/app-backend/myapp-service/myapp.service /etc/systemd/system/myapp.service
-            sudo systemctl daemon-reload
-            sudo systemctl enable myapp
-            sudo systemctl restart myapp
+          aws ssm get-command-invocation \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID" \
+          --query "{Status:Status, Output:StandardOutputContent, Error:StandardErrorContent}" \
+          --output table

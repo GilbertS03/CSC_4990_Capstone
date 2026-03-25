@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS builder
 
 WORKDIR /app-backend
 
@@ -8,7 +8,6 @@ RUN python -m venv venv &&
 RUN venv/bin/pip install --upgrade pip 
 RUN venv/bin/pip install -r appbackend/api/requirements.txt
 
-# Copy application code
 COPY appbackend/ .
 
 ENV PATH="/app/venv/bin:$PATH"

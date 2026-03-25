@@ -1,39 +1,21 @@
-name: Front-end deployment
+name: Front-end Deployment
 on:
-  pull_request:
+  push:
     branches: [production]
   workflow_dispatch:
-
 permissions:
   id-token: write
   contents: read
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    env:
+      ECR_FRONT_REGISTRY: ${{secrets.ECR_FRONT_REGISTRY}}
+      ECR_FRONT_REPOSITORY: ${{secrets.ECR_FRONT_REPOSITORY}}
+      IMAGE_TAG: ${{ github.sha }}
     steps:
-      - name: Sparse checkout app-frontend only
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            app-frontend
-          sparse-checkout-cone-mode: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: app-frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: app-frontend
-        run: npm ci
-
-      - name: Build
-        working-directory: app-frontend
-        run: npm run build
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -41,16 +23,44 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - name: Install SSM plugin
+      - name: Log in to Amazon ECR
         run: |
-          curl -sO "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb"
-          sudo dpkg -i session-manager-plugin.deb
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -f frontend.Dockerfile \
+            -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
+            .
+
+      - name: Push image to ECR
+        run: |
+          docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG
+
 
       - name: Deploy to EC2 via SSM
+        env:
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
         run: |
-          aws ssm send-command \
-            --instance-ids "${{ secrets.EC2_FRONT_END_HOST }}" \
+          CMD_ID=$(aws ssm send-command \
+          --instance-ids "$EC2_INSTANCE_ID" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands=["cd /var/www/html && sudo git pull origin production -- app-frontend && cd app-frontend && npm ci && npm run build && sudo systemctl restart nginx"] \
-            --output text
-          echo "Deployment triggered"
+            --query  "Command.CommandId"
+            --output text\
+            --parameters commands=[
+            "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY",
+            "docker pull $FULL_IMAGE","IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend"]
+
+          echo "Command ID: $CMD_ID"
+
+          aws ssm wait command-executed \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID"
+
+          aws ssm get-command-invocation \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID" \
+          --query "{Status:Status, Output:StandardOutputContent, Error:StandardErrorContent}" \
+          --output table
