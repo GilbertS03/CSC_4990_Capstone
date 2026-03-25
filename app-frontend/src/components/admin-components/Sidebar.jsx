@@ -76,9 +76,9 @@ function Sidebar({ collapsed, setCollapsed }) {
         </li>
 
         <li>
-          <NavLink to="/admin/building-settings" className={linkClass}>
+          <NavLink to="/admin/buildings" className={linkClass}>
             <Building size={iconSize} className="me-2" />
-            {!collapsed && "Building Settings"}
+            {!collapsed && "Buildings"}
           </NavLink>
         </li>
       </ul>

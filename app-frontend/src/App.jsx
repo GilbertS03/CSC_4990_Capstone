@@ -23,7 +23,7 @@ import EditDevice from "./components/admin-components/EditDevice";
 import AdminUsers from "./components/admin-components/AdminUsers";
 import EditUser from "./components/admin-components/EditUser";
 import AdminSettings from "./components/admin-components/AdminSettings";
-import BuildingSettings from "./components/admin-components/BuildingSettings";
+import Buildings from "./components/admin-components/Buildings";
 import BuildingEditing from "./components/admin-components/BuildingEditing";
 import RoomEditing from "./components/admin-components/RoomEditing";
 
@@ -94,10 +94,10 @@ function App() {
         <Route path="users" element={<AdminUsers />} />
         <Route path="users/:id" element={<EditUser />} />
         <Route path="system-settings" element={<AdminSettings />} />
-        <Route path="building-settings" element={<BuildingSettings />} />
+        <Route path="buildings" element={<Buildings />} />
         {/* This will show the rooms that we can edit */}
-        <Route path="building-settings/:id" element={<BuildingEditing />} />
-        <Route path="building-settings/:id/:rid" element={<RoomEditing />} />
+        <Route path="buildings/:id" element={<BuildingEditing />} />
+        <Route path="buildings/:id/:rid" element={<RoomEditing />} />
 
         <Route path="forbidden" element={<Forbidden />} />
 

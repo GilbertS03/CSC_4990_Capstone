@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllBuildings } from "../../services/api/admin";
 import { NavLink } from "react-router-dom";
 
-function BuildingSettings() {
+function Buildings() {
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,10 +42,10 @@ function BuildingSettings() {
               <td>
                 <NavLink
                   className="btn btn-sm btn-primary"
-                  to={`/admin/building-settings/${key}`}
+                  to={`/admin/buildings/${buildings[key].buildingId}`}
                   end
                 >
-                  Edit Building: {key}
+                  Edit Building: {buildings[key].buildingId}
                 </NavLink>
               </td>
             </tr>
@@ -56,4 +56,4 @@ function BuildingSettings() {
   );
 }
 
-export default BuildingSettings;
+export default Buildings;
