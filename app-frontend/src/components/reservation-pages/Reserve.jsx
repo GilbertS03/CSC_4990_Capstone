@@ -10,7 +10,6 @@ function Reserve() {
   useEffect(() => {
     const fetchBuildingData = async () => {
       try {
-        //TODO Fix this request, don't want this out in the public
         const res = await getAllBuildings();
         setBuildingData(res.data);
       } catch (err) {

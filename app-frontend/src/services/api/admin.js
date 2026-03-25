@@ -29,3 +29,13 @@ export const getAllBuildings = async () => {
         throw error;
     }
 }
+
+export const getRoomsByBuildingId = async (id) => {
+    try{
+        const res = await api.get(`/rooms/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}

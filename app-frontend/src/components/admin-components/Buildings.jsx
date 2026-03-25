@@ -52,6 +52,7 @@ function Buildings() {
           ))}
         </tbody>
       </table>
+      {/* TODO add route for form to add new building */}
     </div>
   );
 }
