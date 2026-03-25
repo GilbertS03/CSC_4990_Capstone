@@ -1,5 +1,59 @@
+import { useEffect, useState } from "react";
+import { getAllBuildings } from "../../services/api/admin";
+import { NavLink } from "react-router-dom";
+
 function BuildingSettings() {
-  return <></>;
+  const [buildings, setBuildings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBuildings = async () => {
+      try {
+        const data = await getAllBuildings();
+        setBuildings(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBuildings();
+  }, []);
+
+  if (loading) return <p>"Loading..." </p>;
+
+  return (
+    <div className="container text-center">
+      <h1>All Buildings</h1>
+      <table className="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th>Building Name</th>
+            <th>Building Number</th>
+            <th>Edit Building</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(buildings).map((key) => (
+            <tr key={key}>
+              <td>{buildings[key].buildingName}</td>
+              <td>{buildings[key].buildingId}</td>
+              <td>
+                <NavLink
+                  className="btn btn-sm btn-primary"
+                  to={`/admin/building-settings/${key}`}
+                  end
+                >
+                  Edit Building: {key}
+                </NavLink>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default BuildingSettings;

@@ -19,3 +19,13 @@ export const getAllUsers = async () => {
         throw error;
     }
 };
+
+export const getAllBuildings = async () => {
+    try{
+        const res = await api.get('/buildings');
+        return res.data;
+    }
+    catch(error){
+        throw error;
+    }
+}
