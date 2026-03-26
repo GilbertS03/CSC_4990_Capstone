@@ -14,7 +14,6 @@ function BuildingEditing() {
       try {
         const res = await getRoomsByBuildingId(id);
         setRooms(res.data);
-        console.log(res.data);
       } catch (error) {
         console.error(error);
         setError(true);

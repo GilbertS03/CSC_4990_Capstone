@@ -50,6 +50,11 @@ function Navbar() {
                 Logout
               </NavLink>
             )}
+            {isAuthenticated && user.role === "admin" && (
+              <NavLink className="nav-link" to="/admin" end>
+                Admin Home
+              </NavLink>
+            )}
           </div>
         </div>
         <div className="float-right">

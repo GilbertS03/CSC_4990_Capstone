@@ -1,5 +1,5 @@
 function RoomEditing() {
-  return <></>;
+  return <div className="container"></div>;
 }
 
 export default RoomEditing;
