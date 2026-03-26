@@ -55,7 +55,7 @@ jobs:
             --output text\
             --parameters commands=[
             "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY",
-            "docker pull $FULL_IMAGE","IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend"]
+            "docker pull $FULL_IMAGE","IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend"])
 
           echo "Command ID: $CMD_ID"
 
