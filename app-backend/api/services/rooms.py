@@ -15,6 +15,11 @@ def fetch_room_layouts(session: Session, limit: int):
     layouts = session.exec(statement).all()
     return [RoomLayout.model_validate(room) for room in layouts]
 
+def fetch_room_layouts_by_id(roomId: int, session: Session):
+    statement = select(Rooms).where(Rooms.roomId == roomId)
+    room = session.exec(statement).first()
+    return RoomLayout.model_validate(room) if room else None
+
 def fetch_rooms_by_building(buildingId: int, session: Session):
     building = session.get(Buildings, buildingId)
     if not building:

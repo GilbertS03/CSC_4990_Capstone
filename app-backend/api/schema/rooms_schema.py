@@ -12,3 +12,4 @@ class RoomPublic(RoomBase):
 class RoomLayout(RoomBase):
     layoutHeight: int
     layoutWidth: int
+    roomId: int

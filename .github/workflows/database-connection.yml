@@ -1,100 +1,46 @@
 name: Database Connection
-
 on:
   pull_request:
-    branches: [main]
-  push:
-    branches: [production]
+    branches: [main,production]
   workflow_dispatch:
-
 permissions:
   id-token: write
   contents: read
-
 jobs:
-  integration:
+  EC2-RDS-Communicating:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
+ 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-
-      - name: Install SSM Session Manager plugin
-        run: |
-          curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
-          sudo dpkg -i session-manager-plugin.deb
-
-      - name: Open SSM tunnel to RDS via EC2
+ 
+      - name: Test MySQL connectivity via EC2
         env:
           EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
           DB_HOST: ${{ secrets.DB_HOST }}
-        run: |
-          aws ssm start-session \
-            --target "$EC2_INSTANCE_ID" \
-            --document-name AWS-StartPortForwardingSessionToRemoteHost \
-            --parameters "{\"host\":[\"$DB_HOST\"],\"portNumber\":[\"3306\"],\"localPortNumber\":[\"13306\"]}" &
-          TUNNEL_PID=$!
-          echo "Tunnel process PID: $TUNNEL_PID"
-          echo "Waiting for tunnel to establish..."
-          for i in $(seq 1 20); do
-            echo "Attempt $i: checking port 13306..."
-            if bash -c 'echo > /dev/tcp/127.0.0.1/13306' 2>/dev/null; then
-              echo "Tunnel is up on attempt $i!"
-              break
-            fi
-            if [ $i -eq 20 ]; then
-              echo "Tunnel failed to establish after 40 seconds"
-              echo "SSM process status:"
-              ps -p $TUNNEL_PID || echo "Process no longer running"
-              exit 1
-            fi
-            sleep 2
-          done
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pymysql
-
-      - name: Test MySQL connectivity via SSM tunnel (Python)`
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 13306
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
-          python - <<'EOF'
-          import pymysql
-          import os
-          import sys
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids "$EC2_INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters "{\"commands\":[\"/usr/bin/mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME -e 'SELECT VERSION();' && echo SUCCESS || echo FAILED\"]}" \
+            --query "Command.CommandId" \
+            --output text)
+          echo "Command ID: $CMD_ID"
 
-          try:
-              conn = pymysql.connect(
-                  host=os.environ["DB_HOST"],
-                  port=int(os.environ["DB_PORT"]),
-                  user=os.environ["DB_USER"],
-                  password=os.environ["DB_PASSWORD"],
-                  database=os.environ["DB_NAME"],
-              )
-              print("Connected to RDS via SSM tunnel successfully!")
-              cursor = conn.cursor()
-              cursor.execute("SELECT VERSION();")
-              version = cursor.fetchone()
-              print(f"   MySQL version: {version[0]}")
-              conn.close()
-          except Exception as e:
-              print(f"Connection failed: {e}")
-              sys.exit(1)
-          EOF
+          aws ssm wait command-executed \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID"
+
+          aws ssm get-command-invocation \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID" \
+          --query "{Status:Status, Output:StandardOutputContent, Error:StandardErrorContent}" \
+          --output table

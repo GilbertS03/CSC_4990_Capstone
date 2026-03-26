@@ -1,0 +1,70 @@
+name: Front-end Deployment
+on:
+  push:
+    branches: [disabled]
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ECR_FRONT_REGISTRY: ${{secrets.ECR_FRONT_REGISTRY}}
+      ECR_FRONT_REPOSITORY: ${{secrets.ECR_FRONT_REPOSITORY}}
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            app-frontend
+          sparse-checkout-cone-mode: true
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -f app-frontend/frontend.Dockerfile \
+            -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
+            app-frontend/
+
+      - name: Push image to ECR
+        run: |
+          docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG
+
+
+      - name: Deploy to EC2 via SSM
+        env:
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+        run: |
+          CMD_ID=$(aws ssm send-command \
+          --instance-ids "$EC2_INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --query  "Command.CommandId"
+            --output text\
+            --parameters commands=[
+            "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY",
+            "docker pull $FULL_IMAGE","IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend"]
+
+          echo "Command ID: $CMD_ID"
+
+          aws ssm wait command-executed \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID"
+
+          aws ssm get-command-invocation \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID" \
+          --query "{Status:Status, Output:StandardOutputContent, Error:StandardErrorContent}" \
+          --output table
