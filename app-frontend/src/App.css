@@ -25,3 +25,16 @@ nav {
     color: red;
     /* display: none; */
 }
+
+.grid{
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 100px);
+    grid-template-rows: repeat(var(--rows), 20px);
+}
+
+.box{
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
