@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            app-backend
+          sparse-checkout-cone-mode: true
  
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -31,9 +35,9 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -f backend.Dockerfile \
+            -f app-backend/backend.Dockerfile \
             -t $ECR_BACK_REGISTRY/$ECR_BACK_REPOSITORY:$IMAGE_TAG \
-            .
+            app-backend/
  
       - name: Push image to ECR
         run: |
