@@ -1,0 +1,27 @@
+img {
+    width: 75%;
+}
+
+/* div{
+    height: 10%
+} */
+footer {
+    background-color: #dcdba8;
+}
+#NavImg{
+    width: 5%;
+}
+
+nav {
+    background-color: #75dbcd;
+}
+
+.footerLinks {
+    color: black;
+    text-decoration: none;
+}
+
+.loginPageError {
+    color: red;
+    /* display: none; */
+}

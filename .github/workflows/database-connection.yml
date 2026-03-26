@@ -1,0 +1,46 @@
+name: Database Connection
+on:
+  pull_request:
+    branches: [main,production]
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  EC2-RDS-Communicating:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+ 
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+ 
+      - name: Test MySQL connectivity via EC2
+        env:
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids "$EC2_INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters "{\"commands\":[\"/usr/bin/mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME -e 'SELECT VERSION();' && echo SUCCESS || echo FAILED\"]}" \
+            --query "Command.CommandId" \
+            --output text)
+          echo "Command ID: $CMD_ID"
+
+          aws ssm wait command-executed \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID"
+
+          aws ssm get-command-invocation \
+          --command-id "$CMD_ID" \
+          --instance-id "$EC2_INSTANCE_ID" \
+          --query "{Status:Status, Output:StandardOutputContent, Error:StandardErrorContent}" \
+          --output table
