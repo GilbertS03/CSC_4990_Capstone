@@ -7,6 +7,9 @@ RUN python -m venv venv &&
 RUN venv/bin/pip install --upgrade pip 
 RUN venv/bin/pip install -r api/requirements.txt
 
+FROM python:3.11-slim
+WORKDIR /app
+
 COPY --from=builder /app/venv venv
 
 COPY . .
