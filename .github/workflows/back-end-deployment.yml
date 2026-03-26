@@ -54,10 +54,10 @@ jobs:
           --output text \
           --parameters "{\"commands\":[
           \"aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BACK_REGISTRY\",
-          \"docker pull $FULL_IMAGE\",
-          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend\",
+          \"docker pull $ECR_BACK_REGISTRY/$ECR_BACK_REPOSITORY:$IMAGE_TAG\",
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d backend\",
           \"echo SUCCESS\"
-          ]}" \
+          ]}") \
 
           echo "Waiting for Command ID: $CMD_ID"
 
