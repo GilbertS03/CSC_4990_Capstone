@@ -66,7 +66,6 @@ def delete_reservation(session: Session, resId: int):
     deleted = session.get(Reservations, resId)
     return deleted is None
 
-#add final checks
 def drop_reservation(session: Session, resId: int):
     statement = select(Reservations).where(Reservations.reservationId == resId)
     res = session.exec(statement).one()
