@@ -30,7 +30,11 @@ function RoomEditing() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error Loading Data</p>;
-  return <DynamicGrid height={roomHeight} width={roomWidth} />;
+  return (
+    <div className="container">
+      <DynamicGrid height={roomHeight} width={roomWidth} />
+    </div>
+  );
 }
 
 export default RoomEditing;

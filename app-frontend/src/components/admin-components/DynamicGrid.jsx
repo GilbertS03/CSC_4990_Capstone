@@ -3,12 +3,14 @@ function DynamicGrid({ height, width }) {
   const columns = width;
   return (
     <div
-      className="container grid"
+      className="container justify-content-center grid"
       style={{ "--rows": rows, "--cols": columns }}
     >
       {[...Array(height * width).keys()].map((_, i) => (
         <div key={i} className="box">
-          {i + 1}
+          <button className="btn w-100 h-100 btn-outline-primary nav-link active">
+            {i + 1}{" "}
+          </button>
         </div>
       ))}
     </div>
