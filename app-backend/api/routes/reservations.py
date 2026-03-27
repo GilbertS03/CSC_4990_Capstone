@@ -44,7 +44,7 @@ async def drop_active_res(resId: int, session: SessionDep, user: UserPublic = De
         res = fetch_reservation_by_id(session, resId)
         if not res:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation not found")
-        if(res.userId != user.userId):
+        if((res.userId != user.userId) and (user.role == "student")):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User not authorized to drop this reservation")
         drop_confirmed = drop_reservation(session, resId)
         if drop_confirmed.reservationStatusId != STATUS_DROPPED:
