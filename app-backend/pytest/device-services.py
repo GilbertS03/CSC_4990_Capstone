@@ -7,9 +7,9 @@ class TestDeviceServices(unittest.TestCase):
                     {"deviceId": 1, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "unavailable"},
                     {"deviceId": 2, "roomId": 102, "deviceType": "StandardComputer", "deviceStatus": "Out of Service"},
                     ]
-    allPositionValues = [{"deviceId": 0, "roomId": 101,"positionX" : 10, "positionY" : 15},
-                         {"deviceId": 1, "roomId": 101,"positionX" : 10, "positionY" : 5},
-                        {"deviceId": 2, "roomId": 102,"positionX" : 5, "positionY" : 15}]
+    allPositionValues = [{"deviceId": 0, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "available", "positionX" : 10, "positionY" : 15},
+                         {"deviceId": 1, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "unavailable", "positionX" : 10, "positionY" : 5},
+                        {"deviceId": 2, "roomId": 102, "deviceType": "StandardComputer", "deviceStatus": "Out of Service", "positionX" : 5, "positionY" : 15}]
 
     def test_fetchDevices_fetchExistingDevices_returnInfo(self):
         mockSession = Mock()

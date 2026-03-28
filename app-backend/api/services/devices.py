@@ -12,3 +12,8 @@ def fetch_device_positions(session: Session, limit: int):
     statement = select(Devices).limit(limit)
     positions = session.exec(statement).all()
     return [DevicePosition.model_validate(device) for device in positions]
+
+def fetch_device_positions_room_id(session: Session, id:int):
+    statement = select(Devices).where(Devices.roomId == id)
+    positions = session.exec(statement).all()
+    return [DevicePosition.model_validate(device) for device in positions]

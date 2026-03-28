@@ -49,3 +49,13 @@ export const getRoomLayoutById = async (id) => {
         throw error;
     }
 }
+
+export const getDeviceLocations = async (id) => {
+    try{
+        const res = await api.get(`devices/device-positions/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
