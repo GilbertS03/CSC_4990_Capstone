@@ -4,12 +4,6 @@ from sqlalchemy.engine import URL
 from pydantic import computed_field
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file = Path(__file__).parent.parent.parent / ".env",
-        env_file_encoding = "utf-8",
-        extra = "ignore",
-        env_ignore_empty = True
-    )
 
     JWT_SECRET_KEY: str
 
@@ -33,4 +27,18 @@ class Settings(BaseSettings):
             host=self.DB_HOST,
             port=self.DB_PORT,
             database=self.DB_NAME
+    )
+
+class DevSettings(Settings):
+    model_config = SettingsConfigDict(
+        env_file = Path(__file__).parent.parent.parent / ".env",
+        env_file_encoding = "utf-8",
+        extra = "ignore",
+        env_ignore_empty = True
+    )
+
+class ProdSettings(Settings):
+    model_config = SettingsConfigDict(
+        extra="ignore",
+        env_ignore_empty=True
     )
