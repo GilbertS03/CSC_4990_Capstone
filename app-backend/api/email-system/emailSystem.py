@@ -1,4 +1,4 @@
-from ..services import users
+from api.services import users
 import smtplib
 import ssl
 from dotenv import load_dotenv
@@ -6,14 +6,14 @@ from email.message import EmailMessage
 import os
 load_dotenv()
 
-def EmailDroppedReservation(reason):
-    userinfo = users.fetch_users_by_id(1)
+def EmailDroppedReservation(reason,id):
+    userinfo = users.fetch_users_by_id(id)
 
     print(userinfo)
     subject = "Computer reservation has been canceled"
     body = "Your reservation for" + "date" + " at " + "time" + "has been canceled for" + reason
-    receiver_email = "empty" 
-    ##SendEmail(subject, body, receiver_email)
+    receiver_email = userinfo.email
+    SendEmail(subject, body, receiver_email)
 
 
 def SendEmail(subject, body, receiver_email):
