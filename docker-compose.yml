@@ -8,6 +8,17 @@ services:
     ports:
       - "8000:8000"
 
+  nginx:
+    image: nginx:alpine
+    container_name: myapp-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+
 ##  frontend:
 ##    image: 943881661618.dkr.ecr.us-east-1.amazonaws.com/frontend/v1:${IMAGE_TAG}
 ##    container_name: myapp-frontend
