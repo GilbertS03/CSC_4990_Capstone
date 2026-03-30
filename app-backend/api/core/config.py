@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     DB_NAME: str
     DEFAULT_ROLE: int
     DEFAULT_WEEKLY_HOURS: int
+    EMAIL_PASSWORD: str
 
     @computed_field
     @property
