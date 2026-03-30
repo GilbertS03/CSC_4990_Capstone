@@ -7,11 +7,6 @@ services:
     restart: always
     ports:
       - "8000:8000"
-    environment:
-      - DB_HOST=${DB_HOST}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
 
 ##  frontend:
 ##    image: 943881661618.dkr.ecr.us-east-1.amazonaws.com/frontend/v1:${IMAGE_TAG}
