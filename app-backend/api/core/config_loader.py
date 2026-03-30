@@ -1,3 +1,4 @@
-from .config import Settings 
+from .config import Settings, get_secrets
 
-settings = Settings()
+secrets = get_secrets()
+settings = Settings(**secrets)
