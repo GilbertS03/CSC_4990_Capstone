@@ -9,18 +9,16 @@ def get_secrets():
     secret = client.get_secret_value(SecretId='myapp/backend')
     return json.loads(secret['SecretString'])
 
-secrets = get_secrets()
-
 class Settings(BaseSettings):
-    JWT_SECRET_KEY: str = secrets.get('JWT_SECRET_KEY')
-    DB_USER: str = secrets.get('DB_USER')
-    DB_PASSWORD: str = secrets.get('DB_PASSWORD')
-    DB_HOST: str = secrets.get('DB_HOST')
-    DB_DEV_HOST: str = secrets.get('DB_DEV_HOST')
-    DB_PORT: str = secrets.get('DB_PORT')
-    DB_NAME: str = secrets.get('DB_NAME')
-    DEFAULT_ROLE: int = secrets.get('DEFAULT_ROLE')
-    DEFAULT_WEEKLY_HOURS: int = secrets.get('DEFAULT_WEEKLY_HOURS')
+    JWT_SECRET_KEY: str
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_DEV_HOST: str
+    DB_PORT: str
+    DB_NAME: str
+    DEFAULT_ROLE: int
+    DEFAULT_WEEKLY_HOURS: int
 
     @computed_field
     @property
@@ -34,4 +32,5 @@ class Settings(BaseSettings):
             database=self.DB_NAME
         )
 
-settings = Settings()
+secrets = get_secrets()
+settings = Settings(**secrets)
