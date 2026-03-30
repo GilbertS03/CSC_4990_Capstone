@@ -1,6 +1,8 @@
 import datetime
 from sqlmodel import select, Session
 from sqlalchemy import cast, Date
+
+from ..services.users import subtract_user_hours
 from ..models.Reservations import Reservations
 from ..models.ReservationStatuses import ReservationStatuses
 from ..schema.user_schema import UserPublic
@@ -40,6 +42,14 @@ def create_reservation(session: Session, reservation: CreateReservation, user: U
         "reservationStatusId": 3
     })
     
+    currHours = user.weeklyHoursRemaining
+    resLength = new_res.endTime - new_res.startTime
+    diffInHrs = (resLength.total_seconds() / 3600)
+    updatedHours = subtract_user_hours(session, user.userId, diffInHrs)
+
+    if currHours <= updatedHours:
+        return None
+
     session.add(new_res)
     session.commit()
     session.refresh(new_res)

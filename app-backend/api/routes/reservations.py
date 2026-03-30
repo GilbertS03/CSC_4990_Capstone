@@ -34,9 +34,15 @@ def get_reservation_statuses(
 
 @router.post("/create")
 async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
-    if has_conflict(session, reservation):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
-    return create_reservation(session, reservation, user)
+    try:
+        if has_conflict(session, reservation):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
+        new_res = create_reservation(session, reservation, user)
+        if new_res is None:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating reservation")
+        return new_res
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
 
 @router.post("/drop_reservation/{resid}")
 async def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
