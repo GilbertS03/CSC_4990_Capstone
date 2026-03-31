@@ -35,7 +35,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -f app-frontend/frontend.Dockerfile \
+            -f docker-files/front/frontend.Dockerfile \
             -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
             -t $ECR_BACK_REGISTRY/$ECR_FRONT_REPOSITORY:latest \
             app-frontend/
