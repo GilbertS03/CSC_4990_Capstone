@@ -59,3 +59,13 @@ export const getDeviceLocations = async (id) => {
         throw error;
     }
 }
+
+export const getDevices = async () => {
+    try{
+        const res = await api.get("/devices");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
