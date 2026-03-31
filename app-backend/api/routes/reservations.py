@@ -12,7 +12,8 @@ router = APIRouter (
     responses={404: {"Description": "Not Found"}}
 )
 
-STATUS_DROPPED = 2
+STATUS_DROPPED_NUM = 2
+STATUS_CANCELLED = "Cancelled"
 
 @router.get("/all", response_model=list[UserReservation])
 def get_reservations(session: SessionDep):
@@ -44,16 +45,18 @@ async def create_new_reservation(reservation: CreateReservation, session: Sessio
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
 
-@router.post("/drop_reservation/{resid}")
+@router.post("/drop_reservation/{resId}")
 async def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     try:
         res = fetch_reservation_by_id(session, resId)
         if not res:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation not found")
+        if res.status == STATUS_CANCELLED:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation already dropped")
         if((res.userId != user.userId) and (user.role == "student")):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User not authorized to drop this reservation")
-        drop_confirmed = drop_reservation(session, resId)
-        if drop_confirmed.reservationStatusId != STATUS_DROPPED:
+        drop_confirmed = drop_reservation(session, resId, user)
+        if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
         return drop_confirmed
     except Exception as e:

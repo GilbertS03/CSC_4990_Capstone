@@ -26,7 +26,7 @@ def fetch_user_role(session: Session, email: str):
 
 def fetch_users_by_id(userId: int, session: Session):
     statement = select(User).where(User.userId == userId)
-    user = session.exec(statement).first()
+    user = session.exec(statement).one()
     return UserPublic.model_validate(user) if user else None
 
 def create_user(user: UserCreate, session: Session):
@@ -49,10 +49,20 @@ def fetch_user_by_email(session: Session, email: str):
     return user
 
 def subtract_user_hours(session: Session, userId: int, hoursDiff: float):
-    statement = select(User).where(User.userId == userId)
-    res = session.exec(statement).one()
+    res = session.get(User, userId)
 
     newHours = res.weeklyHoursRemaining - hoursDiff
+
+    res.weeklyHoursRemaining = newHours
+    session.add(res)
+    session.commit()
+    updatedHours = session.get(User, userId).weeklyHoursRemaining
+    return updatedHours
+
+def add_user_hours(session: Session, userId: int, hoursDiff: float):
+    res = session.get(User, userId)
+
+    newHours = res.weeklyHoursRemaining + hoursDiff
 
     res.weeklyHoursRemaining = newHours
     session.add(res)
