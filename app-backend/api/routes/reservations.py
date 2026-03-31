@@ -12,6 +12,8 @@ router = APIRouter (
     responses={404: {"Description": "Not Found"}}
 )
 
+STATUS_DROPPED = 2
+
 @router.get("/all", response_model=list[UserReservation])
 def get_reservations(session: SessionDep):
     try:
@@ -36,6 +38,21 @@ async def create_new_reservation(reservation: CreateReservation, session: Sessio
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
     return create_reservation(session, reservation, user)
 
+@router.post("/drop_reservation/{resid}")
+async def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
+    try:
+        res = fetch_reservation_by_id(session, resId)
+        if not res:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation not found")
+        if((res.userId != user.userId) and (user.role == "student")):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User not authorized to drop this reservation")
+        drop_confirmed = drop_reservation(session, resId)
+        if drop_confirmed.reservationStatusId != STATUS_DROPPED:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
+        return drop_confirmed
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+
 @router.delete("/delete/{resId}")
 async def delete_active_reservation(resId: int, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
     try:
@@ -48,3 +65,4 @@ async def delete_active_reservation(resId: int, session: SessionDep, user: UserP
         return res
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+    
