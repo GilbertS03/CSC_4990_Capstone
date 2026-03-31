@@ -19,6 +19,7 @@ jobs:
         with:
           sparse-checkout: |
             app-backend
+            docker-files/back
           sparse-checkout-cone-mode: true
  
       - name: Configure AWS credentials via OIDC
