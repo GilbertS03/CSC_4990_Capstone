@@ -13,19 +13,22 @@ function BuildingView() {
 
     useEffect(() => {
         const fetchRoomsData = async () => {
+            let rooms = [];
             try {
                 const res = await axios.get(`http://127.0.0.1:8000/rooms/${buildingId}`);
-                setRoomsData(res.data);
+                rooms = res.data;
+                setRoomsData(rooms);
             } catch (err) {
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
             const counts = {};
-            for (const room of roomsData) {
+            for (const room of rooms) {
                 try {
-                    const countRes = await axios.get(`http://127.0.0.1:8000/rooms/${room.roomId}/availableDeviceCount`);
+                    const countRes = await axios.get(`http://127.0.0.1:8000/rooms/${room.roomId}/available-device-count`);
                     counts[room.roomId] = countRes.data;
+                    console.log(room);
                 } catch {
                     counts[room.roomId] = 0;
                 }
@@ -35,7 +38,7 @@ function BuildingView() {
 
         fetchRoomsData();
 
-    }, []);
+    }, [buildingId]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;

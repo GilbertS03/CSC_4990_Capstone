@@ -36,7 +36,6 @@ function Reserve() {
                             <div className="card text-bg-dark">
                                 <div className="card-body">
                                     <h5 className="card-title">{b.buildingName}</h5>
-                                    <p className="card-text">Remaining Available Devices: X</p>
                                     <button className="btn btn-secondary">
                                         <Link className="no-underline-link text-light" to={`/reserve/${b.buildingId}`}>Reserve</Link>
                                     </button>
