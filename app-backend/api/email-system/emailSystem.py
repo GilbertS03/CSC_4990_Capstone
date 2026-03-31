@@ -7,15 +7,15 @@ from email.message import EmailMessage
 import os
 load_dotenv()
 
-def EmailDroppedReservation(id, reason):
-    userInfo = users.fetch_users_by_id(id)
+def EmailDroppedReservation(userId: int, reason: str):
+    userInfo = users.fetch_users_by_id(userId,Session)
     print(userInfo)
     subject = "Computer reservation has been canceled"
     body = "Your reservation has been canceled for" + reason + " "
     receiverEmail = userInfo.email
     SendEmail(subject, body, receiverEmail)
 
-def SendEmail(subject, body, receiverEmail):
+def SendEmail(subject: str, body: str, receiverEmail: str):
     senderEmail = os.getenv('BACKENDEMAIL')
     password = os.getenv('BACKENDEMAILPASSWORD')
     message = EmailMessage()
