@@ -12,7 +12,7 @@ export const getAllDevices = async () => {
 
 export const getAllUsers = async () => {
     try{
-        const res = await api.get('/users');
+        const res = await api.get('/users/all');
         return res.data;
     }
     catch(error){

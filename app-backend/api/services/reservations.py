@@ -12,10 +12,18 @@ def fetch_all_reservations(session: Session):
     reservations = session.exec(statement).all()
     return [UserReservation.model_validate(res) for res in reservations]
 
+def fetch_reservation_by_id(session: Session, resId: int):
+    statement = select(Reservations).where(Reservations.reservationId == resId)
+    reservation = session.exec(statement).first()
+    return UserReservation.model_validate(reservation) if reservation else None
+
+def convert_res_to_db_model(session: Session, resId: int):
+    db_data = session.get(Reservations, resId)
+    return db_data
+
 def fetch_reservation_statuses(
     session: Session, 
     userId: int | None = None,
-    deviceId: int | None = None,
     status: str | None = None
 ):
     statement = select(Reservations).join(ReservationStatuses).where(ReservationStatuses.reservationStatus == status)
@@ -49,3 +57,22 @@ def has_conflict(session: Session, reservation: UserReservation):
     )
     overlap = session.exec(statement).first()
     return overlap is not None
+
+def delete_reservation(session: Session, resId: int):
+    res = convert_res_to_db_model(session, resId)
+    session.delete(res)
+    session.commit()
+
+    deleted = session.get(Reservations, resId)
+    return deleted is None
+
+def drop_reservation(session: Session, resId: int):
+    statement = select(Reservations).where(Reservations.reservationId == resId)
+    res = session.exec(statement).one()
+
+    res.reservationStatusId = 2
+    session.add(res)
+    session.commit()
+
+    dropped = session.get(Reservations, resId)
+    return dropped
