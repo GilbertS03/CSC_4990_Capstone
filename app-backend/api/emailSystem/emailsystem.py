@@ -11,13 +11,13 @@ def EmailDroppedReservation(userId: int, reason: str):
     userInfo = users.fetch_users_by_id(userId,Session)
     print(userInfo)
     subject = "Computer reservation has been canceled"
-    body = "Your reservation has been canceled for" + reason + " "
+    body = "Your reservation at [insert time and date] has been canceled for: " + reason
     receiverEmail = userInfo.email
     SendEmail(subject, body, receiverEmail)
 
 def SendEmail(subject: str, body: str, receiverEmail: str):
-    senderEmail = os.getenv('BACKENDEMAIL')
-    password = os.getenv('BACKENDEMAILPASSWORD')
+    senderEmail = os.getenv('LIBRARY_EMAIL')
+    password = os.getenv('LIBRARY_EMAIL_PASSWORD')
     message = EmailMessage()
     message.set_content(body)
     message['Subject'] = subject
