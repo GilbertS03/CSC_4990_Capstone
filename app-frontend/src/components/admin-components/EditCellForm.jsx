@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { getDeviceLocations } from "../../services/api/admin";
 function EditCellForm({ device, row, col, onSave, onCancel }) {
   const [hasDevice, setHasDevice] = useState(!!device);
 
@@ -9,7 +9,7 @@ function EditCellForm({ device, row, col, onSave, onCancel }) {
   });
 
   const [loading, setLoading] = useState(false);
-
+  //TODO make add feature where if getDeviceLocations(0) is called if clikcing on an empty cell
   // Populate form when device loads (important for async fetch)
   useEffect(() => {
     if (device) {

@@ -71,7 +71,7 @@ function SearchBar({ data, setFilteredData, fields }) {
               </option>
             ))}
           </select>
-          <button className="btn btn-primary" type="submit">
+          <button className="btn btn-primary me-2" type="submit">
             Search
           </button>
           <button

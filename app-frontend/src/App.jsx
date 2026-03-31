@@ -19,6 +19,7 @@ import AdminLayout from "./layouts/AdminLayout";
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
 import AdminDevices from "./components/admin-components/AdminDevices";
+import AddDeviceForm from "./components/admin-components/AddDeviceForm";
 import EditDevice from "./components/admin-components/EditDevice";
 import AdminUsers from "./components/admin-components/AdminUsers";
 import EditUser from "./components/admin-components/EditUser";
@@ -91,6 +92,7 @@ function App() {
       >
         <Route index element={<AdminHome />} />
         <Route path="devices" element={<AdminDevices />} />
+        <Route path="devices/newDevice" element={<AddDeviceForm />} />
         <Route path="devices/:id" element={<EditDevice />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="users/:id" element={<EditUser />} />

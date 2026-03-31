@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 //todo enforce validation on fields
+//TODO fix the form now because it asks for a room id and make sure the user change it here, this is what the grid is for
 function EditDevice() {
   const onSubmit = (e) => {
     e.preventDefault();

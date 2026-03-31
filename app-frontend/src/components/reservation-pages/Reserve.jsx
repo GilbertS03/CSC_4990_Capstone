@@ -3,60 +3,59 @@ import { getAllBuildings } from "../../services/api/user";
 import { NavLink } from "react-router-dom";
 
 function Reserve() {
-  const [buildingData, setBuildingData] = useState([]);
+  const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const fetchBuildingData = async () => {
+    const fetchBuildings = async () => {
       try {
         const res = await getAllBuildings();
-        setBuildingData(res.data);
-      } catch (err) {
-        setError(err.message);
+        setBuildings(res.data);
+      } catch (error) {
+        console.error(error);
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBuildingData();
+    fetchBuildings();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <p>Loading... </p>;
+  if (error) return <p>Error Loading Data. Please try again</p>;
 
   return (
-    <>
-      <div className="container d-flex align-items-center">
-        <div className="row">
-          <div className="btn-group col-4" id="bListDropdown">
-            <button type="button" className="btn btn-info">
-              Buildings
-            </button>
-            <button
-              type="button"
-              className="btn btn-info dropdown-toggle dropdown-toggle-split"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <span className="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <ul className="dropdown-menu">
-              {buildingData.map((b) => (
-                <li key={b.buildingId}>
-                  <NavLink
-                    className="dropdown-item"
-                    to={`/reserve/${b.buildingId}`}
-                  >
-                    {b.buildingName}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="container text-center">
+      <h1>All Buildings</h1>
+      <table className="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th>Building Name</th>
+            <th>Building Number</th>
+            <th>View Rooms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(buildings).map((key) => (
+            <tr key={key}>
+              <td>{buildings[key].buildingName}</td>
+              <td>{buildings[key].buildingId}</td>
+              <td>
+                <NavLink
+                  className="btn btn-sm btn-primary"
+                  to={`${buildings[key].buildingId}`}
+                  end
+                >
+                  View Rooms: {buildings[key].buildingId}
+                </NavLink>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 export default Reserve;

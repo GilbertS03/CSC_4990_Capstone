@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { getAllBuildings } from "../../services/api/admin";
+import { getAllBuildings } from "../../services/api/user";
 import { NavLink } from "react-router-dom";
 
 function Buildings() {
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchBuildings = async () => {
       try {
-        const data = await getAllBuildings();
-        setBuildings(data);
+        const res = await getAllBuildings();
+        setBuildings(res.data);
       } catch (error) {
         console.error(error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -21,7 +23,8 @@ function Buildings() {
     fetchBuildings();
   }, []);
 
-  if (loading) return <p>"Loading..." </p>;
+  if (loading) return <p>Loading... </p>;
+  if (error) return <p>Error Loading Data. Please try again</p>;
 
   return (
     <div className="container text-center">
