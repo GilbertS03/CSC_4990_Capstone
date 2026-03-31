@@ -14,5 +14,5 @@ services:
 ##    restart: always
 ##    ports:
 ##      - "80:80"
-##    depends_on:
-##      - backend
+    depends_on:
+      - backend
