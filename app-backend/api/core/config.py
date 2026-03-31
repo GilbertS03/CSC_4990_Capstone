@@ -1,6 +1,6 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pathlib import Path
-from sqlalchemy.engine import URL
+import boto3
+import json
+from pydantic_settings import BaseSettings
 from pydantic import computed_field
 import json
 import boto3
@@ -12,18 +12,19 @@ def get_secrets(secret_name: str) -> dict:
 
 class Settings(BaseSettings):
 
+class Settings(BaseSettings):
     JWT_SECRET_KEY: str
-
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
     DB_DEV_HOST: str
-    DB_PORT: str    
+    DB_PORT: str
     DB_NAME: str
     EMAIL_PASSWORD: str
 
     DEFAULT_ROLE: int
     DEFAULT_WEEKLY_HOURS: int
+    EMAIL_PASSWORD: str
 
     @computed_field
     @property
