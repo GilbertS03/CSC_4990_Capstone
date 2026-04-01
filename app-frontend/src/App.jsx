@@ -6,7 +6,8 @@ import Home from "./components/home-components/Home";
 import Login from "./components/login-and-signup-components/Login";
 import About from "./components/home-components/About";
 import BuildingsView from "./components/reservation-pages/BuildingsView";
-import Room from "./components/reservation-pages/Room";
+import BuildingRooms from "./components/reservation-pages/Room";
+import SpecificRoom from "./components/reservation-pages/SpecificRoom";
 import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
@@ -52,11 +53,18 @@ function App() {
           path="buildings/:bid"
           element={
             <RoleBasedRoute publicOnly={false}>
-              <Room />'
+              <BuildingRooms />
             </RoleBasedRoute>
           }
         />
-
+        <Route
+          path="buildings/:bid/:rid"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <SpecificRoom />
+            </RoleBasedRoute>
+          }
+        />
         <Route
           path="login"
           element={

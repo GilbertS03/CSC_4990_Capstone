@@ -29,3 +29,13 @@ export const getDevices = async () => {
         throw error;
     }
 }
+
+export const getRoomLayoutById = async (id) => {
+    try{
+        const res = await api.get(`/rooms/room-layouts/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}

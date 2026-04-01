@@ -41,7 +41,7 @@ function DynamicGrid({ height, width, rid, onCellClick }) {
   return (
     <div className="container">
       <div
-        className="container justify-content-center grid mt-5"
+        className="container justify-content-center grid mt-2"
         style={{ "--rows": rows, "--cols": columns }}
       >
         {[...Array(height)].map((_, row) =>
