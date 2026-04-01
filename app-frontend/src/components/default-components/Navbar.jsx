@@ -34,7 +34,7 @@ function Navbar() {
             <NavLink className="nav-link" to="/" end>
               Home
             </NavLink>
-            <NavLink className="nav-link" to="/reserve" end>
+            <NavLink className="nav-link" to="/buildings" end>
               Reserve a Computer
             </NavLink>
             <NavLink className="nav-link" to="/about" end>
