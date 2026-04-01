@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  backend:
+    image: 943881661618.dkr.ecr.us-east-1.amazonaws.com/back-end/v1:${IMAGE_TAG}
+    environment:
+      - ENV=production
+    container_name: myapp-backend
+    restart: always
+    ports:
+      - "8000:8000"
+      

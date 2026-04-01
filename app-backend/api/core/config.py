@@ -2,23 +2,26 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 from sqlalchemy.engine import URL
 from pydantic import computed_field
+import json
+import boto3
+
+def get_secrets(secret_name: str) -> dict:
+    client = boto3.client("secretsmanager", region_name="us-east-1")
+    response = client.get_secret_value(SecretId=secret_name)
+    return json.loads(response["SecretString"])
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file = Path(__file__).parent.parent.parent / ".env",
-        env_file_encoding = "utf-8",
-        extra = "ignore",
-        env_ignore_empty = True
-    )
 
     JWT_SECRET_KEY: str
 
+    ENV: str
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
     DB_DEV_HOST: str
     DB_PORT: str    
     DB_NAME: str
+    EMAIL_PASSWORD: str
 
     DEFAULT_ROLE: int
     DEFAULT_WEEKLY_HOURS: int
@@ -34,3 +37,21 @@ class Settings(BaseSettings):
             port=self.DB_PORT,
             database=self.DB_NAME
     )
+
+class DevSettings(Settings):
+    model_config = SettingsConfigDict(
+        env_file = Path(__file__).parent.parent.parent / ".env",
+        env_file_encoding = "utf-8",
+        extra = "ignore",
+        env_ignore_empty = True
+    )
+
+class ProdSettings(Settings):
+    model_config = SettingsConfigDict(
+        extra="ignore",
+        env_ignore_empty=True
+    )
+    @classmethod
+    def from_secrets(cls) -> "ProdSettings":
+        secrets = get_secrets("myapp/backend") 
+        return cls(**secrets)

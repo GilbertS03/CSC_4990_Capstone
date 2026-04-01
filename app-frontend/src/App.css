@@ -8,7 +8,8 @@ img {
 footer {
     background-color: #dcdba8;
 }
-#NavImg{
+
+#NavImg {
     width: 5%;
 }
 
@@ -49,4 +50,10 @@ nav {
 
 .grid-button:hover {
     background-color: red;
+.no-underline-link {
+    text-decoration: none;
+}
+
+.no-underline-link:hover {
+    opacity: 10;
 }

@@ -19,6 +19,7 @@ jobs:
         with:
           sparse-checkout: |
             app-frontend
+            docker-files/front
           sparse-checkout-cone-mode: true
 
       - name: Configure AWS credentials via OIDC
@@ -35,14 +36,15 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -f app-frontend/frontend.Dockerfile \
+            -f docker-files/front/frontend.Dockerfile \
             -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_BACK_REGISTRY/$ECR_FRONT_REPOSITORY:latest \
             app-frontend/
 
       - name: Push image to ECR
         run: |
           docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG
-
+          docker push $ECR_BACK_REGISTRY/$ECR_FRONT_REPOSITORY:latest
 
       - name: Deploy to EC2 via SSM
         env:
@@ -50,14 +52,17 @@ jobs:
         run: |
           CMD_ID=$(aws ssm send-command \
           --instance-ids "$EC2_INSTANCE_ID" \
-            --document-name "AWS-RunShellScript" \
-            --query  "Command.CommandId"
-            --output text\
-            --parameters commands=[
-            "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY",
-            "docker pull $FULL_IMAGE","IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend"]
+          --document-name "AWS-RunShellScript" \
+          --query  "Command.CommandId"\
+          --output text\
+          --parameters "{\"commands\":[
+          \"aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY\",
+          \"docker pull $FULL_IMAGE\",
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend\",
+          \"echo Success\"
+          ]}"\
 
-          echo "Command ID: $CMD_ID"
+          echo "Waiting for Command ID: $CMD_ID"
 
           aws ssm wait command-executed \
           --command-id "$CMD_ID" \
