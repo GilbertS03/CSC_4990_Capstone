@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     JWT_SECRET_KEY: str
 
+    ENV:str
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
