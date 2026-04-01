@@ -2,7 +2,7 @@ import unittest
 import imaplib
 import email
 from unittest.mock import MagicMock, patch
-from api.emailSystem.emailsystem import EmailDroppedReservation
+from api.emailSystem.emailsystem import email_dropped_reservation
 from dotenv import load_dotenv
 import os
 import time
@@ -22,7 +22,7 @@ def get_latest_email():
     msg = email.message_from_bytes(msg_data[0][1])
 
     subject = msg["subject"]
-    body = msg.get_payload()
+    body = msg.get_payload(decode=True).decode("utf-8")
 
     mail.logout()
     return subject, body
@@ -31,12 +31,20 @@ def get_latest_email():
 class TestDeviceServices(unittest.TestCase):
     
     def test_email_dropped_reservation(self):
-        with patch("api.services.users.fetch_users_by_id") as mock_fetch:
+        with (patch("api.services.users.fetch_users_by_id") as mock_fetch_user,
+              patch("api.services.reservations.fetch_reservation_by_id") as mock_fetch_res):
+
             fake_user = MagicMock()
             fake_user.email = os.getenv('GMAIL_TEST_EMAIL')
-            mock_fetch.return_value = fake_user
-            EmailDroppedReservation(userId=1, reason="building closure")
+            mock_fetch_user.return_value = fake_user
+
+            fake_reservation = {"startTime": "2025-04-01T10:00:00Z"}
+            mock_fetch_res.return_value = fake_reservation
+
+            email_dropped_reservation(userId=1, resId=1, reason="building closure", Session=MagicMock())
+
         time.sleep(5)
         subject, body = get_latest_email()
 
-        assert subject == "Computer reservation has been canceled"
+        self.assertEqual(subject, "Computer reservation has been canceled")
+        self.assertIn("Tuesday, April 01, 2025", body)

@@ -26,6 +26,8 @@ class Settings(BaseSettings):
   
     LIBRARY_EMAIL: str
     LIBRARY_EMAIL_PASSWORD: str
+    GMAIL_TEST_EMAIL: str
+    GMAIL_TEST_PASSWORD: str
 
 
     @computed_field

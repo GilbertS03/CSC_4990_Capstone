@@ -1,21 +1,27 @@
 from .. services import users
+from .. services import reservations
 import smtplib
 from sqlmodel import Session
 import ssl
 from dotenv import load_dotenv
 from email.message import EmailMessage
 import os
+from datetime import datetime
 load_dotenv()
 
-def EmailDroppedReservation(userId: int, reason: str):
-    userInfo = users.fetch_users_by_id(userId,Session)
+def email_dropped_reservation(userId: int, resId:int, reason: str, Session:Session):
+    userInfo = users.fetch_users_by_id(userId)
+    reservationInfo = reservations.fetch_reservation_by_id()
+    dt = datetime.fromisoformat(reservationInfo["startTime"].replace("Z", "+00:00"))
+    day = dt.strftime("%A, %B %d, %Y")
+    time = dt.strftime("%I:%M %p")  
     print(userInfo)
     subject = "Computer reservation has been canceled"
-    body = "Your reservation at [insert time and date] has been canceled for: " + reason
+    body = "Your reservation for " + day + "," + time + " has been canceled for: "  + reason
     receiverEmail = userInfo.email
-    SendEmail(subject, body, receiverEmail)
+    send_email(subject, body, receiverEmail)
 
-def SendEmail(subject: str, body: str, receiverEmail: str):
+def send_email(subject: str, body: str, receiverEmail: str):
     senderEmail = os.getenv('LIBRARY_EMAIL')
     password = os.getenv('LIBRARY_EMAIL_PASSWORD')
     message = EmailMessage()
