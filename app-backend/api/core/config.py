@@ -13,7 +13,6 @@ class Settings(BaseSettings):
 
     JWT_SECRET_KEY: str
 
-    ENV:str
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
@@ -23,6 +22,7 @@ class Settings(BaseSettings):
 
     DEFAULT_ROLE: int
     DEFAULT_WEEKLY_HOURS: int
+
   
     LIBRARY_EMAIL: str
     LIBRARY_EMAIL_PASSWORD: str
