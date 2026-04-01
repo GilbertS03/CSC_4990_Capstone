@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllBuildings } from "../../services/api/user";
 import { NavLink } from "react-router-dom";
 
-function Reserve() {
+function BuildingsView() {
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -58,4 +58,4 @@ function Reserve() {
     </div>
   );
 }
-export default Reserve;
+export default BuildingsView;
