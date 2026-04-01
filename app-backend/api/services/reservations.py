@@ -1,6 +1,7 @@
-import datetime
-from sqlmodel import select, Session
-from sqlalchemy import cast, Date
+from datetime import datetime, date
+from sqlmodel import select, cast, Session, Date
+
+from ..services.users import subtract_user_hours, add_user_hours
 from ..models.Reservations import Reservations
 from ..models.ReservationStatuses import ReservationStatuses
 from ..schema.user_schema import UserPublic
@@ -40,6 +41,13 @@ def create_reservation(session: Session, reservation: CreateReservation, user: U
         "reservationStatusId": 3
     })
     
+    currHours = user.weeklyHoursRemaining
+    hourDiff = calc_hour_diff(new_res.startTime, new_res.endTime)
+    updatedHours = subtract_user_hours(session, user.userId, hourDiff)
+
+    if currHours <= updatedHours:
+        return None
+
     session.add(new_res)
     session.commit()
     session.refresh(new_res)
@@ -58,6 +66,14 @@ def has_conflict(session: Session, reservation: UserReservation):
     overlap = session.exec(statement).first()
     return overlap is not None
 
+def has_existing_res(session: Session, userId: int, newResDate: date):
+    statement = select(Reservations).where(
+        Reservations.userId == userId,
+        cast(Reservations.startTime, Date) == newResDate
+    )
+    res = session.exec(statement).first()
+    return res is not None
+
 def delete_reservation(session: Session, resId: int):
     res = convert_res_to_db_model(session, resId)
     session.delete(res)
@@ -66,9 +82,21 @@ def delete_reservation(session: Session, resId: int):
     deleted = session.get(Reservations, resId)
     return deleted is None
 
-def drop_reservation(session: Session, resId: int):
+def calc_hour_diff(resStart: datetime, resEnd: datetime):
+    resLength = resEnd - resStart
+    diffInHrs = (resLength.total_seconds() / 3600)
+    return diffInHrs
+
+def drop_reservation(session: Session, resId: int, user: UserPublic):
     statement = select(Reservations).where(Reservations.reservationId == resId)
     res = session.exec(statement).one()
+
+    currHours = user.weeklyHoursRemaining
+    hourDiff = calc_hour_diff(res.startTime, res.endTime)
+    updatedHours = add_user_hours(session, user.userId, hourDiff)
+
+    if currHours >= updatedHours:
+        return None
 
     res.reservationStatusId = 2
     session.add(res)

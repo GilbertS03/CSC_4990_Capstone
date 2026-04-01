@@ -12,7 +12,8 @@ router = APIRouter (
     responses={404: {"Description": "Not Found"}}
 )
 
-STATUS_DROPPED = 2
+STATUS_DROPPED_NUM = 2
+STATUS_CANCELLED = "Cancelled"
 
 @router.get("/all", response_model=list[UserReservation])
 def get_reservations(session: SessionDep):
@@ -32,22 +33,33 @@ def get_reservation_statuses(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error retrieving reservations: {e}")
 
+#TODO: add logic to ensure reservation stays within building hours
 @router.post("/create")
 async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
-    if has_conflict(session, reservation):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
-    return create_reservation(session, reservation, user)
+    try:
+        if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
+        if has_conflict(session, reservation):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
+        new_res = create_reservation(session, reservation, user)
+        if new_res is None:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating reservation")
+        return new_res
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
 
-@router.post("/drop_reservation/{resid}")
+@router.post("/drop_reservation/{resId}")
 async def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     try:
         res = fetch_reservation_by_id(session, resId)
         if not res:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation not found")
+        if res.status == STATUS_CANCELLED:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation already dropped")
         if((res.userId != user.userId) and (user.role == "student")):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User not authorized to drop this reservation")
-        drop_confirmed = drop_reservation(session, resId)
-        if drop_confirmed.reservationStatusId != STATUS_DROPPED:
+        drop_confirmed = drop_reservation(session, resId, user)
+        if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
         return drop_confirmed
     except Exception as e:
