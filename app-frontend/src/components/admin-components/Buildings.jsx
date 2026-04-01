@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAllBuildings } from "../../services/api/user";
 import { NavLink } from "react-router-dom";
 
-function Reserve() {
+function Buildings() {
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -34,7 +34,7 @@ function Reserve() {
           <tr>
             <th>Building Name</th>
             <th>Building Number</th>
-            <th>View Rooms</th>
+            <th>Edit Building</th>
           </tr>
         </thead>
         <tbody>
@@ -45,17 +45,19 @@ function Reserve() {
               <td>
                 <NavLink
                   className="btn btn-sm btn-primary"
-                  to={`${buildings[key].buildingId}`}
+                  to={`/admin/buildings/${buildings[key].buildingId}`}
                   end
                 >
-                  View Rooms: {buildings[key].buildingId}
+                  Edit Building: {buildings[key].buildingId}
                 </NavLink>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {/* TODO add route for form to add new building */}
     </div>
   );
 }
-export default Reserve;
+
+export default Buildings;

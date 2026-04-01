@@ -3,7 +3,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-
 function BuildingView() {
     const [roomsData, setRoomsData] = useState([]);
     const [availableDeviceCounts, setAvailableDeviceCounts] = useState({});

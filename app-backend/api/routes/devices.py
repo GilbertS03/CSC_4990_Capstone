@@ -29,3 +29,11 @@ def get_device_positions(session: SessionDep, limit: int = 100):
         return positions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving device positions: {e}")
+    
+@router.get("/device-positions/{rid}", response_model=list[DevicePosition])
+def get_devices_by_room_id(session: SessionDep, rid:int):
+    try:
+        positions = fetch_device_positions_room_id(session, rid)
+        return positions
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving device positions: {e}")
