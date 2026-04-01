@@ -33,13 +33,12 @@ def get_reservation_statuses(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error retrieving reservations: {e}")
 
-#TODO: add logic to limit reservations to 1 per day for user.
 #TODO: add logic to ensure reservation stays within building hours
 @router.post("/create")
 async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     try:
-        if has_existing_res(session, user.userId, user.role):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date}")
+        if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
         if has_conflict(session, reservation):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
         new_res = create_reservation(session, reservation, user)
