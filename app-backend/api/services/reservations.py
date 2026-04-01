@@ -1,6 +1,5 @@
-import datetime
+from datetime import datetime, date
 from sqlmodel import select, Session
-from sqlalchemy import cast, Date
 
 from ..services.users import subtract_user_hours, add_user_hours
 from ..models.Reservations import Reservations
@@ -67,6 +66,10 @@ def has_conflict(session: Session, reservation: UserReservation):
     overlap = session.exec(statement).first()
     return overlap is not None
 
+def has_existing_res(session: Session, userId: int, newResDate: date):
+    #pull reservations for user on a given date
+    #if no res found, ret true; else false
+    return
 def delete_reservation(session: Session, resId: int):
     res = convert_res_to_db_model(session, resId)
     session.delete(res)
