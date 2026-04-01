@@ -23,6 +23,8 @@ function AddDeviceForm() {
     navigate(-1);
   };
 
+  //TODO finish this once I we get the backend endpoints I need up which are /device/create
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Yippee!!!");
