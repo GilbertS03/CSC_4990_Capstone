@@ -39,6 +39,7 @@ function Room() {
   useEffect(() => {
     if (!devices.length || !roomsData.length) return;
 
+    //This gets the counts for all the devices based on their room but does not display rooms that are not in use.
     const counts = {};
     devices.forEach((device) => {
       const roomId = device.roomId;
@@ -78,14 +79,14 @@ function Room() {
               <div className="card-body">
                 <h5 className="card-title">{r.roomName}</h5>
                 <p className="card-text">
-                  Remaining Available Devices:{" "}
+                  Remaining Available Devices:
                   {availableDeviceCounts[r.roomId] ?? "..."}
                 </p>
                 <button className="btn btn-secondary">
-                  {" "}
                   <NavLink
                     className="no-underline-link text-light"
-                    to={`/reserve/`}
+                    to={`/buildings/${bid}/${r.roomId}`}
+                    end
                   >
                     View Devices
                   </NavLink>
