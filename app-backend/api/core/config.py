@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     DB_DEV_HOST: str
     DB_PORT: str    
     DB_NAME: str
-    EMAIL_PASSWORD: str
 
     DEFAULT_ROLE: int
     DEFAULT_WEEKLY_HOURS: int
