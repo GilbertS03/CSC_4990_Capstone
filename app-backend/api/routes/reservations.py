@@ -29,7 +29,7 @@ def get_reservation_statuses(
     userId: int | None = None
 ):
     try:
-        return fetch_reservation_statuses(session, resStatus, userId)
+        return fetch_reservation_statuses(session, userId, resStatus)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error retrieving reservations: {e}")
 
