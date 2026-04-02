@@ -43,20 +43,12 @@ def create_reservation(session: Session, reservation: CreateReservation, user: U
     
     currHours = user.weeklyHoursRemaining
     hourDiff = calc_hour_diff(new_res.startTime, new_res.endTime)
-<<<<<<< HEAD
-    updatedHours = subtract_user_hours(session, user.userId, hourDiff)
-
-    if currHours <= updatedHours:
-        return None
-
-=======
 
     if hourDiff > currHours:
         return None
     
     updatedHours = subtract_user_hours(session, user.userId, hourDiff)
     
->>>>>>> main
     session.add(new_res)
     session.commit()
     session.refresh(new_res)
