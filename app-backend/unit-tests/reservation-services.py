@@ -9,6 +9,12 @@ class TestReservationServices(unittest.TestCase):
      datetime(2025, 1, 15, 9, 0, 0),"endTime": datetime(2025, 1, 15, 11, 0, 0)},
     {"reservationId": 2,"userId": 2,"deviceId": 5,"reservationStatusId": 2,"status" : "cancelled","startTime": 
      datetime(2025, 1, 16, 14, 0, 0),"endTime": datetime(2025, 1, 16, 16, 0, 0)}]
+    
+    userValues = {"userId": 1, "firstName": "Gilbert", "lastName": "Salazar",
+                  "email": "test@gmail.com", "weeklyHoursRemaining": 6.5, "role": "admin"}
+
+    reservationValues = 
+    {"roomId": 1,"startTime": datetime(2025, 1, 1, 10, 30, 45),"endTime":   datetime(2025, 1, 1, 12, 45, 59)}
 
     def test_fetchAllReservations_fetchExistingReservations_returnInfo(self):
         mockReservations = [Mock(**reservationData) for reservationData in self.allReservationValues]
@@ -56,4 +62,4 @@ class TestReservationServices(unittest.TestCase):
         assert result == []
         mockSession.exec.assert_called()    
     
-    def test_CreateReservation_
+    def test_createReservation_sufficientHours_returnNewReservation(self):
