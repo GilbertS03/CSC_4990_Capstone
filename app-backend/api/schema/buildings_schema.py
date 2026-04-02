@@ -9,6 +9,6 @@ class BuildingBase(BaseModel):
 class BuildingPublic(BuildingBase):
     buildingId: int
 
-class BuildingTime(BuildingBase):
+class BuildingTime(BuildingPublic):
     openTime: time
     closeTime: time
