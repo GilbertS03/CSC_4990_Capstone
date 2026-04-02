@@ -43,7 +43,7 @@ async def create_new_reservation(reservation: CreateReservation, session: Sessio
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
         new_res = create_reservation(session, reservation, user)
         if new_res is None:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating reservation")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"User does not have enough hours remaining")
         return new_res
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
