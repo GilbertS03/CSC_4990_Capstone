@@ -26,6 +26,13 @@ class Settings(BaseSettings):
     DEFAULT_ROLE: int
     DEFAULT_WEEKLY_HOURS: int
 
+  
+    LIBRARY_EMAIL: str
+    LIBRARY_EMAIL_PASSWORD: str
+    GMAIL_TEST_EMAIL: str
+    GMAIL_TEST_PASSWORD: str
+
+
     @computed_field
     @property
     def DATABASE_URI(self) -> URL:
