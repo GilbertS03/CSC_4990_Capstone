@@ -1,4 +1,4 @@
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getRoomLayoutById } from "../../services/api/user";
 import DynamicGrid from "../admin-components/DynamicGrid";
@@ -7,6 +7,7 @@ function SpecificRoom() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { bid, rid } = useParams();
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchRoomData = async (id) => {
       try {
@@ -23,6 +24,10 @@ function SpecificRoom() {
   }, []);
 
   const handleCellClick = (device, row, col) => {
+    navigate(`/buildings/${bid}/${rid}/${row}/${col}`, {
+      state: { device },
+    });
+
     console.log(device, row, col);
   };
   if (loading) return <p>Loading...</p>;

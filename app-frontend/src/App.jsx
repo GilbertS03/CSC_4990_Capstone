@@ -8,6 +8,7 @@ import About from "./components/home-components/About";
 import BuildingsView from "./components/reservation-pages/BuildingsView";
 import BuildingRooms from "./components/reservation-pages/Room";
 import SpecificRoom from "./components/reservation-pages/SpecificRoom";
+import ViewCell from "./components/reservation-pages/ViewCell";
 import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
@@ -65,6 +66,15 @@ function App() {
             </RoleBasedRoute>
           }
         />
+        <Route
+          path="buildings/:bid/:rid/:row/:col"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <ViewCell />
+            </RoleBasedRoute>
+          }
+        />
+
         <Route
           path="login"
           element={
