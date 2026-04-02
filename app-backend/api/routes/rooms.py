@@ -38,3 +38,10 @@ def get_rooms_by_buildingId(buildingId: int, session: SessionDep):
         return fetch_rooms_by_building(buildingId, session)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retreiving rooms by building Id: {e}")
+    
+@router.get("/{roomId}/available-device-count", response_model=int)
+def get_available_device_count_by_roomId(roomId: int, session: SessionDep):
+    try:
+        return fetch_available_devices_by_room(roomId, session)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retreiving available device count: {e}")

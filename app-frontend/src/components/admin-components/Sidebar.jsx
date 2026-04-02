@@ -8,6 +8,7 @@ import {
   Users,
   MonitorSmartphone,
   UserRound,
+  Building,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -73,12 +74,19 @@ function Sidebar({ collapsed, setCollapsed }) {
             {!collapsed && "System Settings"}
           </NavLink>
         </li>
+
+        <li>
+          <NavLink to="/admin/buildings" className={linkClass}>
+            <Building size={iconSize} className="me-2" />
+            {!collapsed && "Buildings"}
+          </NavLink>
+        </li>
       </ul>
       <div className="mt-auto">
         <hr />
         <button className="btn btn-outline-primary" onClick={logout}>
           {/* todo add user name here and add modal with settings, logout, etc. */}
-          <UserRound /> {collapsed ? "" : "User: "}
+          <UserRound /> {collapsed ? "" : "Logout "}
         </button>
       </div>
     </div>

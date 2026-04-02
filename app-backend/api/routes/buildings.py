@@ -16,3 +16,10 @@ def get_buildings(session: SessionDep):
         return fetch_buildings(session)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving buildings: {e}")
+    
+@router.get("/all-hours", response_model=list[BuildingTime])
+def get_all_building_hours(session: SessionDep, limit: int = 100):
+    try:
+        return fetch_building_times(session, limit)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"{e}")

@@ -1,8 +1,9 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from ..core.config_loader import settings
 
 from ..models.Rooms import Rooms
 from ..models.Buildings import Buildings
+from ..models.Devices import Devices
 from ..schema.rooms_schema import RoomPublic, RoomLayout
 
 def fetch_rooms(session: Session):
@@ -27,3 +28,14 @@ def fetch_rooms_by_building(buildingId: int, session: Session):
     statement = select(Rooms).where(Rooms.buildingId == buildingId)
     rooms = session.exec(statement).all()
     return [RoomPublic.model_validate(room) for room in rooms]
+
+def fetch_available_devices_by_room(roomId: int, session: Session):
+    room = session.get(Rooms, roomId)
+    if not room:
+        return None
+    statement = select(func.count(Devices.deviceId)).where(
+        Devices.roomId == roomId,
+        Devices.deviceStatusId == 1
+    )
+    count = session.exec(statement).first()
+    return count

@@ -19,6 +19,7 @@ jobs:
         with:
           sparse-checkout: |
             app-backend
+            docker-files/back
           sparse-checkout-cone-mode: true
  
       - name: Configure AWS credentials via OIDC
@@ -35,7 +36,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -f app-backend/backend.Dockerfile \
+            -f docker-files/back/backend.Dockerfile \
             -t $ECR_BACK_REGISTRY/$ECR_BACK_REPOSITORY:$IMAGE_TAG \
             -t $ECR_BACK_REGISTRY/$ECR_BACK_REPOSITORY:latest \
             app-backend/
