@@ -39,3 +39,22 @@ export const getRoomLayoutById = async (id) => {
         throw error;
     }
 }
+
+export const getAllBuildingHours = async () => {
+    try{
+        const res = await api.get("/buildings/all-hours");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+//Date time object (start and end time), deviceId
+// export const createReservation = async () => {
+//     try{
+        
+//     }
+//     catch(error){
+//         throw new error;
+//     }
+// }

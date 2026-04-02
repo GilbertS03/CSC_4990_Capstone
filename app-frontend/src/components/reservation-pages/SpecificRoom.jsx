@@ -1,9 +1,13 @@
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRoomLayoutById } from "../../services/api/user";
+import {
+  getRoomLayoutById,
+  getAllBuildingHours,
+} from "../../services/api/user";
 import DynamicGrid from "../admin-components/DynamicGrid";
 function SpecificRoom() {
   const [roomData, setRoomData] = useState(null);
+  const [buildingHours, setBuildingHours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { bid, rid } = useParams();
@@ -22,6 +26,25 @@ function SpecificRoom() {
     };
     fetchRoomData(rid);
   }, []);
+
+  useEffect(() => {
+    const fetchBuildingHours = async () => {
+      try {
+        const res = await getAllBuildingHours();
+        setBuildingHours(res.data);
+        setBuildingHours(
+          buildingHours.filter((building) => {
+            building.buildingId === bid;
+          }),
+        );
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+  });
 
   const handleCellClick = (device, row, col) => {
     navigate(`/buildings/${bid}/${rid}/${row}/${col}`, {

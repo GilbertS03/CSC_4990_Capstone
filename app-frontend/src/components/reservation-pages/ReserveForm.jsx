@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
-function ReserveForm({ device, row, col, onReserve, onCancel }) {
+function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
   const [formData, setFormData] = useState({
     email: "",
     duration: "1",
+    startTime: "",
   });
 
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+
   useEffect(() => {
-    const email = user.email ?? "";
-    const data = { email: email, duration: 1 };
-    setFormData(data);
+    const email = user?.email ?? "";
+    setFormData((prev) => ({
+      ...prev,
+      email,
+    }));
   }, [user]);
 
   if (!device) {
@@ -39,8 +43,44 @@ function ReserveForm({ device, row, col, onReserve, onCancel }) {
     }));
   };
 
+  // 🔥 helper: convert "HH:mm:ss" → Date today
+  const buildTime = (timeStr) => {
+    const [h, m] = timeStr.split(":");
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!building) {
+      alert("Building data not loaded.");
+      return;
+    }
+
+    if (!formData.startTime) {
+      alert("Please select a start time.");
+      return;
+    }
+
+    const open = buildTime(building.openTime);
+    const close = buildTime(building.closeTime);
+
+    const start = buildTime(formData.startTime);
+
+    // duration is in hours → convert to ms
+    const durationMs = parseFloat(formData.duration) * 60 * 60 * 1000;
+    const end = new Date(start.getTime() + durationMs);
+
+    // 🔴 VALIDATION
+    if (start < open || end > close) {
+      alert(
+        `Reservation must be within building hours (${building.openTime} - ${building.closeTime})`,
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -80,7 +120,7 @@ function ReserveForm({ device, row, col, onReserve, onCancel }) {
                 />
               </div>
 
-              {/* Status Alert */}
+              {/* Status */}
               <div
                 className={`alert ${
                   device.deviceStatus === "available"
@@ -92,6 +132,13 @@ function ReserveForm({ device, row, col, onReserve, onCancel }) {
               >
                 Status: {device.deviceStatus}
               </div>
+
+              {/* Building Hours Display */}
+              {building && (
+                <div className="alert alert-info">
+                  Hours: {building.openTime} - {building.closeTime}
+                </div>
+              )}
 
               {isUnavailable ? (
                 <div className="text-center">
@@ -111,10 +158,23 @@ function ReserveForm({ device, row, col, onReserve, onCancel }) {
                       type="email"
                       name="email"
                       value={formData.email}
+                      className="form-control"
+                      disabled
+                    />
+                  </div>
+
+                  {/* Start Time */}
+                  <div className="mb-3">
+                    <label className="form-label">Start Time</label>
+                    <input
+                      type="time"
+                      name="startTime"
+                      value={formData.startTime}
                       onChange={handleChange}
                       className="form-control"
+                      min={building?.openTime}
+                      max={building?.closeTime}
                       required
-                      disabled
                     />
                   </div>
 
@@ -128,7 +188,7 @@ function ReserveForm({ device, row, col, onReserve, onCancel }) {
                       className="form-select"
                     >
                       <option value="0.5">30 Minutes</option>
-                      <option value="1">1 Hours</option>
+                      <option value="1">1 Hour</option>
                       <option value="1.5">1:30 Hours</option>
                       <option value="2">2 Hours</option>
                     </select>
@@ -149,14 +209,7 @@ function ReserveForm({ device, row, col, onReserve, onCancel }) {
                       className="btn btn-success"
                       disabled={loading}
                     >
-                      {loading ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2"></span>
-                          Reserving...
-                        </>
-                      ) : (
-                        "Confirm Reservation"
-                      )}
+                      {loading ? "Reserving..." : "Confirm Reservation"}
                     </button>
                   </div>
                 </form>
