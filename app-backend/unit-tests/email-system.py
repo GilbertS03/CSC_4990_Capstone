@@ -41,7 +41,7 @@ class TestDeviceServices(unittest.TestCase):
             fake_reservation = {"startTime": "2025-04-01T10:00:00Z"}
             mock_fetch_res.return_value = fake_reservation
 
-            email_dropped_reservation(userId=1, resId=1, reason="building closure", Session=MagicMock())
+            email_dropped_reservation(userId=1, resId=1, reason="building closure", session=MagicMock())
 
         time.sleep(5)
         subject, body = get_latest_email()
