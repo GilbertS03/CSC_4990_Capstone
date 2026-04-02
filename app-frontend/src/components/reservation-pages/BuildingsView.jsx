@@ -33,7 +33,7 @@ function BuildingsView() {
         console.error(err);
         setError(true);
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     };
     fetchBuildingHours();
