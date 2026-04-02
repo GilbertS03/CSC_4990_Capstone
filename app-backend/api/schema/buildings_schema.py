@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import timedelta
+from datetime import time
 
 class BuildingBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -10,5 +10,5 @@ class BuildingPublic(BuildingBase):
     buildingId: int
 
 class BuildingTime(BuildingBase):
-    openTime: timedelta
-    closeTime: timedelta
+    openTime: time
+    closeTime: time
