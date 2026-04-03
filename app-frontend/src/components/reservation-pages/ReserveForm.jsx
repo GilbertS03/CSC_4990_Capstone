@@ -6,6 +6,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     email: "",
     duration: "1",
     startTime: "",
+    reservationDate: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -162,7 +163,24 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
                       disabled
                     />
                   </div>
-
+                  {/* Reservation Date */}
+                  <div className="mb-3">
+                    <label className="form-label">Reservation Date</label>
+                    <input
+                      type="date"
+                      name="reservationDate"
+                      value={formData.reservationDate}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                      min={new Date().toISOString().split("T")[0]} // today
+                      max={
+                        new Date(new Date().setMonth(new Date().getMonth() + 1))
+                          .toISOString()
+                          .split("T")[0]
+                      } // 1 month from now
+                    />
+                  </div>
                   {/* Start Time */}
                   <div className="mb-3">
                     <label className="form-label">Start Time</label>
