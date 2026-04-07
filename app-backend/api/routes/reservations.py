@@ -48,7 +48,7 @@ async def create_new_reservation(reservation: CreateReservation, session: Sessio
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
 
-@router.post("/drop_reservation/{resId}")
+@router.put("/drop_reservation/{resId}")
 async def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     try:
         res = fetch_reservation_by_id(session, resId)
