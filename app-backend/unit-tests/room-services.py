@@ -10,9 +10,9 @@ class TestRoomServices(unittest.TestCase):
         {"roomId": 120, "roomName": "TrueBlu",      "buildingId": 9, "layoutHeight": 30, "layoutWidth": 20},
     ]
     allLayoutValues = [
-         {"roomName": "computerLab", "layoutHeight": 10, "layoutWidth": 10,}, 
-         {"roomName": "SpartanSpot", "layoutHeight": 20, "layoutWidth": 15},
-         {"roomName": "TrueBlu", "layoutHeight": 30, "layoutWidth": 20}
+        {"roomId": 1,   "roomName": "computerLab", "layoutHeight": 10, "layoutWidth": 10},
+        {"roomId": 102, "roomName": "SpartanSpot", "layoutHeight": 20, "layoutWidth": 15},
+        {"roomId": 120, "roomName": "TrueBlu",     "layoutHeight": 30, "layoutWidth": 20},
     ]
     allDeviceValues = [
         {"deviceId":1, "deviceStatusId":1},
