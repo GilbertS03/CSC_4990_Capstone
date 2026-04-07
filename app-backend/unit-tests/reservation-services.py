@@ -62,24 +62,24 @@ class TestReservationServices(unittest.TestCase):
         mockSession.exec.assert_called()    
     
     def test_createReservation_sufficientHours_returnNewReservation(self):
-        self.mockUser = Mock(**self.userValues)
-        self.mockReservation = Mock(**self.reservationValues)
-        self.mockSession = Mock()
+        mockUser = Mock(**self.userValues)
+        mockReservation = Mock(**self.reservationValues)
+        mockSession = Mock()
         with patch("api.services.reservations.subtract_user_hours", return_value=4.25):
-            result = create_reservation(self.mockSession, self.mockReservation, self.mockUser)
+            result = create_reservation(mockSession, mockReservation, mockUser)
         assert result is not None
-        self.mockSession.add.assert_called_once()
-        self.mockSession.commit.assert_called_once()
+        mockSession.add.assert_called_once()
+        mockSession.commit.assert_called_once()
     
     def test_createReservation_insufficientHours_returnNone(self):
-        self.mockReservation = Mock(**self.reservationValues)
-        self.mockUser = Mock(**self.insufficentHoursUserValues)
-        self.mockSession = Mock() 
+        mockReservation = Mock(**self.reservationValues)
+        mockUser = Mock(**self.insufficentHoursUserValues)
+        mockSession = Mock() 
         with patch("api.services.reservations.subtract_user_hours") as mockSubtract:
-            result = create_reservation(self.mockSession, self.mockReservation, self.mockUser)
+            result = create_reservation(mockSession, mockReservation, mockUser)
         assert result is None
         mockSubtract.assert_not_called()
-        self.mockSession.add.assert_not_called()
+        mockSession.add.assert_not_called()
 
     def test_dropReservation_existingReservation_returnSuccess(self):
         mock_session = Mock()
