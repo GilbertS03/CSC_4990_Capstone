@@ -8,9 +8,9 @@ class TestBuildingServices(unittest.TestCase):
     BuildingValues = {"buildingName": "Stephens", "buildingId": 1}
 
     allBuildingTimeValues = [
-    {"buildingName": "Engineering Hall","openTime": "08:00","closeTime": "20:00"},
-    {"buildingName": "Science Center","openTime": "09:00","closeTime": "18:00"}]
-
+    {"buildingId": 1, "buildingName": "Engineering Hall", "openTime": "08:00", "closeTime": "20:00"},
+    {"buildingId": 2, "buildingName": "Science Center", "openTime": "09:00", "closeTime": "18:00"}
+]
     def test_fetchBuildings_fetchExistingBuildings_returnInfo(self):
         mockSession = Mock()
         mockBuildings = [Mock(**buildingdata) for buildingdata in self.allBuildingValues]
