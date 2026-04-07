@@ -11,6 +11,7 @@ jobs:
         working-directory: ./app-backend
 
     env:
+      ENV: ${{secrets.ENV}}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       DB_DEV_HOST: ${{ secrets.DB_DEV_HOST }}
       DB_USER: ${{ secrets.DB_USER }}   
