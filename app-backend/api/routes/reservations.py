@@ -38,12 +38,12 @@ def get_reservation_statuses(
 async def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     try:
         if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
+            raise HTTPException(status_code=status.HTTP_200_OK, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
         if has_conflict(session, reservation):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Reservation Conflict")
+            raise HTTPException(status_code=status.HTTP_200_OK, detail=f"Reservation Conflict")
         new_res = create_reservation(session, reservation, user)
         if new_res is None:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"User does not have enough hours remaining")
+            raise HTTPException(status_code=status.HTTP_200_OK, detail=f"User does not have enough hours remaining")
         return new_res
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")

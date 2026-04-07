@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 
 from ..auth.services.auth_service import require_roles
 from ..schema.devices_schema import DevicePosition, DevicePublic
@@ -37,3 +37,11 @@ def get_devices_by_room_id(session: SessionDep, rid:int):
         return positions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving device positions: {e}")
+    
+@router.post("/devices/create")
+def create_new_device(device: CreateDevice, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
+    try:
+        newDevice = create_device(session, device)
+        return newDevice
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
