@@ -7,36 +7,24 @@ import {
 import DynamicGrid from "../admin-components/DynamicGrid";
 function SpecificRoom() {
   const [roomData, setRoomData] = useState(null);
-  const [buildingHours, setBuildingHours] = useState([]);
+  const [building, setBuilding] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { bid, rid } = useParams();
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchRoomData = async (id) => {
-      try {
-        const res = await getRoomLayoutById(id);
-        setRoomData(res.data);
-      } catch (error) {
-        console.error(error);
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRoomData(rid);
-  }, []);
 
   useEffect(() => {
-    const fetchBuildingHours = async () => {
+    const fetchBuildingsData = async (id) => {
       try {
-        const res = await getAllBuildingHours();
-        setBuildingHours(res.data);
-        setBuildingHours(
-          buildingHours.filter((building) => {
-            building.buildingId === bid;
-          }),
+        const res1 = await getRoomLayoutById(id);
+        setRoomData(res1.data);
+        const res2 = await getAllBuildingHours();
+        const buildings = res2.data;
+        const foundBuilding = buildings.find(
+          (b) => Number(b.buildingId) === Number(bid),
         );
+        console.log("Building: ", foundBuilding);
+        setBuilding(foundBuilding);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -44,7 +32,8 @@ function SpecificRoom() {
         setLoading(false);
       }
     };
-  });
+    fetchBuildingsData(rid);
+  }, [bid, rid]);
 
   const handleCellClick = (device, row, col) => {
     navigate(`/buildings/${bid}/${rid}/${row}/${col}`, {
@@ -64,6 +53,7 @@ function SpecificRoom() {
         height={roomData.layoutHeight}
         width={roomData.layoutWidth}
         rid={rid}
+        building={building}
         onCellClick={handleCellClick}
       />
     </div>

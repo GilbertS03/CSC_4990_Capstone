@@ -44,7 +44,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     }));
   };
 
-  // 🔥 helper: convert "HH:mm:ss" → Date today
+  //helper: convert "HH:mm:ss" → Date today
   const buildTime = (timeStr) => {
     const [h, m] = timeStr.split(":");
     const d = new Date();
@@ -74,7 +74,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     const durationMs = parseFloat(formData.duration) * 60 * 60 * 1000;
     const end = new Date(start.getTime() + durationMs);
 
-    // 🔴 VALIDATION
+    // VALIDATION
     if (start < open || end > close) {
       alert(
         `Reservation must be within building hours (${building.openTime} - ${building.closeTime})`,

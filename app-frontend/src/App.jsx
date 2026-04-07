@@ -13,6 +13,7 @@ import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
 import NotFound from "./components/default-components/NotFound";
+import UserDetails from "./components/default-components/UserDetails";
 
 //Layouts
 import PublicLayout from "./layouts/PublicLayout";
@@ -79,6 +80,15 @@ function App() {
           element={
             <RoleBasedRoute publicOnly={true}>
               <Login />
+            </RoleBasedRoute>
+          }
+        />
+
+        <Route
+          path="profile"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <UserDetails />
             </RoleBasedRoute>
           }
         />

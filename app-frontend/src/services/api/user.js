@@ -5,7 +5,7 @@ export const getAllBuildings = async () => {
         const res = await api.get('/buildings');
         return res;
     }
-    catch(error){
+    catch (error) {
         throw error;
     }
 }
@@ -16,6 +16,16 @@ export const getRoomsByBuildingId = async (id) => {
         return res;
     }
     catch(error){
+        throw error
+    }
+}
+
+export const getAllReservations = async () => {
+    try {
+        const data = await api.get('/reservations/all')
+        return data;
+    }
+    catch (error) {
         throw error;
     }
 }
@@ -26,6 +36,16 @@ export const getDevices = async () => {
         return res;
     }
     catch(error){
+        throw error
+    }
+}
+
+export const getReservationStatuses = async (resStatus, userId) => {
+    try {
+        const data = await api.get(`/reservations/status/?resStatus=${resStatus}&userId=${userId}`)
+        return data;
+    }
+    catch (error) {
         throw error;
     }
 }
@@ -58,3 +78,12 @@ export const getAllBuildingHours = async () => {
 //         throw new error;
 //     }
 // }
+export const getCurrentUser = async () => {
+    try {
+        const data = await api.get('/users/me')
+        return data;
+    }
+    catch (error) {
+        throw error;
+    }
+}

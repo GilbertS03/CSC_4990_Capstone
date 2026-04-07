@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import WoMM from "../../assets/WoMM.jpg";
 import "../../App.css";
 import { useAuth } from "../../context/AuthContext";
@@ -61,9 +61,9 @@ function Navbar() {
           {/* todo Add functionality to this button and put the logout here and make a dropdown or 
           take them to a page that displays their information such as user/information/:id or something
           so they can know their role and such*/}
-          <button className="btn " type="button">
-            {isAuthenticated && <UserCircle />}
-          </button>
+          <div>
+            {isAuthenticated && <Link className="nav-link" to="/profile"><UserCircle /></Link>}
+          </div>
         </div>
       </div>
     </nav>
