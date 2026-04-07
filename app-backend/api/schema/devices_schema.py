@@ -28,3 +28,6 @@ class DevicePublic(DeviceBase):
 class DevicePosition(DevicePublic):
     positionX: int
     positionY: int
+
+class CreateDevice(BaseModel):
+    deviceTypeId: int
