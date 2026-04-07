@@ -28,9 +28,8 @@ class TestBuildingServices(unittest.TestCase):
         mockSession.exec.assert_called()
 
     def test_fetchBuildingtimes_fetchExistingBuildingTimes_returnInfo(self):
-        mockBuildings = [Mock(**data) for data in self.allBuildingTimeValues]
         mockSession = Mock()
-        mockSession.exec.return_value.all.return_value = mockBuildings
+        mockSession.exec.return_value.all.return_value = self.allBuildingTimeValues
         result = fetch_building_times(mockSession, limit=10)
         assert result is not None
         assert len(result) == 2
