@@ -21,7 +21,7 @@ jobs:
  
       - name: Test MySQL connectivity via EC2
         env:
-          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          EC2_INSTANCE_ID: ${{ secrets.BACK_EC2_INSTANCE_ID }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

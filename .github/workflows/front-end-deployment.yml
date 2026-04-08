@@ -48,19 +48,19 @@ jobs:
 
       - name: Deploy to EC2 via SSM
         env:
-          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+          EC2_INSTANCE_ID: ${{ secrets.FRONT_EC2_INSTANCE_ID }}
         run: |
           CMD_ID=$(aws ssm send-command \
           --instance-ids "$EC2_INSTANCE_ID" \
           --document-name "AWS-RunShellScript" \
-          --query  "Command.CommandId"\
-          --output text\
+          --query "Command.CommandId" \
+          --output text \
           --parameters "{\"commands\":[
           \"aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY\",
-          \"docker pull $FULL_IMAGE\",
-          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend\",
-          \"echo Success\"
-          ]}"\
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml pull frontend\",
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml down frontend\"
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend\"
+          ]}") 
 
           echo "Waiting for Command ID: $CMD_ID"
 
