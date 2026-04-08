@@ -38,13 +38,13 @@ jobs:
           docker build \
             -f docker-files/front/frontend.Dockerfile \
             -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_BACK_REGISTRY/$ECR_FRONT_REPOSITORY:latest \
+            -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:latest \
             app-frontend/
 
       - name: Push image to ECR
         run: |
           docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_BACK_REGISTRY/$ECR_FRONT_REPOSITORY:latest
+          docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:latest
 
       - name: Deploy to EC2 via SSM
         env:
