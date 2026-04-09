@@ -15,10 +15,22 @@ def fetch_device_positions(session: Session, limit: int):
     positions = session.exec(statement).all()
     return [DevicePosition.model_validate(device) for device in positions]
 
-def fetch_device_positions_room_id(session: Session, id:int):
+def fetch_device_positions_room_id(session: Session, id: int):
     statement = select(Devices).where(Devices.roomId == id)
     positions = session.exec(statement).all()
     return [DevicePosition.model_validate(device) for device in positions]
+
+def edit_device_position(session: Session, id: int, newX: int, newY: int):
+    statement = select(Devices).where(Devices.deviceId == id)
+    device = session.exec(statement).one()
+    device.positionX = newX
+    device.positionY = newY
+
+    session.add(device)
+    session.commit()
+    session.refresh(device)
+
+    return device
 
 def create_device(session: Session, device: CreateDevice):
     new_device = Devices.model_validate(device, update={

@@ -21,7 +21,14 @@ def get_devices(session: SessionDep, user: UserPublic = Depends(require_roles("a
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving devices: {e}")
 
-
+@router.post("/create")
+def create_new_device(device: CreateDevice, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
+    try:
+        newDevice = create_device(session, device)
+        return newDevice
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+    
 @router.get("/device-positions", response_model=list[DevicePosition])
 def get_device_positions(session: SessionDep, limit: int = 100):
     try:
@@ -30,6 +37,14 @@ def get_device_positions(session: SessionDep, limit: int = 100):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving device positions: {e}")
     
+@router.put("/device-positions/edit/{dId}", response_model=DevicePosition)
+def edit_device_by_id(session: SessionDep, dId: int, newXPos: int, newYPos: int, user: UserPublic = Depends(require_roles("admin"))):
+    try:
+        updatedDevicePos = edit_device_position(session, dId, newXPos, newYPos)
+        return updatedDevicePos
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+    
 @router.get("/device-positions/{rid}", response_model=list[DevicePosition])
 def get_devices_by_room_id(session: SessionDep, rid:int):
     try:
@@ -37,11 +52,4 @@ def get_devices_by_room_id(session: SessionDep, rid:int):
         return positions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving device positions: {e}")
-    
-@router.post("/devices/create")
-def create_new_device(device: CreateDevice, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
-    try:
-        newDevice = create_device(session, device)
-        return newDevice
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
+        
