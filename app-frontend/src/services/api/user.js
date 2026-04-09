@@ -70,14 +70,31 @@ export const getAllBuildingHours = async () => {
     }
 }
 //Date time object (start and end time), deviceId
-// export const createReservation = async () => {
-//     try{
-        
-//     }
-//     catch(error){
-//         throw new error;
-//     }
-// }
+//TODO find out why this is keeps throwing an error
+export const createReservation = async ({ deviceId, startTime, endTime }) => {
+    try{
+        const res = api.post(`/reservations/create`, {
+            deviceId: Number(deviceId),
+            startTime: startTime,
+            endTime: endTime
+        },
+        {
+            headers : {
+                'Content-Type' : 'application/json',
+            },
+        });
+
+        return res;
+    }
+    catch(error){
+        console.error("Status:", error.response?.status);
+        console.error("Response data:", error.response?.data);  // <-- this will show the actual server error
+        console.error("Request payload:", { deviceId, startTime, endTime }); // <-- confirm what was sent
+        throw error.response?.data?.message
+        ? new Error(error.response.data.message)
+        : error;
+    }
+}
 export const getCurrentUser = async () => {
     try {
         const data = await api.get('/users/me')

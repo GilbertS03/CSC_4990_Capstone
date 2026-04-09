@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, NavLink, useParams, useNavigate } from "react-router-dom";
-import { getAllBuildingHours, getAllBuildings } from "../../services/api/user";
+import {
+  createReservation,
+  getAllBuildingHours,
+} from "../../services/api/user";
 import ReserveForm from "./ReserveForm";
 
 function ViewCell() {
@@ -18,9 +21,8 @@ function ViewCell() {
       try {
         setLoading(true);
 
-        // 1. Get buildings (to map ID → name)
-        const buildingsRes = await getAllBuildings();
-        const buildings = buildingsRes.data;
+        const res = await getAllBuildingHours();
+        const buildings = res.data;
 
         const buildingObj = buildings.find(
           (b) => String(b.buildingId) === String(bid),
@@ -28,19 +30,8 @@ function ViewCell() {
 
         if (!buildingObj) throw new Error("Building not found");
 
-        // 2. Get hours (uses name)
-        const hoursRes = await getAllBuildingHours();
-        const hours = hoursRes.data;
-
-        const buildingHours = hours.find(
-          (h) => h.buildingName === buildingObj.buildingName,
-        );
-
-        if (!buildingHours) throw new Error("Hours not found");
-
         setBuilding({
           ...buildingObj,
-          ...buildingHours,
         });
       } catch (err) {
         console.error(err);
@@ -53,24 +44,14 @@ function ViewCell() {
     fetchData();
   }, [bid]);
 
-  const onReserve = (selectedTime) => {
-    const [openH, openM] = building.openTime.split(":");
-    const [closeH, closeM] = building.closeTime.split(":");
-
-    const now = new Date(selectedTime);
-
-    const open = new Date();
-    open.setHours(openH, openM, 0);
-
-    const close = new Date();
-    close.setHours(closeH, closeM, 0);
-
-    if (now < open || now > close) {
-      alert("Outside building hours");
-      return;
+  const onReserve = async ({ deviceId, startTime, endTime }) => {
+    try {
+      await createReservation({ deviceId, startTime, endTime });
+      alert("Reservation Confirmed");
+      navigate(-1);
+    } catch (err) {
+      alert(err.message || "Failed to create reservation. Please try again.");
     }
-
-    console.log("Valid reservation");
   };
 
   const onCancel = () => {

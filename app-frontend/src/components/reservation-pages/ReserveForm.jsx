@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import DeviceInfo from "./ReserveFormComponents/DeviceInfo";
+import Calendar from "./ReserveFormComponents/Calendar";
+import Time from "./ReserveFormComponents/Time";
 
 function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
   const [formData, setFormData] = useState({
@@ -33,8 +36,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     );
   }
 
-  const isUnavailable =
-    device.deviceStatus === "reserved" || device.deviceStatus === "unavailable";
+  const isUnavailable = device.deviceStatus === "unavailable";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,52 +46,47 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     }));
   };
 
-  //helper: convert "HH:mm:ss" → Date today
-  const buildTime = (timeStr) => {
-    const [h, m] = timeStr.split(":");
-    const d = new Date();
-    d.setHours(h, m, 0, 0);
-    return d;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!building) {
-      alert("Building data not loaded.");
-      return;
-    }
+    if (!building) return alert("Building data not loaded.");
+    if (!formData.startTime) return alert("Please select a start time.");
+    if (!formData.reservationDate) return alert("Please select a date.");
 
-    if (!formData.startTime) {
-      alert("Please select a start time.");
-      return;
-    }
+    const buildDateTime = (dateStr, timeStr) => {
+      const [h, m] = timeStr.split(":");
+      const d = new Date(dateStr);
+      d.setHours(Number(h), Number(m), 0, 0);
+      return d;
+    };
 
-    const open = buildTime(building.openTime);
-    const close = buildTime(building.closeTime);
-
-    const start = buildTime(formData.startTime);
-
-    // duration is in hours → convert to ms
+    const start = buildDateTime(formData.reservationDate, formData.startTime);
     const durationMs = parseFloat(formData.duration) * 60 * 60 * 1000;
     const end = new Date(start.getTime() + durationMs);
 
-    // VALIDATION
+    const open = buildDateTime(formData.reservationDate, building.openTime);
+    const close = buildDateTime(formData.reservationDate, building.closeTime);
+
     if (start < open || end > close) {
       alert(
-        `Reservation must be within building hours (${building.openTime} - ${building.closeTime})`,
+        `Outside building hours (${building.openTime} - ${building.closeTime})`,
       );
       return;
     }
 
-    setLoading(true);
+    //TODO fix this function it is not allowing me to reserve anything before current time even on other days
 
+    if (start < new Date()) {
+      alert("Cannot reserve a time in the past.");
+      return;
+    }
+
+    setLoading(true);
     try {
       await onReserve({
         deviceId: device.deviceId,
-        row,
-        col,
-        ...formData,
+        startTime: start.toISOString(),
+        endTime: end.toISOString(),
       });
     } catch (err) {
       console.error("Reservation failed:", err);
@@ -110,31 +107,9 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
             </div>
 
             <div className="card-body">
-              {/* Device Info */}
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Device</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={`${device.deviceType} #${device.deviceId}`}
-                  disabled
-                />
-              </div>
-
-              {/* Status */}
-              <div
-                className={`alert ${
-                  device.deviceStatus === "available"
-                    ? "alert-success"
-                    : device.deviceStatus === "reserved"
-                      ? "alert-danger"
-                      : "alert-dark"
-                }`}
-              >
-                Status: {device.deviceStatus}
-              </div>
-
+              <DeviceInfo device={device} />
               {/* Building Hours Display */}
+
               {building && (
                 <div className="alert alert-info">
                   Hours: {building.openTime} - {building.closeTime}
@@ -163,54 +138,13 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
                       disabled
                     />
                   </div>
-                  {/* Reservation Date */}
-                  <div className="mb-3">
-                    <label className="form-label">Reservation Date</label>
-                    <input
-                      type="date"
-                      name="reservationDate"
-                      value={formData.reservationDate}
-                      onChange={handleChange}
-                      className="form-control"
-                      required
-                      min={new Date().toISOString().split("T")[0]} // today
-                      max={
-                        new Date(new Date().setMonth(new Date().getMonth() + 1))
-                          .toISOString()
-                          .split("T")[0]
-                      } // 1 month from now
-                    />
-                  </div>
-                  {/* Start Time */}
-                  <div className="mb-3">
-                    <label className="form-label">Start Time</label>
-                    <input
-                      type="time"
-                      name="startTime"
-                      value={formData.startTime}
-                      onChange={handleChange}
-                      className="form-control"
-                      min={building?.openTime}
-                      max={building?.closeTime}
-                      required
-                    />
-                  </div>
+                  <Calendar handleChange={handleChange} formData={formData} />
 
-                  {/* Duration */}
-                  <div className="mb-3">
-                    <label className="form-label">Reservation Duration</label>
-                    <select
-                      name="duration"
-                      value={formData.duration}
-                      onChange={handleChange}
-                      className="form-select"
-                    >
-                      <option value="0.5">30 Minutes</option>
-                      <option value="1">1 Hour</option>
-                      <option value="1.5">1:30 Hours</option>
-                      <option value="2">2 Hours</option>
-                    </select>
-                  </div>
+                  <Time
+                    handleChange={handleChange}
+                    formData={formData}
+                    building={building}
+                  />
 
                   {/* Buttons */}
                   <div className="d-flex justify-content-between mt-4">
