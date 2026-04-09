@@ -55,7 +55,7 @@ class TestUserServices(unittest.TestCase):
         userID= 1
         mockUser = Mock(**self.UserValues)
         mockSession = Mock()
-        mockSession.exec.return_value.first.return_value = mockUser
+        mockSession.exec.return_value.one.return_value = mockUser
         result = fetch_users_by_id(userID, mockSession)
         assert result is not None
         assert result.email == "test@gmail.com"
@@ -66,7 +66,7 @@ class TestUserServices(unittest.TestCase):
     def test_userFetchId_fetchNonExistingUserId_returnNothing(self):
         userId = 0
         mockSession = Mock()
-        mockSession.exec.return_value.first.return_value = None
+        mockSession.exec.return_value.one.return_value = None
         result = fetch_users_by_id(userId, mockSession)
         assert result is None
         mockSession.exec.assert_called()

@@ -11,6 +11,7 @@ import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
 import NotFound from "./components/default-components/NotFound";
+import UserDetails from "./components/default-components/UserDetails";
 
 //Layouts
 import PublicLayout from "./layouts/PublicLayout";
@@ -19,9 +20,15 @@ import AdminLayout from "./layouts/AdminLayout";
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
 import AdminDevices from "./components/admin-components/AdminDevices";
+import AddDeviceForm from "./components/admin-components/AddDeviceForm";
 import EditDevice from "./components/admin-components/EditDevice";
 import AdminUsers from "./components/admin-components/AdminUsers";
 import EditUser from "./components/admin-components/EditUser";
+import AdminSettings from "./components/admin-components/AdminSettings";
+import Buildings from "./components/admin-components/Buildings";
+import BuildingEditing from "./components/admin-components/BuildingEditing";
+import RoomEditing from "./components/admin-components/RoomEditing";
+import EditCell from "./components/admin-components/EditCell";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -61,6 +68,15 @@ function App() {
         />
 
         <Route
+          path="profile"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <UserDetails />
+            </RoleBasedRoute>
+          }
+        />
+
+        <Route
           path="signup"
           element={
             <RoleBasedRoute publicOnly={true}>
@@ -86,9 +102,17 @@ function App() {
       >
         <Route index element={<AdminHome />} />
         <Route path="devices" element={<AdminDevices />} />
+        <Route path="devices/newDevice" element={<AddDeviceForm />} />
         <Route path="devices/:id" element={<EditDevice />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="users/:id" element={<EditUser />} />
+        <Route path="system-settings" element={<AdminSettings />} />
+        <Route path="buildings" element={<Buildings />} />
+        {/* This will show the rooms that we can edit */}
+        <Route path="buildings/:id" element={<BuildingEditing />} />
+        <Route path="buildings/:id/:rid" element={<RoomEditing />} />
+        <Route path="buildings/:id/:rid/:row/:col" element={<EditCell />} />
+
         <Route path="forbidden" element={<Forbidden />} />
 
         {/* Admin 404 */}

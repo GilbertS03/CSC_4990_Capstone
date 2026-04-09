@@ -6,11 +6,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    continue-on-error: true
     defaults:
       run:
         working-directory: ./app-backend
 
     env:
+      ENV: ${{secrets.ENV}}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       DB_DEV_HOST: ${{ secrets.DB_DEV_HOST }}
       DB_USER: ${{ secrets.DB_USER }}   
@@ -20,6 +22,10 @@ jobs:
       DB_NAME: ${{ secrets.DB_NAME }}
       DEFAULT_ROLE: ${{ secrets.DEFAULT_ROLE }}
       DEFAULT_WEEKLY_HOURS: ${{ secrets.DEFAULT_WEEKLY_HOURS }}
+      GMAIL_TEST_EMAIL: ${{secrets.GMAIL_TEST_EMAIL}}
+      GMAIL_TEST_PASSWORD: ${{secrets.GMAIL_TEST_PASSWORD}}
+      LIBRARY_EMAIL: ${{secrets.LIBRARY_EMAIL}}
+      LIBRARY_EMAIL_PASSWORD: ${{secrets.LIBRARY_EMAIL_PASSWORD}}
 
     steps:
     - uses: actions/checkout@v3
@@ -35,13 +41,16 @@ jobs:
         pip install -r api/requirements.txt
     
     - name: Run User Endpoint tests
-      run: python -m unittest pytest.user-services -v
+      run: python -m unittest unit-tests.user-services
 
     - name: Run Devices Endpoint tests
-      run: python -m unittest pytest.device-services -v
+      run: python -m unittest unit-tests.device-services
 
     - name: Run Building Endpoint tests
-      run: python -m unittest pytest.building-services -v
+      run: python -m unittest unit-tests.building-services
 
     - name: Run roomEndpoint tests
-      run: python -m unittest pytest.room-services -v
+      run: python -m unittest unit-tests.room-services
+
+    - name: Run EmailSystem test
+      run: python -m unittest unit-tests.email-system

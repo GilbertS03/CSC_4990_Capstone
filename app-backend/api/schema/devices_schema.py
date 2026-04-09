@@ -25,6 +25,9 @@ class DevicePublic(DeviceBase):
             return v.deviceStatus
         return v
     
-class DevicePosition(DeviceBase):
+class DevicePosition(DevicePublic):
     positionX: int
     positionY: int
+
+class CreateDevice(BaseModel):
+    deviceTypeId: int

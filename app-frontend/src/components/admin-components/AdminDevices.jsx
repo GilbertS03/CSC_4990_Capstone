@@ -98,6 +98,11 @@ function AdminDevices() {
           )}
         </tbody>
       </table>
+      <div className="conatiner">
+        <NavLink to={"/admin/devices/newDevice"} end>
+          Add new device
+        </NavLink>
+      </div>
     </div>
   );
 }

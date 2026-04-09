@@ -3,13 +3,14 @@ from unittest.mock import Mock
 from api.services.devices import *
 
 class TestDeviceServices(unittest.TestCase):
+    createDeviceValue = {"deviceId": 0,"roomId": 1, "deviceTypeId": 2, "deviceStatusId":0, "positionX":2, "positionY":0}
     allDeviceValues = [{"deviceId": 0, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "available"},
                     {"deviceId": 1, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "unavailable"},
                     {"deviceId": 2, "roomId": 102, "deviceType": "StandardComputer", "deviceStatus": "Out of Service"},
                     ]
-    allPositionValues = [{"deviceId": 0, "roomId": 101,"positionX" : 10, "positionY" : 15},
-                         {"deviceId": 1, "roomId": 101,"positionX" : 10, "positionY" : 5},
-                        {"deviceId": 2, "roomId": 102,"positionX" : 5, "positionY" : 15}]
+    allPositionValues = [{"deviceId": 0, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "available", "positionX" : 10, "positionY" : 15},
+                         {"deviceId": 1, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "unavailable", "positionX" : 10, "positionY" : 5},
+                        {"deviceId": 2, "roomId": 102, "deviceType": "StandardComputer", "deviceStatus": "Out of Service", "positionX" : 5, "positionY" : 15}]
 
     def test_fetchDevices_fetchExistingDevices_returnInfo(self):
         mockSession = Mock()
@@ -45,3 +46,11 @@ class TestDeviceServices(unittest.TestCase):
         assert result == []
         assert len(result) == 0
         mockSession.exec.assert_called()
+    
+    def test_createDevice_returnNewDevice(self):
+        mockSession = Mock()
+        mockDeviceCreate = Mock(**self.createDeviceValue)
+        result = create_device(mockSession, mockDeviceCreate)
+        assert result is not None
+        mockSession.add.assert_called_once()
+        mockSession.commit.assert_called_once()        
