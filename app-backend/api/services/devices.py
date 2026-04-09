@@ -1,12 +1,19 @@
 from sqlmodel import Session, select
 
-from ..models.Devices import Devices
+from ..models.Devices import Devices, DeviceStatus
 from ..schema.devices_schema import DevicePublic, DevicePosition, CreateDevice
 
 UNAVAILABLE_STATUS = 2
 
 def fetch_all_devices(session: Session):
     statement = select(Devices)
+    devices = session.exec(statement).all()
+    return [DevicePublic.model_validate(device) for device in devices]
+
+def fetch_devices_status_by_room(session: Session, status: str, roomId: int | None = None):
+    statement = select(Devices).join(DeviceStatus).where(DeviceStatus.deviceStatus == status)
+    if roomId:
+        statement = statement.where(Devices.roomId == roomId)
     devices = session.exec(statement).all()
     return [DevicePublic.model_validate(device) for device in devices]
 

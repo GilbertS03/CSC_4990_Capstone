@@ -64,3 +64,7 @@ class TestDeviceServices(unittest.TestCase):
         assert result.positionY == 12
         mockSession.add.assert_called_once()
         mockSession.commit.assert_called_once()
+
+    #TODO: Tests
+    #statuses
+    #delete devices
