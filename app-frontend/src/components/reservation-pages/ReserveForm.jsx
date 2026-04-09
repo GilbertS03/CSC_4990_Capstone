@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import DeviceInfo from "./ReserveFormComponents/DeviceInfo";
 import Calendar from "./ReserveFormComponents/Calendar";
 import Time from "./ReserveFormComponents/Time";
+import { getCurrentUser } from "../../services/api/user";
 
 function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
   const [formData, setFormData] = useState({
@@ -11,8 +12,10 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     startTime: "",
     reservationDate: "",
   });
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -22,6 +25,21 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
       email,
     }));
   }, [user]);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await getCurrentUser();
+        setCurrentUser(res.data);
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
 
   if (!device) {
     return (
@@ -48,22 +66,23 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!building) return alert("Building data not loaded.");
     if (!formData.startTime) return alert("Please select a start time.");
     if (!formData.reservationDate) return alert("Please select a date.");
 
     const buildDateTime = (dateStr, timeStr) => {
-      const [h, m] = timeStr.split(":");
+      const [year, month, day] = dateStr.split("-").map(Number);
+      const [h, m] = timeStr.split(":").map(Number);
       const d = new Date(dateStr);
-      d.setHours(Number(h), Number(m), 0, 0);
-      return d;
+      return new Date(year, month - 1, day, h, m, 0, 0);
     };
 
     const start = buildDateTime(formData.reservationDate, formData.startTime);
     const durationMs = parseFloat(formData.duration) * 60 * 60 * 1000;
+    const durationHours = parseFloat(formData.duration);
     const end = new Date(start.getTime() + durationMs);
 
+    const today = new Date();
     const open = buildDateTime(formData.reservationDate, building.openTime);
     const close = buildDateTime(formData.reservationDate, building.closeTime);
 
@@ -73,21 +92,24 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
       );
       return;
     }
-
-    //TODO fix this function it is not allowing me to reserve anything before current time even on other days
-
-    if (start < new Date()) {
+    if (currentUser.weeklyHoursRemaining < durationHours) {
+      alert(
+        `Not enough remaining hours: ${currentUser.weeklyHoursRemaining} hours`,
+      );
+      return;
+    }
+    if (start < today) {
       alert("Cannot reserve a time in the past.");
       return;
     }
-
+    const payload = {
+      deviceId: Number(device.deviceId),
+      startTime: start.toISOString(),
+      endTime: end.toISOString(),
+    };
     setLoading(true);
     try {
-      await onReserve({
-        deviceId: device.deviceId,
-        startTime: start.toISOString(),
-        endTime: end.toISOString(),
-      });
+      await onReserve(payload);
     } catch (err) {
       console.error("Reservation failed:", err);
     } finally {
@@ -95,6 +117,8 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error Loading data, try again...</p>;
   return (
     <div className="container py-2">
       <div className="row justify-content-center">
