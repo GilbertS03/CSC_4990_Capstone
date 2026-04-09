@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from dotenv import load_dotenv
 from datetime import datetime, timezone, timedelta
 
+from ...core.config_loader import settings
 from ..utils.auth_utils import verify_pw
 from ..models.Token import TokenData
 
@@ -14,9 +15,7 @@ from ...schema.user_schema import UserPublic
 from ...db.session import SessionDep
 from ...services.users import fetch_user_by_email
 
-load_dotenv()
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+SECRET_KEY = settings.JWT_SECRET_KEY
 ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
