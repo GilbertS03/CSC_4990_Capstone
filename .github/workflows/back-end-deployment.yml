@@ -58,7 +58,7 @@ jobs:
           --parameters "{\"commands\":[
           \"aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_BACK_REGISTRY\",
           \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml pull backend\",
-          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml down backend\"
+          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml down backend\",
           \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d backend\"
           ]}") 
 
