@@ -14,9 +14,7 @@ def fetch_rooms(session: Session):
 def fetch_room_by_id(session: Session, roomId: int):
     statement = select(Rooms).where(Rooms.roomId == roomId)
     room = session.exec(statement).one_or_none()
-    if room is None:
-        return None
-    return RoomPublic.model_validate(room)
+    return RoomPublic.model_validate(room) if room else None
 
 def fetch_room_layouts(session: Session, limit: int):
     statement = select(Rooms).limit(limit)
