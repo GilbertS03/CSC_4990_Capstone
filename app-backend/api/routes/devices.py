@@ -65,3 +65,17 @@ def get_devices_by_room_id(session: SessionDep, rid:int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving device positions: {e}")
         
+@router.delete("/delete/{dId}", response_model=DevicePublic)
+def delete_device_by_id(session: SessionDep, dId: int, user: UserPublic = Depends(require_roles("admin"))):
+    try:
+        device = fetch_device_by_id(session, dId)
+        if not device:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Device to delete not found: {dId}")
+        del_confirmed = delete_device(session, dId)
+        if not del_confirmed:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting device {dId}")
+        return device
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
