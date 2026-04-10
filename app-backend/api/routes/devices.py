@@ -25,9 +25,10 @@ def get_devices(session: SessionDep, user: UserPublic = Depends(require_roles("a
 @router.get("/status", response_model=list[DevicePublic])
 def get_device_statuses_by_room_and_roomId(session: SessionDep, devStatus: str, roomId: int | None = None):
     try:
-        roomExists = fetch_room_by_id(session, roomId) is not None
-        if not roomExists:
-            raise HTTPException(status_code=status.HTTP_200_OK, detail=f"Room does not exist")
+        if roomId is not None:
+            roomExists = fetch_room_by_id(session, roomId) is not None
+            if not roomExists:
+                raise HTTPException(status_code=status.HTTP_200_OK, detail=f"Room does not exist")
         devices = fetch_devices_status_by_room(session, devStatus, roomId)
         return devices
     except Exception as e:
