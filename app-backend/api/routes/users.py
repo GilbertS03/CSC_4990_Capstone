@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 
 from ..auth.services.auth_service import require_roles, get_current_active_user
 from ..db.session import SessionDep
@@ -42,3 +42,16 @@ def update_role(session: SessionDep,user_id: int, roleId: int , userRole: UserPu
         return user 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error updating user: {e}")
+    
+@router.delete("/delete/{user_id}", response_model= UserPublic)
+def delete_user_account(session: SessionDep, user_id: int, userRole: UserPublic = Depends(require_roles("admin"))):
+    try:
+        user = fetch_users_by_id(user_id, session)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User Not Found")
+        Deleteduser = delete_user(session, user_id)
+        if not Deleteduser:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error Deleting User: {user.userId}")
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")

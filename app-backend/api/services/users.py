@@ -82,8 +82,8 @@ def update_user_role(session: Session, userId: int, roleId: int):
      return updatedRole
 
 def delete_user(session: Session, userId: int):
-    user = session.get(User, userId)
-    session.delete(user)
+    modeledUser = session.get(User, userId)
+    session.delete(modeledUser)
     session.commit()
 
     deleted = session.get(User, userId)
