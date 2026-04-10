@@ -12,21 +12,21 @@ router = APIRouter(
 )  
 
 @router.get("/all", response_model=list[UserPublic])
-def get_users(session: SessionDep, user: UserPublic = Depends(require_roles("admin")), ):
+async def get_users(session: SessionDep, user: UserPublic = Depends(require_roles("admin")), ):
     try:
         return fetch_users(session)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving users: {e}")
     
 @router.get("/me", response_model=UserPublic)
-def get_active_user(user: UserPublic = Depends(get_current_active_user)):
+async def get_active_user(user: UserPublic = Depends(get_current_active_user)):
     try:
         return user
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving user: {e}")
 
 @router.get("/{user_id}", response_model=UserPublic)
-def get_user(user_id: int, session: SessionDep, userRole: UserPublic = Depends(require_roles("admin"))):
+async def get_user(user_id: int, session: SessionDep, userRole: UserPublic = Depends(require_roles("admin"))):
     try:
         user = fetch_users_by_id(user_id, session)
         if not user:
@@ -34,3 +34,11 @@ def get_user(user_id: int, session: SessionDep, userRole: UserPublic = Depends(r
         return user
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving user: {e}")
+    
+@router.put("/update-role/{user_id}", response_model=UserPublic)
+def update_role(session: SessionDep,user_id: int, roleId: int , userRole: UserPublic = Depends(require_roles("admin"))):
+    try:
+        user = update_user_role(session, user_id, roleId)
+        return user 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating user: {e}")

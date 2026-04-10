@@ -60,12 +60,32 @@ def subtract_user_hours(session: Session, userId: int, hoursDiff: float):
     return updatedHours
 
 def add_user_hours(session: Session, userId: int, hoursDiff: float):
-    res = session.get(User, userId)
+    user = session.get(User, userId)
 
-    newHours = res.weeklyHoursRemaining + hoursDiff
+    newHours = user.weeklyHoursRemaining + hoursDiff
 
-    res.weeklyHoursRemaining = newHours
-    session.add(res)
+    user.weeklyHoursRemaining = newHours
+    session.add(user)
     session.commit()
     updatedHours = session.get(User, userId).weeklyHoursRemaining
     return updatedHours
+
+def update_user_role(session: Session, userId: int, roleId: int):
+     statement =  select(User).where(User.userId == userId )
+     user = session.exec(statement).one_or_none()
+     if user is None:
+        return None
+     user.roleId = roleId
+     session.add(user)
+     session.commit()
+     updatedRole = session.get(User, userId)
+     return updatedRole
+
+def delete_user(session: Session, userId: int):
+    user = session.get(User, userId)
+    session.delete(user)
+    session.commit()
+
+    deleted = session.get(User, userId)
+    return deleted is None
+    
