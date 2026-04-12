@@ -1,12 +1,28 @@
 from sqlmodel import Session, select
 
-from ..models.Devices import Devices
+from ..models.Devices import Devices, DeviceStatus
 from ..schema.devices_schema import DevicePublic, DevicePosition, CreateDevice
 
 UNAVAILABLE_STATUS = 2
 
 def fetch_all_devices(session: Session):
     statement = select(Devices)
+    devices = session.exec(statement).all()
+    return [DevicePublic.model_validate(device) for device in devices]
+
+def convert_to_db_model(session: Session, dId: int):
+    db_obj = session.get(Devices, dId)
+    return db_obj
+
+def fetch_device_by_id(session: Session, deviceId: int):
+    statement = select(Devices).where(Devices.deviceId == deviceId)
+    device = session.exec(statement).one_or_none()
+    return DevicePublic.model_validate(device) if device else None
+
+def fetch_devices_status_by_room(session: Session, status: str, roomId: int | None = None):
+    statement = select(Devices).join(DeviceStatus).where(DeviceStatus.deviceStatus == status)
+    if roomId:
+        statement = statement.where(Devices.roomId == roomId)
     devices = session.exec(statement).all()
     return [DevicePublic.model_validate(device) for device in devices]
 
@@ -45,3 +61,12 @@ def create_device(session: Session, device: CreateDevice):
     session.refresh(new_device)
 
     return new_device
+
+def delete_device(session: Session, deviceId: int):
+    device = convert_to_db_model(session, deviceId)
+
+    session.delete(device)
+    session.commit()
+
+    deleted = session.get(Devices, deviceId)
+    return deleted is None
