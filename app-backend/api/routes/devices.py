@@ -28,13 +28,13 @@ def get_device_statuses_by_room_and_roomId(session: SessionDep, devStatus: str, 
         if roomId is not None:
             roomExists = fetch_room_by_id(session, roomId) is not None
             if not roomExists:
-                raise HTTPException(status_code=status.HTTP_200_OK, detail=f"Room does not exist")
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Room does not exist")
         devices = fetch_devices_status_by_room(session, devStatus, roomId)
         return devices
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"{e}")
 
-@router.post("/create")
+@router.post("/create", response_model=DevicePublic, status_code=status.HTTP_201_CREATED)
 def create_new_device(device: CreateDevice, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
     try:
         newDevice = create_device(session, device)
