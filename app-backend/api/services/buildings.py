@@ -1,8 +1,9 @@
 from sqlmodel import Session, select
 from ..core.config_loader import settings
+from datetime import time
 
 from ..models.Buildings import Buildings
-from ..schema.buildings_schema import BuildingPublic, BuildingTime
+from ..schema.buildings_schema import BuildingPublic, BuildingTime, BuildingCreate
 
 def fetch_buildings(session: Session):
     statement = select(Buildings)
@@ -13,3 +14,26 @@ def fetch_building_times(session: Session, limit: int):
     statement = select(Buildings).limit(limit)
     times = session.exec(statement).all()
     return [BuildingTime.model_validate(building) for building in times]
+
+def has_existing_building(session: Session, buildingId: int):
+    statement = select(Buildings).where(
+        Buildings.buildingId == buildingId
+    )
+    res = session.exec(statement).one_or_none()
+    return res is not None
+
+def is_valid_time(openTime: time, closeTime: time):
+    if(openTime < closeTime):
+        return True
+    return False
+
+def create_building(session: Session, building: BuildingCreate):
+    newBuilding = Buildings.model_validate(building, update={
+        "openTime" : building.openTime.replace(second=0, microsecond=0),
+        "closeTime" : building.closeTime.replace(second=0, microsecond=0)
+    })
+    session.add(newBuilding)
+    session.commit()
+    session.refresh(newBuilding)
+
+    return newBuilding
