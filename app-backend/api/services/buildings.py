@@ -10,6 +10,11 @@ def fetch_buildings(session: Session):
     buildings = session.exec(statement).all()
     return [BuildingPublic.model_validate(building) for building in buildings]
 
+def fetch_building_by_id(session: Session, buildingId: int):
+    statement = select(Buildings).where(Buildings.buildingId == buildingId)
+    building = session.exec(statement).first()
+    return BuildingPublic.model_validate(building) if building else None
+
 def fetch_building_times(session: Session, limit: int):
     statement = select(Buildings).limit(limit)
     times = session.exec(statement).all()
@@ -37,3 +42,15 @@ def create_building(session: Session, building: BuildingCreate):
     session.refresh(newBuilding)
 
     return newBuilding
+
+def get_building_data(session: Session, buildingId: int):
+    buildingData = session.get(Buildings, buildingId)
+    return buildingData
+
+def delete_building_by_id(session: Session, buildingId: int):
+    res = get_building_data(session, buildingId)
+    session.delete(res)
+    session.commit()
+
+    deleted = session.get(Buildings, buildingId)
+    return deleted is None

@@ -9,22 +9,15 @@ router = APIRouter(
     prefix="/buildings",
     tags=["buildings"],
     responses={404: {"description": "Not Found"}}
-
 )
 
 @router.get("/", response_model=list[BuildingPublic])
 def get_buildings(session: SessionDep):
-    try:
         return fetch_buildings(session)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving buildings: {e}")
     
 @router.get("/all-hours", response_model=list[BuildingTime])
 def get_all_building_hours(session: SessionDep, limit: int = 100):
-    try:
         return fetch_building_times(session, limit)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"{e}")
     
 @router.post("/create")
 def create_new_building(session: SessionDep, building: BuildingCreate, user: UserPublic = Depends(require_roles("admin"))):
@@ -34,3 +27,13 @@ def create_new_building(session: SessionDep, building: BuildingCreate, user: Use
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid building open and close times")
     new_building = create_building(session, building)
     return new_building
+
+@router.delete("/delete/{buildingId}")
+def delete_building(session: SessionDep, buildingId: int, user: UserPublic = Depends(require_roles("admin"))):
+    res = fetch_building_by_id(session, buildingId)
+    if not res:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Building not found")
+    del_confirmed = delete_building_by_id(session, buildingId)
+    if not del_confirmed:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting building: {res.buildingId}")
+    return res
