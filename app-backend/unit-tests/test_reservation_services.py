@@ -5,13 +5,13 @@ from datetime import datetime
 
 class TestReservationServices(unittest.TestCase):
     allReservationValues = [
-    {"reservationId": 1,"userId": 1,"deviceId": 3,"reservationStatusId": 1,"status" : "active","startTime": 
+    {"reservationId": 1,"userId": 1,"deviceId": 3,"reservationStatusId": 1,"status" : "Pending","startTime": 
      datetime(2025, 1, 15, 9, 0, 0),"endTime": datetime(2025, 1, 15, 11, 0, 0)},
-    {"reservationId": 2,"userId": 2,"deviceId": 2,"reservationStatusId": 2,"status" : "cancelled","startTime": 
+    {"reservationId": 2,"userId": 2,"deviceId": 2,"reservationStatusId": 2,"status" : "Completed","startTime": 
      datetime(2025, 1, 18, 14, 0, 0),"endTime": datetime(2025, 1, 18, 16, 0, 0)},
-     {"reservationId": 3,"userId": 4,"deviceId": 1,"reservationStatusId": 4,"status" : "active","startTime": 
+     {"reservationId": 3,"userId": 4,"deviceId": 1,"reservationStatusId": 4,"status" : "Pending","startTime": 
      datetime(2025, 1, 17, 14, 0, 0),"endTime": datetime(2025, 1, 17, 16, 0, 0)},
-     {"reservationId": 4,"userId": 3,"deviceId": 7,"reservationStatusId": 2,"status" : "completed","startTime": 
+     {"reservationId": 4,"userId": 3,"deviceId": 7,"reservationStatusId": 2,"status" : "Completed","startTime": 
      datetime(2025, 1, 16, 14, 0, 0),"endTime": datetime(2025, 1, 16, 16, 0, 0)}]
 
     userValues = {"userId": 1, "firstName": "Gilbert", "lastName": "Salazar",
@@ -42,9 +42,9 @@ class TestReservationServices(unittest.TestCase):
         mockReservations = [Mock(**data) for data in self.allReservationValues]
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = mockReservations
-        middleResult = fetch_reservation_statuses(mockSession, userId=2, status="cancelled")
-        upperResult = fetch_reservation_statuses(mockSession, userId=3, status="completed")
-        lowerResult = fetch_reservation_statuses(mockSession, userId=1, status="active")
+        middleResult = fetch_reservation_statuses(mockSession, userId=2, status="Cancelled")
+        upperResult = fetch_reservation_statuses(mockSession, userId=3, status="Completed")
+        lowerResult = fetch_reservation_statuses(mockSession, userId=1, status="Pending")
         print(len(middleResult), len(upperResult), len(lowerResult))
         assert middleResult is not None
         assert upperResult is not None
@@ -57,7 +57,7 @@ class TestReservationServices(unittest.TestCase):
     def test_fetchReservationStatuses_fetchEmptyReservations_returnEmpty(self):
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = []
-        result = fetch_reservation_statuses(mockSession)
+        result = fetch_reservation_statuses(mockSession, status="Cancelled")
         assert result == []
         mockSession.exec.assert_called()    
     
