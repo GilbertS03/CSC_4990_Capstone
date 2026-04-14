@@ -20,8 +20,7 @@ class TestReservationServices(unittest.TestCase):
                   "email": "test@gmail.com", "weeklyHoursRemaining": 0, "role": "admin"} 
     
     reservationValues = {"reservationId": 1,"deviceId": 3,"roomId": 1,"startTime": datetime(2025, 1, 1, 10, 30, 45),"endTime": datetime(2025, 1, 1, 12, 45, 59)}
-    userValues ={"userId": 1, "weeklyHoursRemaining" : 6.5,"email": "test@gmail.com", "firstName": "Niko", "lastName": "Salazar", "role": "student"}
-
+   
     def test_fetchAllReservations_fetchExistingReservations_returnInfo(self):
         mockReservations = [Mock(**reservationData) for reservationData in self.allReservationValues]
         mockSession = Mock()
@@ -107,5 +106,4 @@ class TestReservationServices(unittest.TestCase):
         assert result is True
         mock_session.delete.assert_called_once_with(mock_reservation)
         mock_session.commit.assert_called_once()
-    
     
