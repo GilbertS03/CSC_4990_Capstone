@@ -9,7 +9,7 @@ class TestReservationServices(unittest.TestCase):
      datetime(2025, 1, 15, 9, 0, 0),"endTime": datetime(2025, 1, 15, 11, 0, 0)},
     {"reservationId": 2,"userId": 2,"deviceId": 2,"reservationStatusId": 2,"status" : "Completed","startTime": 
      datetime(2025, 1, 18, 14, 0, 0),"endTime": datetime(2025, 1, 18, 16, 0, 0)},
-     {"reservationId": 3,"userId": 4,"deviceId": 1,"reservationStatusId": 4,"status" : "Pending","startTime": 
+     {"reservationId": 3,"userId": 4,"deviceId": 1,"reservationStatusId": 4,"status" : "Cancelled","startTime": 
      datetime(2025, 1, 17, 14, 0, 0),"endTime": datetime(2025, 1, 17, 16, 0, 0)},
      {"reservationId": 4,"userId": 3,"deviceId": 7,"reservationStatusId": 2,"status" : "Completed","startTime": 
      datetime(2025, 1, 16, 14, 0, 0),"endTime": datetime(2025, 1, 16, 16, 0, 0)}]
@@ -36,21 +36,23 @@ class TestReservationServices(unittest.TestCase):
         result = fetch_all_reservations(mockSession)
         assert result == []
         mockSession.exec.assert_called()   
-##TODO still broken values alway return entire list
 
     def test_fetchReservationStatus_inBoundary_fetchExisitingReservation_returnInfo(self):
-        mockReservations = [Mock(**data) for data in self.allReservationValues]
         mockSession = Mock()
-        mockSession.exec.return_value.all.return_value = mockReservations
-        middleResult = fetch_reservation_statuses(mockSession, userId=2, status="Cancelled")
-        upperResult = fetch_reservation_statuses(mockSession, userId=3, status="Completed")
+        mockSession.exec.return_value.all.side_effect = [
+            [Mock(**self.allReservationValues[2])],
+            [Mock(**self.allReservationValues[1])],
+            [Mock(**self.allReservationValues[0])],
+    ]
+        middleResult = fetch_reservation_statuses(mockSession, userId=4, status="Cancelled")
+        upperResult = fetch_reservation_statuses(mockSession, userId=2, status="Completed")
         lowerResult = fetch_reservation_statuses(mockSession, userId=1, status="Pending")
-        print(len(middleResult), len(upperResult), len(lowerResult))
+
         assert middleResult is not None
         assert upperResult is not None
         assert lowerResult is not None
-        assert middleResult[0].reservationId == 1
-        assert upperResult[0].reservationId == 1
+        assert middleResult[0].reservationId == 3
+        assert upperResult[0].reservationId == 2
         assert lowerResult[0].reservationId == 1
         mockSession.exec.assert_called()
 
