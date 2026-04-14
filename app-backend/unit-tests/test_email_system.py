@@ -32,7 +32,8 @@ class TestDeviceServices(unittest.TestCase):
     
     def test_email_dropped_reservation(self):
         with (patch("api.services.users.fetch_users_by_id") as mock_fetch_user,
-              patch("api.services.reservations.fetch_reservation_by_id") as mock_fetch_res):
+              patch("api.services.reservations.fetch_reservation_by_id") as mock_fetch_res,
+              patch("api.emailSystem.emailsystem.send_email") as mock_send_email):
 
             fake_user = MagicMock()
             fake_user.email = os.getenv('GMAIL_TEST_EMAIL')
@@ -43,8 +44,8 @@ class TestDeviceServices(unittest.TestCase):
 
             email_dropped_reservation(userId=1, resId=1, reason="building closure", session=MagicMock())
 
-        time.sleep(5)
-        subject, body = get_latest_email()
+        mock_send_email.assert_called_once()
+        subject, body, _ = mock_send_email.call_args[0]
 
         self.assertEqual(subject, "Computer reservation has been canceled")
         self.assertIn("Tuesday, April 01, 2025", body)
