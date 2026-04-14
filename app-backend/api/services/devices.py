@@ -1,7 +1,9 @@
 from sqlmodel import Session, select
 
 from ..models.Devices import Devices, DeviceStatus
-from ..schema.devices_schema import DevicePublic, DevicePosition, CreateDevice
+from ..schema.devices_schema import DevicePublic, DevicePosition, CreateDevice, EditDevice
+from ..services.device_types import type_to_id
+from ..services.device_status import status_to_id
 
 UNAVAILABLE_STATUS = 2
 
@@ -71,6 +73,15 @@ def delete_device(session: Session, deviceId: int):
     deleted = session.get(Devices, deviceId)
     return deleted is None
 
-def edit_device(session: Session, device: DevicePublic):
+def edit_device(session: Session, device: EditDevice):
     statement = select(Devices).where(Devices.deviceId == device.deviceId)
     dbDevice = session.exec(statement).one_or_none()
+
+    dbDevice.deviceTypeId = device.deviceTypeId
+    dbDevice.deviceStatusId = device.deviceStatusId
+
+    session.add(dbDevice)
+    session.commit()
+    session.refresh(dbDevice)
+
+    return dbDevice
