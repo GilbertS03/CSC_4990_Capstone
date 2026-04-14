@@ -1,57 +1,48 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-//TODO finish this component once the endpoint is created so that we can create new devices
+import { useNavigate, NavLink } from "react-router-dom";
+import { createDevice } from "../../services/api/admin";
+
 function AddDeviceForm() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    deviceType: "",
-    deviceStatus: "available",
-  });
-
+  const [deviceType, setDeviceType] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setDeviceType(e.target.value);
+    console.log(deviceType);
   };
 
   const onCancel = () => {
     navigate(-1);
   };
 
-  //TODO finish this once I we get the backend endpoints I need up which are /device/create
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Yippee!!!");
-    // setLoading(true);
-
-    // try {
-    //   await onCreate({
-    //     ...formData,
-    //     roomId: 0,
-    //     positionX: -1,
-    //     positionY: -1,
-    //   });
-
-    //   // optional: reset form after creation
-    //   setFormData({
-    //     deviceType: "",
-    //     deviceStatus: "available",
-    //   });
-    // } catch (err) {
-    //   console.error("Error creating device:", err);
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    try {
+      const res = await createDevice({
+        deviceTypeId: deviceType,
+      });
+      console.log(res.data);
+    } catch (err) {
+      console.error("Error creating device:", err);
+    } finally {
+      setLoading(false);
+      if (!error) {
+        navigate(-1);
+      } else {
+        setError(false);
+        return;
+      }
+    }
   };
 
   return (
     <div className="container py-5">
+      <p>
+        <NavLink to={"/admin/devices"}>&larr; Go Back</NavLink>
+      </p>
       <div className="row justify-content-center">
         <div className="col-lg-6 col-md-8">
           <div className="card shadow-sm">
@@ -64,31 +55,14 @@ function AddDeviceForm() {
                 {/* Device Type */}
                 <div className="mb-3">
                   <label className="form-label fw-semibold">Device Type</label>
-                  <input
-                    type="text"
-                    name="deviceType"
-                    value={formData.deviceType}
-                    onChange={handleChange}
-                    className="form-control"
-                    placeholder="Gaming PC, Console, VR Station..."
-                    required
-                  />
-                </div>
-
-                {/* Device Status */}
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">
-                    Initial Status
-                  </label>
                   <select
-                    name="deviceStatus"
-                    value={formData.deviceStatus}
+                    value={deviceType}
                     onChange={handleChange}
                     className="form-select"
+                    required
                   >
-                    <option value="available">Available</option>
-                    <option value="reserved">Reserved</option>
-                    <option value="unavailable">Unavailable</option>
+                    <option value={1}>Gaming PC</option>
+                    <option value={2}>Desktop PC</option>
                   </select>
                 </div>
 
