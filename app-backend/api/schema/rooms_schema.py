@@ -13,3 +13,9 @@ class RoomLayout(RoomBase):
     layoutHeight: int
     layoutWidth: int
     roomId: int
+
+class CreateRoom(BaseModel):
+    roomName: str
+    buildingId: int
+    layoutWidth: int
+    layoutHeight: int

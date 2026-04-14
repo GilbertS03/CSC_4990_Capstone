@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import users, devices, buildings, rooms, reservations
+from .routes import users, devices, buildings, rooms, reservations, device_types
 from .auth.routes import auth_router
 
 
@@ -25,6 +25,7 @@ app.include_router(buildings.router)
 app.include_router(rooms.router)
 app.include_router(auth_router.router)
 app.include_router(reservations.router)
+app.include_router(device_types.router)
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(req: Request, e: HTTPException):
