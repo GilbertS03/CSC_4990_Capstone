@@ -37,13 +37,14 @@ class TestReservationServices(unittest.TestCase):
         assert result == []
         mockSession.exec.assert_called()   
 ##TODO still broken values alway return entire list
+
     def test_fetchReservationStatus_inBoundary_fetchExisitingReservation_returnInfo(self):
         mockReservations = [Mock(**data) for data in self.allReservationValues]
         mockSession = Mock()
         mockSession.exec.return_value.all.return_value = mockReservations
-        middleResult = fetch_reservation_statuses(mockSession, "cancelled", 2)
-        upperResult = fetch_reservation_statuses(mockSession, "completed",3)
-        lowerResult = fetch_reservation_statuses(mockSession, "active",1)
+        middleResult = fetch_reservation_statuses(mockSession, userId=2, status="cancelled")
+        upperResult = fetch_reservation_statuses(mockSession, userId=3, status="completed")
+        lowerResult = fetch_reservation_statuses(mockSession, userId=1, status="active")
         print(len(middleResult), len(upperResult), len(lowerResult))
         assert middleResult is not None
         assert upperResult is not None
