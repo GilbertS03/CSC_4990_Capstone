@@ -69,8 +69,7 @@ export const getAllBuildingHours = async () => {
         throw error;
     }
 }
-//Date time object (start and end time), deviceId
-//TODO find out why this is keeps throwing an error
+
 export const createReservation = async (data) => {
     try{
         const { deviceId, startTime, endTime } = data;
