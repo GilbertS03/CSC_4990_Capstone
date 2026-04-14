@@ -32,7 +32,17 @@ def get_room_layout_by_roomId(roomId: int, session: SessionDep):
 def create_new_room(session: SessionDep, newRoom: CreateRoom, user: UserPublic = Depends(require_roles("admin"))):
     room = create_room(session, newRoom)
     return room
-    
+
+@router.delete("/delete-room/{roomId}", response_model=RoomPublic)
+def delete_a_room(session: SessionDep, roomId: int, user: UserPublic = Depends(require_roles("admin"))):
+    room = fetch_room_by_id(session, roomId)
+    if not room:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Room to delete not found: {roomId}")
+    del_confirmed = delete_room(session, roomId)
+    if not del_confirmed:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting room {roomId}")
+    return room
+
 @router.get("/{roomId}/available-device-count", response_model=int)
 def get_available_device_count_by_roomId(roomId: int, session: SessionDep):
     return fetch_available_devices_by_room(roomId, session)

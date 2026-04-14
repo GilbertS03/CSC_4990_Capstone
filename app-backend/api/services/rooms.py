@@ -11,6 +11,10 @@ def fetch_rooms(session: Session):
     rooms = session.exec(statement).all()
     return [RoomPublic.model_validate(room) for room in rooms]
 
+def convert_to_db_model(session: Session, rId: int):
+    db_obj = session.get(Devices, rId)
+    return db_obj
+
 def fetch_room_by_id(session: Session, roomId: int):
     statement = select(Rooms).where(Rooms.roomId == roomId)
     room = session.exec(statement).one_or_none()
@@ -53,3 +57,12 @@ def create_room(session: Session, room: CreateRoom):
     session.refresh(new_room)
 
     return new_room
+
+def delete_room(session: Session, roomId: int):
+    room = convert_to_db_model(session, roomId)
+
+    session.delete(room)
+    session.commit()
+
+    deleted = session.get(Rooms, roomId)
+    return deleted is None
