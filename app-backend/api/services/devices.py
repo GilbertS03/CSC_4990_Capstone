@@ -70,3 +70,7 @@ def delete_device(session: Session, deviceId: int):
 
     deleted = session.get(Devices, deviceId)
     return deleted is None
+
+def edit_device(session: Session, device: DevicePublic):
+    statement = select(Devices).where(Devices.deviceId == device.deviceId)
+    dbDevice = session.exec(statement).one_or_none()

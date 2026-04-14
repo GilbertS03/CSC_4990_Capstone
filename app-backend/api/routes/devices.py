@@ -35,7 +35,15 @@ def create_new_device(device: CreateDevice, session: SessionDep, user: UserPubli
     newDevice = create_device(session, device)
     return newDevice
 
+
+@router.put("/edit/{deviceId}", response_model=DevicePublic)
+def edit_existing_device(session: SessionDep, deviceId: int, device: DevicePublic):
+    if(device.deviceId != deviceId):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Edited device does not match route: {deviceId}")
     
+    return
+    
+
 @router.get("/device-positions", response_model=list[DevicePosition])
 def get_device_positions(session: SessionDep, limit: int = 100):
     positions = fetch_device_positions(session, limit)
