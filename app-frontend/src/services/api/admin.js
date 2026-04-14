@@ -61,7 +61,7 @@ export const moveDevice = async (id, data) => {
 
 export const deleteDevice = async(id) => {
     try{
-        const res = api.delete(`/devices/delete${id}`);
+        const res = api.delete(`/devices/delete/${id}`);
         return res;
     }
     catch(error){
@@ -155,7 +155,7 @@ export const deleteUser = async(id) => {
     }
 };
 
-// Reservation
+// Reservation Routes
 export const deleteReservation = async (id) => {
     try{
         const res = await api.delete(`/reservations/delete/${id}`);
