@@ -40,17 +40,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r api/requirements.txt
     
-    - name: Run User Endpoint tests
-      run: python -m unittest unit-tests.user-services
-
-    - name: Run Devices Endpoint tests
-      run: python -m unittest unit-tests.device-services
-
-    - name: Run Building Endpoint tests
-      run: python -m unittest unit-tests.building-services
-
-    - name: Run roomEndpoint tests
-      run: python -m unittest unit-tests.room-services
-
-    - name: Run EmailSystem test
-      run: python -m unittest unit-tests.email-system
+    - name: Run All Tests
+      run: python -m unittest discover -s unit-tests -p "test_*.py" -v
