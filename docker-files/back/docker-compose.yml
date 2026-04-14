@@ -6,7 +6,7 @@ services:
     environment:
       - ENV=production
     container_name: myapp-backend
-    restart: always
+    restart: unless-stopped
     ports:
       - "8000:8000"
       
