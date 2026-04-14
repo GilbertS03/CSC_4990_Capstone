@@ -4,7 +4,7 @@ from ..core.config_loader import settings
 from ..models.Rooms import Rooms
 from ..models.Buildings import Buildings
 from ..models.Devices import Devices
-from ..schema.rooms_schema import RoomPublic, RoomLayout
+from ..schema.rooms_schema import RoomPublic, RoomLayout, CreateRoom
 
 def fetch_rooms(session: Session):
     statement = select(Rooms)
@@ -44,3 +44,12 @@ def fetch_available_devices_by_room(roomId: int, session: Session):
     )
     count = session.exec(statement).first()
     return count
+
+def create_room(session: Session, room: CreateRoom):
+    new_room = Rooms.model_validate(room)
+
+    session.add(new_room)
+    session.commit()
+    session.refresh(new_room)
+
+    return new_room

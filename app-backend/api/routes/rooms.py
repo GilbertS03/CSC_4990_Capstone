@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status, Depends
 
+from ..auth.services.auth_service import require_roles
 from ..db.session import SessionDep
 from..services.rooms import *
+from ..services.users import UserPublic
 
 router = APIRouter(
     prefix="/rooms",
@@ -26,11 +28,15 @@ def get_room_layout_by_roomId(roomId: int, session: SessionDep):
     return roomLayout
 
     
-@router.get("/{buildingId}", response_model=list[RoomPublic])
-def get_rooms_by_buildingId(buildingId: int, session: SessionDep):
-    return fetch_rooms_by_building(buildingId, session)
-
+@router.post("/new_room", response_model=RoomPublic, status_code=status.HTTP_201_CREATED)
+def create_new_room(session: SessionDep, newRoom: CreateRoom, user: UserPublic = Depends(require_roles("admin"))):
+    room = create_room(session, newRoom)
+    return room
     
 @router.get("/{roomId}/available-device-count", response_model=int)
 def get_available_device_count_by_roomId(roomId: int, session: SessionDep):
     return fetch_available_devices_by_room(roomId, session)
+
+@router.get("/{buildingId}", response_model=list[RoomPublic])
+def get_rooms_by_buildingId(buildingId: int, session: SessionDep):
+    return fetch_rooms_by_building(buildingId, session)
