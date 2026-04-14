@@ -26,7 +26,7 @@ def get_reservation_statuses(
     resStatus: str,
     userId: int | None = None
 ):
-    return fetch_reservation_statuses(session, userId, resStatus)
+    return fetch_reservation_statuses(session, status=resStatus, userId=userId)
 
 
 #TODO: add logic to ensure reservation stays within building hours
