@@ -97,7 +97,7 @@ class TestReservationServices(unittest.TestCase):
 
     def test_deleteReservation_existingReservation_returnTrue(self):
         mock_session = Mock()
-        mock_reservation = Mock(**{"reservationId": 1})
+        mock_reservation = Mock(**self.reservationValues)
     
         with patch("api.services.reservations.convert_res_to_db_model", return_value=mock_reservation):
             mock_session.get.return_value = None
@@ -106,4 +106,15 @@ class TestReservationServices(unittest.TestCase):
         assert result is True
         mock_session.delete.assert_called_once_with(mock_reservation)
         mock_session.commit.assert_called_once()
-    
+
+    def test_deleteReservation_deleteFailed_returnFalse(self):
+        mock_session = Mock()
+        mock_reservation = Mock(**self.reservationValues)
+
+        with patch("api.services.reservations.convert_res_to_db_model", return_value=mock_reservation):
+            mock_session.get.return_value = mock_reservation
+            result = delete_reservation(mock_session, resId=1)
+
+        assert result is False
+        mock_session.delete.assert_called_once_with(mock_reservation)
+        mock_session.commit.assert_called_once()

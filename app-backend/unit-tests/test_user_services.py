@@ -122,4 +122,3 @@ class TestUserServices(unittest.TestCase):
         assert result is None
         mockSession.add.assert_not_called()
         mockSession.commit.assert_not_called()
-
