@@ -24,7 +24,7 @@ jobs:
       - name: Ping EC2 via SSM
         run: |
           aws ssm send-command \
-            --instance-ids "${{ secrets.EC2_FRONT_END_HOST }}" \
+            --instance-ids "${{ secrets.FRONT_EC2_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --parameters commands=["echo ok"] \
             --output text

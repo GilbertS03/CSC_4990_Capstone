@@ -5,8 +5,10 @@ import { Routes, Route, Router, BrowserRouter } from "react-router-dom";
 import Home from "./components/home-components/Home";
 import Login from "./components/login-and-signup-components/Login";
 import About from "./components/home-components/About";
-import Reserve from "./components/reservation-pages/Reserve";
-import BuildingView from "./components/reservation-pages/BuildingView";
+import BuildingsView from "./components/reservation-pages/BuildingsView";
+import BuildingRooms from "./components/reservation-pages/Room";
+import SpecificRoom from "./components/reservation-pages/SpecificRoom";
+import ViewCell from "./components/reservation-pages/ViewCell";
 import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
@@ -42,22 +44,37 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route
-          path="reserve"
+          path="buildings"
           element={
             <RoleBasedRoute publicOnly={false}>
-              <Reserve />
+              <BuildingsView />
             </RoleBasedRoute>
           }
         />
         <Route
-          path="reserve/:buildingId"
+          path="buildings/:bid"
           element={
             <RoleBasedRoute publicOnly={false}>
-              <BuildingView />'
+              <BuildingRooms />
             </RoleBasedRoute>
           }
         />
-
+        <Route
+          path="buildings/:bid/:rid"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <SpecificRoom />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="buildings/:bid/:rid/:row/:col"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <ViewCell />
+            </RoleBasedRoute>
+          }
+        />
         <Route
           path="login"
           element={

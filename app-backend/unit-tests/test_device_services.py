@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from api.services.devices import *
 
 class TestDeviceServices(unittest.TestCase):
-    createDeviceValue = {"deviceId": 0,"roomId": 1, "deviceTypeId": 2, "deviceStatusId":0, "positionX":2, "positionY":0}
+    singleDeviceValue = {"deviceId": 0,"roomId": 1, "deviceTypeId": 2, "deviceStatusId":0, "positionX":2, "positionY":10}
     allDeviceValues = [{"deviceId": 0, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "available"},
                     {"deviceId": 1, "roomId": 101, "deviceType": "GamingComputer", "deviceStatus": "unavailable"},
                     {"deviceId": 2, "roomId": 102, "deviceType": "StandardComputer", "deviceStatus": "Out of Service"},
@@ -49,8 +49,22 @@ class TestDeviceServices(unittest.TestCase):
     
     def test_createDevice_returnNewDevice(self):
         mockSession = Mock()
-        mockDeviceCreate = Mock(**self.createDeviceValue)
+        mockDeviceCreate = Mock(**self.singleDeviceValue)
         result = create_device(mockSession, mockDeviceCreate)
         assert result is not None
         mockSession.add.assert_called_once()
-        mockSession.commit.assert_called_once()        
+        mockSession.commit.assert_called_once()
+
+    def test_editDevicePosition_existingDevice_returnSuccess(self):
+        mockSession = Mock()
+        mockDevice = Mock(**self.singleDeviceValue)
+        result = edit_device_position(mockSession, mockDevice.id, 12, 12)
+        assert result is not None
+        assert result.positionX == 12
+        assert result.positionY == 12
+        mockSession.add.assert_called_once()
+        mockSession.commit.assert_called_once()
+
+    #TODO: Tests
+    #statuses
+    #delete devices

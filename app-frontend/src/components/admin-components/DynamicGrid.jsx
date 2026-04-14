@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "../../App.css";
 import { getDeviceLocations } from "../../services/api/admin";
 
-function DynamicGrid({ height, width, rid, onCellClick }) {
+function DynamicGrid({ height, width, rid, building, onCellClick }) {
   const rows = height;
   const columns = width;
   const [deviceObjs, setDeviceObjs] = useState([]);
@@ -40,8 +40,15 @@ function DynamicGrid({ height, width, rid, onCellClick }) {
   if (error) return <p>Error loading data, try again</p>;
   return (
     <div className="container">
+      {building ? (
+        <p>
+          Open: {building.openTime}, Close: {building.closeTime}
+        </p>
+      ) : (
+        <p>No Available times</p>
+      )}
       <div
-        className="container justify-content-center grid mt-5"
+        className="container justify-content-center grid mt-2"
         style={{ "--rows": rows, "--cols": columns }}
       >
         {[...Array(height)].map((_, row) =>
