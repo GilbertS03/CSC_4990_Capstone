@@ -135,9 +135,19 @@ export const getUserById = async(id) => {
     }
 };
 
-export const updateUserRole = async(id) => {
+export const updateUserRole = async(id, data) => {
+    const {roleId} = data;
     try{
-        const res = await api.put(`/users/update-role/${id}`);
+        const res = await api.put(`/users/update-role/${id}`,
+            {
+                roleId: Number(roleId),
+            },
+            {
+                headers: {
+                    'Content-Type' : 'application/json',
+                }
+            }
+        );
         return res;
     }
     catch(error){

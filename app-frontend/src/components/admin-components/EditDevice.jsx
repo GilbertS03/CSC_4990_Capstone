@@ -1,8 +1,9 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { deleteDevice } from "../../services/api/admin";
 import { useState } from "react";
 //todo enforce validation on fields
 //TODO fix the form now because it asks for a room id and make sure the user change it here, this is what the grid is for
+//TODO come back and fix this because there is no device/edit for all features, just device positions which is not the purpose of this form
 function EditDevice() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,6 +36,9 @@ function EditDevice() {
 
   return (
     <div className="container">
+      <p>
+        <NavLink to={"/admin/devices"}>&larr;Go Back</NavLink>
+      </p>
       <h2>Device ID: {id} </h2>
       <form>
         <div className="form-group mb-3">

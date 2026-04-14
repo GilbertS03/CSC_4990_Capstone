@@ -1,13 +1,58 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { deleteUser, getUserById } from "../../services/api/admin";
+import { useEffect, useState } from "react";
 //todo enforce validation on fields
 function EditUser() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
   const onSubmit = (e) => {
     e.preventDefault();
     return;
   };
+
+  useEffect(() => {
+    const fetchUserById = async (id) => {
+      try {
+        const res = await getUserById(id);
+        console.log(res);
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserById(id);
+  }, [id]);
+
+  // TODO check why handleDelete is not updating the table.
+  const handleDelete = async () => {
+    if (confirm(`Delete user ${id}?`)) {
+      try {
+        const res = await deleteUser(id);
+        console.log(res);
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      } finally {
+        if (!error) {
+          navigate(-1);
+        } else {
+          console.log("Error, please try again");
+        }
+        setError(false);
+      }
+    } else {
+      return;
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error, try again</p>;
   // TODO finish user editing
-  // TODO talk about if we want to be able to edit their email, firstname, and lastname
-  const { id } = useParams();
   return (
     <div className="container">
       <h2>User ID: {id} </h2>
@@ -15,13 +60,9 @@ function EditUser() {
         <div className="form-group mb-3">
           <label>Role:</label>
           <select id="userRole" className="form-control">
-            <option>Student</option>
-            <option>Esports Player</option>
-            <option>Esports Coach</option>
-            <option>Student Organization</option>
-            <option>Faculty</option>
-            <option>Library Staff</option>
-            <option>Admin</option>
+            <option value={3}>Student</option>
+            <option value={2}>Faculty</option>
+            <option value={1}>Admin</option>
           </select>
         </div>
         <div className="form-group mb-3">
@@ -37,6 +78,11 @@ function EditUser() {
         </div>
         <button className="btn btn-primary">Submit</button>
       </form>
+      <div className="container mt-5 text-center">
+        <button onClick={handleDelete} className="btn btn-danger">
+          Delete user {id}
+        </button>
+      </div>
     </div>
   );
 }
