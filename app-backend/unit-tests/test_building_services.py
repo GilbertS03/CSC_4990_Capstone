@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from api.services.buildings import *
 
 class TestBuildingServices(unittest.TestCase):
@@ -56,3 +56,15 @@ class TestBuildingServices(unittest.TestCase):
             create_building(mockSession, newBuilding)
         mockSession.add.assert_not_called()
         mockSession.commit.assert_not_called()
+
+    def test_deleteBuilding_deleteSuccessful_returnTrue(self):
+        mockSession = Mock()
+        mockBuilding = Mock(**self.BuildingValues)
+
+        with patch("api.services.buildings.get_building_data", return_value=mockBuilding):
+            mockSession.get.return_value = None  # simulates it's gone after delete
+            result = delete_building_by_id(mockSession, buildingId=1)
+
+        assert result is True
+        mockSession.delete.assert_called_once_with(mockBuilding)
+        mockSession.commit.assert_called_once()
