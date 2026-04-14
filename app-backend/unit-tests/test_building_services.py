@@ -8,8 +8,8 @@ class TestBuildingServices(unittest.TestCase):
     BuildingValues = {"buildingName": "Stephens", "buildingId": 1}
 
     allBuildingTimeValues = [
-    {"buildingId": 1, "buildingName": "Engineering Hall", "openTime": "08:00", "closeTime": "20:00"},
-    {"buildingId": 2, "buildingName": "Science Center", "openTime": "09:00", "closeTime": "18:00"}
+    {"buildingId": 1, "buildingName": "Engineering Hall", "openTime": "08:00:00", "closeTime": "20:00:00"},
+    {"buildingId": 2, "buildingName": "Science Center", "openTime": "09:00:00", "closeTime": "18:00:00"}
 ]
     def test_fetchBuildings_fetchExistingBuildings_returnInfo(self):
         mockSession = Mock()
@@ -42,3 +42,17 @@ class TestBuildingServices(unittest.TestCase):
         result = fetch_building_times(mockSession, limit=10)
         assert result == []
         mockSession.exec.assert_called()
+
+    def test_createBuilding_createSuccessful_returnNewBuilding(self):
+        newBuilding = BuildingCreate(buildingId="6000", buildingName="Institute", openTime="09:00:00", closeTime="20:00:00")
+        mockSession = Mock()
+        result = create_building(mockSession, newBuilding)
+        assert result is not None
+
+    def test_createBuilding_createEmptyBuildingInfo_returnError(self):
+        mockSession = Mock()
+        with self.assertRaises(Exception):
+            newBuilding = BuildingCreate()
+            create_building(mockSession, newBuilding)
+        mockSession.add.assert_not_called()
+        mockSession.commit.assert_not_called()
