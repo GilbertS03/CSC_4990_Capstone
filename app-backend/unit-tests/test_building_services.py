@@ -44,10 +44,13 @@ class TestBuildingServices(unittest.TestCase):
         mockSession.exec.assert_called()
 
     def test_createBuilding_createSuccessful_returnNewBuilding(self):
-        newBuilding = BuildingCreate(buildingId="6000", buildingName="Institute", openTime="09:00:00", closeTime="20:00:00")
+        newBuilding = BuildingCreate(buildingId=6000, buildingName="Institute", openTime="09:00:00", closeTime="20:00:00")
         mockSession = Mock()
         result = create_building(mockSession, newBuilding)
         assert result is not None
+        assert result.buildingId == 6000
+        mockSession.add.assert_called_once()
+        mockSession.commit.assert_called_once()
 
     def test_createBuilding_createEmptyBuildingInfo_returnError(self):
         mockSession = Mock()
