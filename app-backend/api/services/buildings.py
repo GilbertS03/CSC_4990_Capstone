@@ -24,8 +24,8 @@ def has_existing_building(session: Session, buildingId: int):
     statement = select(Buildings).where(
         Buildings.buildingId == buildingId
     )
-    res = session.exec(statement).one_or_none()
-    return res is not None
+    building = session.exec(statement).one_or_none()
+    return building is not None
 
 def is_valid_time(openTime: time, closeTime: time):
     if(openTime < closeTime):
@@ -48,8 +48,8 @@ def get_building_data(session: Session, buildingId: int):
     return buildingData
 
 def delete_building_by_id(session: Session, buildingId: int):
-    res = get_building_data(session, buildingId)
-    session.delete(res)
+    building = get_building_data(session, buildingId)
+    session.delete(building)
     session.commit()
 
     deleted = session.get(Buildings, buildingId)
