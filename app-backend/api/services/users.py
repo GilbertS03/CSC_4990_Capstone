@@ -48,13 +48,18 @@ def fetch_user_by_email(session: Session, email: str):
     user = session.exec(statement).first()
     return user
 
+def convert_user_to_db_model(session: Session, userId: int):
+    db_data = session.get(User, userId)
+    return db_data
+
+
 def subtract_user_hours(session: Session, userId: int, hoursDiff: float):
-    res = session.get(User, userId)
+    user = session.get(User, userId)
 
-    newHours = res.weeklyHoursRemaining - hoursDiff
+    newHours = user.weeklyHoursRemaining - hoursDiff
 
-    res.weeklyHoursRemaining = newHours
-    session.add(res)
+    user.weeklyHoursRemaining = newHours
+    session.add(user)
     session.commit()
     updatedHours = session.get(User, userId).weeklyHoursRemaining
     return updatedHours
@@ -70,6 +75,7 @@ def add_user_hours(session: Session, userId: int, hoursDiff: float):
     updatedHours = session.get(User, userId).weeklyHoursRemaining
     return updatedHours
 
+
 def update_user_role(session: Session, userId: int, roleId: int):
      statement =  select(User).where(User.userId == userId )
      user = session.exec(statement).one_or_none()
@@ -82,7 +88,7 @@ def update_user_role(session: Session, userId: int, roleId: int):
      return updatedRole
 
 def delete_user(session: Session, userId: int):
-    modeledUser = session.get(User, userId)
+    modeledUser = convert_user_to_db_model(session, userId)
     session.delete(modeledUser)
     session.commit()
 
