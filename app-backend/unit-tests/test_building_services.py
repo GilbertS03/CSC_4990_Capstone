@@ -62,9 +62,21 @@ class TestBuildingServices(unittest.TestCase):
         mockBuilding = Mock(**self.BuildingValues)
 
         with patch("api.services.buildings.get_building_data", return_value=mockBuilding):
-            mockSession.get.return_value = None  # simulates it's gone after delete
+            mockSession.get.return_value = None
             result = delete_building_by_id(mockSession, buildingId=1)
 
         assert result is True
+        mockSession.delete.assert_called_once_with(mockBuilding)
+        mockSession.commit.assert_called_once()
+
+    def test_deleteBuilding_buildingNotFound_returnFalse(self):
+        mockSession = Mock()
+        mockBuilding = Mock(**self.BuildingValues)
+
+        with patch("api.services.buildings.get_building_data", return_value=mockBuilding):
+            mockSession.get.return_value = mockBuilding
+            result = delete_building_by_id(mockSession, buildingId=1)
+
+        assert result is False
         mockSession.delete.assert_called_once_with(mockBuilding)
         mockSession.commit.assert_called_once()
