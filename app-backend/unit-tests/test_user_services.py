@@ -104,3 +104,22 @@ class TestUserServices(unittest.TestCase):
         result = fetch_user_by_email( mockSession,userEmail)
         assert result is None
         mockSession.exec.assert_called()
+    
+    def test_updateUserRole_UpdateExistingUser_returnInfo(self):
+        mockUser = Mock(**self.UserValues)
+        mockSession = Mock()
+        mockSession.exec.return_value.one_or_none.return_value = mockUser
+        result = update_user_role(mockSession, 1, 3)
+        assert result is not None
+        result.roleId == 3
+        mockSession.get.assert_called()
+        mockSession.commit.assert_called()
+
+    def test_updateUserRole_UpdateNonExistingUser_returnNothing(self):
+        mockSession = Mock()
+        mockSession.exec.return_value.one_or_none.return_value = None
+        result = update_user_role(mockSession, 1, 1)
+        assert result is None
+        mockSession.add.assert_not_called()
+        mockSession.commit.assert_not_called()
+

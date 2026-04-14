@@ -27,3 +27,22 @@ def get_user(user_id: int, session: SessionDep, userRole: UserPublic = Depends(r
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
+
+    
+@router.put("/update-role/{user_id}", response_model=UserPublic)
+def update_role(session: SessionDep,user_id: int, roleId: int , userRole: UserPublic = Depends(require_roles("admin"))):
+    user = update_user_role(session, user_id, roleId)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User Not Found")
+    return user 
+
+    
+@router.delete("/delete/{user_id}", response_model= UserPublic)
+def delete_user_account(session: SessionDep, user_id: int, userRole: UserPublic = Depends(require_roles("admin"))):
+    user = fetch_users_by_id(user_id, session)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User Not Found")
+    deletedUser = delete_user(session, user_id)
+    if not deletedUser:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error Deleting User: {user.userId}")
+    return user
