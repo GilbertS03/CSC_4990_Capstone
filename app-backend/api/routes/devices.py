@@ -71,5 +71,5 @@ def edit_existing_device(session: SessionDep, deviceId: int, device: EditDevice)
     if(device.deviceId != deviceId):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Edited device does not match route: {deviceId}")
     updatedDevice = edit_device(session, device)
-    return
+    return updatedDevice
     
