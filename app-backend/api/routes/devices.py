@@ -53,6 +53,8 @@ def edit_device_position_by_id(
     ):
     if((roomId is not None) and (fetch_room_by_id(session, roomId) is None)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"RoomId does not exist: {roomId}")
+    if(device_in_position(session, roomId, newXPos, newYPos)):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"There is already a device in this position")
     updatedDevicePos = edit_device_position(session, dId, newXPos, newYPos, roomId)
     return updatedDevicePos
 

@@ -54,6 +54,17 @@ def edit_device_position(session: Session, id: int, newX: int, newY: int, roomId
 
     return device
 
+def device_in_position(session: Session, roomId: int, posX: int, posY: int):
+    statement = select(Devices).where(
+        Devices.roomId == roomId,
+        Devices.positionX == posX,
+        Devices.positionY == posY
+    )
+
+    hasDevice = session.exec(statement).one()
+
+    return hasDevice is not None
+
 def create_device(session: Session, device: CreateDevice):
     new_device = Devices.model_validate(device, update={
         "roomId": 0,
