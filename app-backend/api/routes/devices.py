@@ -35,7 +35,7 @@ def create_new_device(device: CreateDevice, session: SessionDep, user: UserPubli
     newDevice = create_device(session, device)
     return newDevice
 
-    
+
 @router.get("/device-positions", response_model=list[DevicePosition])
 def get_device_positions(session: SessionDep, limit: int = 100):
     positions = fetch_device_positions(session, limit)
@@ -43,8 +43,19 @@ def get_device_positions(session: SessionDep, limit: int = 100):
 
     
 @router.put("/device-positions/edit/{dId}", response_model=DevicePosition)
-def edit_device_by_id(session: SessionDep, dId: int, newXPos: int, newYPos: int, user: UserPublic = Depends(require_roles("admin"))):
-    updatedDevicePos = edit_device_position(session, dId, newXPos, newYPos)
+def edit_device_position_by_id(
+        session: SessionDep,
+        dId: int,
+        newXPos: int,
+        newYPos: int,
+        roomId: int | None=None,
+        user: UserPublic = Depends(require_roles("admin"))
+    ):
+    if((roomId is not None) and (fetch_room_by_id(session, roomId) is None)):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"RoomId does not exist: {roomId}")
+    if(device_in_position(session, roomId, newXPos, newYPos)):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"There is already a device in this position")
+    updatedDevicePos = edit_device_position(session, dId, newXPos, newYPos, roomId)
     return updatedDevicePos
 
     
@@ -65,3 +76,11 @@ def delete_device_by_id(session: SessionDep, dId: int, user: UserPublic = Depend
     if not del_confirmed:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting device {dId}")
     return device
+
+@router.put("/{deviceId}/edit", response_model=DevicePublic)
+def edit_existing_device(session: SessionDep, deviceId: int, device: EditDevice):
+    if(device.deviceId != deviceId):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Edited device does not match route: {deviceId}")
+    updatedDevice = edit_device(session, device)
+    return updatedDevice
+    
