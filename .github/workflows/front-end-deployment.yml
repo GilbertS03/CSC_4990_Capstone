@@ -1,7 +1,7 @@
 name: Front-end Deployment
 on:
   push:
-    branches: [disabled]
+    branches: [production]
   workflow_dispatch:
 permissions:
   id-token: write
