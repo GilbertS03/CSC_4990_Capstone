@@ -43,8 +43,17 @@ def get_device_positions(session: SessionDep, limit: int = 100):
 
     
 @router.put("/device-positions/edit/{dId}", response_model=DevicePosition)
-def edit_device_by_id(session: SessionDep, dId: int, newXPos: int, newYPos: int, user: UserPublic = Depends(require_roles("admin"))):
-    updatedDevicePos = edit_device_position(session, dId, newXPos, newYPos)
+def edit_device_position_by_id(
+        session: SessionDep,
+        dId: int,
+        newXPos: int,
+        newYPos: int,
+        roomId: int | None=None,
+        user: UserPublic = Depends(require_roles("admin"))
+    ):
+    if((roomId is not None) and (fetch_room_by_id(session, roomId) is None)):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"RoomId does not exist: {roomId}")
+    updatedDevicePos = edit_device_position(session, dId, newXPos, newYPos, roomId)
     return updatedDevicePos
 
     

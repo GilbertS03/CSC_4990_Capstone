@@ -38,11 +38,15 @@ def fetch_device_positions_room_id(session: Session, id: int):
     positions = session.exec(statement).all()
     return [DevicePosition.model_validate(device) for device in positions]
 
-def edit_device_position(session: Session, id: int, newX: int, newY: int):
+def edit_device_position(session: Session, id: int, newX: int, newY: int, roomId: int | None = None):
     statement = select(Devices).where(Devices.deviceId == id)
     device = session.exec(statement).one()
     device.positionX = newX
     device.positionY = newY
+
+    if((roomId is not None) and (device.roomId != roomId)):
+        print("updating room")
+        device.roomId = roomId
 
     session.add(device)
     session.commit()
