@@ -28,6 +28,15 @@ def create_new_building(session: SessionDep, building: BuildingCreate, user: Use
     new_building = create_building(session, building)
     return new_building
 
+@router.put("/edit/{buildingId}")
+def update_building(session: SessionDep, buildingId: int, building: BuildingUpdate, user: UserPublic = Depends(require_roles("admin"))):
+    if not has_existing_building(session, buildingId):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Building not found")
+    if not is_valid_time(building.openTime, building.closeTime):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid building open and close times")
+    updated_building = update_building_times_and_name(session, buildingId, building)
+    return updated_building
+
 @router.delete("/delete/{buildingId}")
 def delete_building(session: SessionDep, buildingId: int, user: UserPublic = Depends(require_roles("admin"))):
     building = fetch_building_by_id(session, buildingId)

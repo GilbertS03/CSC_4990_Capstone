@@ -18,3 +18,8 @@ class BuildingCreate(BaseModel):
     buildingName: str
     openTime: time
     closeTime: time
+
+class BuildingUpdate(BaseModel):
+    buildingName: str
+    openTime: time
+    closeTime: time
