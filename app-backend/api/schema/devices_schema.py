@@ -33,6 +33,5 @@ class CreateDevice(BaseModel):
     deviceTypeId: int
 
 class EditDevice(BaseModel):
-    deviceId: int
     deviceTypeId: int
     deviceStatusId: int
