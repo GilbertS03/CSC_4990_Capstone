@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { deleteUser, getUserById } from "../../services/api/admin";
 import { useEffect, useState } from "react";
 //todo enforce validation on fields
@@ -21,6 +21,14 @@ function EditUser() {
       } catch (err) {
         console.error(err);
         setError(true);
+        return (
+          <p>
+            <NavLink to={"/admin/users"} end>
+              &larr; Back{" "}
+            </NavLink>{" "}
+            User Does not Exist{" "}
+          </p>
+        );
       } finally {
         setLoading(false);
       }
@@ -51,7 +59,6 @@ function EditUser() {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error, try again</p>;
   // TODO finish user editing
   return (
     <div className="container">
