@@ -88,8 +88,8 @@ def delete_device(session: Session, deviceId: int):
     deleted = session.get(Devices, deviceId)
     return deleted is None
 
-def edit_device(session: Session, device: EditDevice):
-    statement = select(Devices).where(Devices.deviceId == device.deviceId)
+def edit_device(session: Session, deviceId: int, device: EditDevice):
+    statement = select(Devices).where(Devices.deviceId == deviceId)
     dbDevice = session.exec(statement).one_or_none()
 
     dbDevice.deviceTypeId = device.deviceTypeId

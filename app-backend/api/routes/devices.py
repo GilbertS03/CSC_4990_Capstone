@@ -79,8 +79,6 @@ def delete_device_by_id(session: SessionDep, dId: int, user: UserPublic = Depend
 
 @router.put("/{deviceId}/edit", response_model=DevicePublic)
 def edit_existing_device(session: SessionDep, deviceId: int, device: EditDevice):
-    if(device.deviceId != deviceId):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Edited device does not match route: {deviceId}")
-    updatedDevice = edit_device(session, device)
+    updatedDevice = edit_device(session, deviceId, device)
     return updatedDevice
     
