@@ -52,6 +52,16 @@ def convert_user_to_db_model(session: Session, userId: int):
     db_data = session.get(User, userId)
     return db_data
 
+def update_user_hours(session: Session, userId: int, newHours: int):
+    statement =  select(User).where(User.userId == userId )
+    user = session.exec(statement).one_or_none()
+    if user is None:
+        return None
+    user.weeklyHoursRemaining = newHours
+    session.add(user)
+    session.commit()
+    return user
+    
 
 def subtract_user_hours(session: Session, userId: int, hoursDiff: float):
     user = session.get(User, userId)
@@ -75,6 +85,10 @@ def add_user_hours(session: Session, userId: int, hoursDiff: float):
     updatedHours = session.get(User, userId).weeklyHoursRemaining
     return updatedHours
 
+def role_to_id(session: Session, role: str):
+    statement = select(Roles.roleId).where(Roles.role == role)
+    id = session.exec(statement).one_or_none()
+    return id
 
 def update_user_role(session: Session, userId: int, roleId: int):
      statement =  select(User).where(User.userId == userId )

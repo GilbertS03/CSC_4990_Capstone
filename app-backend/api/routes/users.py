@@ -29,9 +29,16 @@ def get_user(user_id: int, session: SessionDep, userRole: UserPublic = Depends(r
     return user
 
     
-@router.put("/update-role/{user_id}", response_model=UserPublic)
-def update_role(session: SessionDep,user_id: int, roleId: int , userRole: UserPublic = Depends(require_roles("admin"))):
-    user = update_user_role(session, user_id, roleId)
+@router.put("/edit/{user_id}", response_model=UserPublic)
+def update_role(session: SessionDep,user_id: int, role: str | None = None , weeklyHours: int | None = None, userRole: UserPublic = Depends(require_roles("admin"))):
+    if role:
+        roleId = role_to_id(session, role)
+        if roleId is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Role does not exist")
+        update_user_role(session, user_id, roleId)
+    if weeklyHours:
+        update_user_hours(session, user_id, weeklyHours)
+    user = fetch_users_by_id(user_id, session)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User Not Found")
     return user 
