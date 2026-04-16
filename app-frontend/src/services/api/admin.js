@@ -69,24 +69,42 @@ export const deleteDevice = async(id) => {
     }
 };
 
-
-
-// todo find out if this is actually needed or not
-// export const getDevices = async () => {
-//     try{
-//         const res = await api.get("/devices");
-//         return res;
-//     }
-//     catch(error){
-//         throw error;
-//     }
-// }
-
 // Building Routes
 export const getAllBuildings = async () => {
     try{
         const res = await api.get('/buildings');
-        return res.data;
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+};
+
+export const createBuilding = async (data) => {
+    const {buildingId, buildingName, openTime, closeTime} = data;
+    try{
+        const res = await api.post('/buildings/create', {
+            buildingId: Number(buildingId), 
+            buildingName: String(buildingName), 
+            openTime: String(openTime), 
+            closeTime: String(closeTime)
+        },
+        {
+            headers: {
+                'Content-Type' : 'application/json',
+            }
+        });
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+};
+
+export const deleteBuilding = async (id) => {
+    try{
+        const res = await api.delete(`/buildings/delete/${id}`);
+        return res;
     }
     catch(error){
         throw error;

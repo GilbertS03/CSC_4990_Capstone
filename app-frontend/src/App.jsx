@@ -31,6 +31,7 @@ import Buildings from "./components/admin-components/Buildings";
 import BuildingEditing from "./components/admin-components/BuildingEditing";
 import RoomEditing from "./components/admin-components/RoomEditing";
 import EditCell from "./components/admin-components/EditCell";
+import CreateBuilding from "./components/admin-components/CreateBuilding";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -126,6 +127,7 @@ function App() {
         <Route path="system-settings" element={<AdminSettings />} />
         <Route path="buildings" element={<Buildings />} />
         {/* This will show the rooms that we can edit */}
+        <Route path="buildings/create" element={<CreateBuilding />} />
         <Route path="buildings/:id" element={<BuildingEditing />} />
         <Route path="buildings/:id/:rid" element={<RoomEditing />} />
         <Route path="buildings/:id/:rid/:row/:col" element={<EditCell />} />
