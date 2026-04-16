@@ -66,3 +66,16 @@ def delete_room(session: Session, roomId: int):
 
     deleted = session.get(Rooms, roomId)
     return deleted is None
+
+def edit_room_layout(session: Session, roomId: int, width: int, height: int):
+    statement = select(Rooms).where(Rooms.roomId == roomId)
+    room = session.exec(statement).one_or_none()
+
+    room.layoutWidth = width
+    room.layoutHeight = height
+
+    session.add(room)
+    session.commit()
+    session.refresh(room)
+
+    return room
