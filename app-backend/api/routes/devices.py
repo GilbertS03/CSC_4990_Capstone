@@ -77,8 +77,8 @@ def delete_device_by_id(session: SessionDep, dId: int, user: UserPublic = Depend
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting device {dId}")
     return device
 
-@router.put("/{deviceId}/edit", response_model=DevicePublic)
-def edit_existing_device(session: SessionDep, deviceId: int, device: EditDevice):
+@router.put("/edit/{deviceId}", response_model=DevicePublic)
+def edit_existing_device(session: SessionDep, deviceId: int, device: EditDevice, user: UserPublic = Depends(require_roles("admin"))):
     updatedDevice = edit_device(session, deviceId, device)
     return updatedDevice
     
