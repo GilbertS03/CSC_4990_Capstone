@@ -69,7 +69,11 @@ function BuildingEditing() {
           )}
         </tbody>
       </table>
-      {/* TODO add route for form to add rooms */}
+      <div className="container text-center">
+        <NavLink to={`/admin/buildings/${id}/create-room`} end>
+          Create Room
+        </NavLink>
+      </div>
     </div>
   );
 }

@@ -32,6 +32,7 @@ import BuildingEditing from "./components/admin-components/BuildingEditing";
 import RoomEditing from "./components/admin-components/RoomEditing";
 import EditCell from "./components/admin-components/EditCell";
 import CreateBuilding from "./components/admin-components/CreateBuilding";
+import CreateRoom from "./components/admin-components/CreateRoom";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -129,6 +130,7 @@ function App() {
         {/* This will show the rooms that we can edit */}
         <Route path="buildings/create" element={<CreateBuilding />} />
         <Route path="buildings/:id" element={<BuildingEditing />} />
+        <Route path="buildings/:id/create-room" element={<CreateRoom />} />
         <Route path="buildings/:id/:rid" element={<RoomEditing />} />
         <Route path="buildings/:id/:rid/:row/:col" element={<EditCell />} />
 

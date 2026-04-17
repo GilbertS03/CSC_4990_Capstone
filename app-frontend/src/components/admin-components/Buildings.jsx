@@ -85,7 +85,6 @@ function Buildings() {
       <div className="container text-center">
         <NavLink to="/admin/buildings/create">Create Building</NavLink>
       </div>
-      {/* TODO add route for form to add new building */}
     </div>
   );
 }

@@ -122,6 +122,27 @@ export const getRoomsByBuildingId = async (id) => {
     }
 };
 
+export const createRoom = async (data) => {
+    const {roomName, buildingId, layoutWidth, layoutHeight} = data;
+
+    try{
+        const res = await api.post("/rooms/new_room", {
+            roomName: String(roomName),
+            buildingId : Number(buildingId),
+            layoutWidth : Number(layoutWidth),
+            layoutHeight : Number(layoutHeight)
+        }, {
+            headers : {
+                'Content-Type' : 'application/json',
+            }
+        });
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+};
+
 export const getRoomLayoutById = async (id) => {
     try{
         const res = await api.get(`/rooms/room-layouts/${id}`);
