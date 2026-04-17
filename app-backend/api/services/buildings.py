@@ -45,7 +45,6 @@ def create_building(session: Session, building: BuildingCreate):
 
 def update_building_times_and_name(session: Session, buildingId: int, building: BuildingUpdate):
     buildingData = get_building_data(session, buildingId)
-    buildingData.buildingName = building.buildingName
     buildingData.openTime = building.openTime.replace(second=0, microsecond=0)
     buildingData.closeTime = building.closeTime.replace(second=0, microsecond=0)
 
