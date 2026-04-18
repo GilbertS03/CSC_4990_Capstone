@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { getRoomsByBuildingId } from "../../services/api/admin";
+import { getRoomsByBuildingId, deleteRoomById } from "../../services/api/admin";
 
 function BuildingEditing() {
   const [rooms, setRooms] = useState([]);
@@ -24,6 +24,17 @@ function BuildingEditing() {
     fetchRoomsByBuildingId(id);
   }, []);
 
+  const handleDelete = async (id) => {
+    if (confirm(`Delete room: ${id}?`)) {
+      try {
+        const res = await deleteRoomById(id);
+        console.log(res);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error Loading Data</p>;
 
@@ -41,6 +52,7 @@ function BuildingEditing() {
             <th>Room Name</th>
             <th>Room ID</th>
             <th>Edit Room</th>
+            <th>Delete Room</th>
           </tr>
         </thead>
         <tbody>
@@ -57,6 +69,14 @@ function BuildingEditing() {
                   >
                     Edit Room: {rooms[key].roomId}
                   </NavLink>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(rooms[key].roomId)}
+                  >
+                    Delete Room: {rooms[key].roomId}
+                  </button>
                 </td>
               </tr>
             ))

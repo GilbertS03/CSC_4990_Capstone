@@ -124,6 +124,7 @@ export const getRoomsByBuildingId = async (id) => {
 
 export const createRoom = async (data) => {
     const {roomName, buildingId, layoutWidth, layoutHeight} = data;
+    console.log(data);
 
     try{
         const res = await api.post("/rooms/new_room", {
@@ -152,6 +153,16 @@ export const getRoomLayoutById = async (id) => {
         throw error;
     }
 };
+
+export const deleteRoomById = async (id) => {
+    try{
+        const res = await api.delete(`/rooms/delete-room/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
 
 // User Routes
 export const getAllUsers = async () => {

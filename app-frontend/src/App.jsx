@@ -129,8 +129,8 @@ function App() {
         <Route path="buildings" element={<Buildings />} />
         {/* This will show the rooms that we can edit */}
         <Route path="buildings/create" element={<CreateBuilding />} />
-        <Route path="buildings/:id" element={<BuildingEditing />} />
         <Route path="buildings/:id/create-room" element={<CreateRoom />} />
+        <Route path="buildings/:id" element={<BuildingEditing />} />
         <Route path="buildings/:id/:rid" element={<RoomEditing />} />
         <Route path="buildings/:id/:rid/:row/:col" element={<EditCell />} />
 
