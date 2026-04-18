@@ -28,7 +28,7 @@ def get_room_layout_by_roomId(roomId: int, session: SessionDep):
     return roomLayout
 
     
-@router.post("/new_room", response_model=RoomPublic, status_code=status.HTTP_201_CREATED)
+@router.post("/new-room", response_model=RoomPublic, status_code=status.HTTP_201_CREATED)
 def create_new_room(session: SessionDep, newRoom: CreateRoom, user: UserPublic = Depends(require_roles("admin"))):
     room = create_room(session, newRoom)
     return room
