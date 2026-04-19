@@ -85,7 +85,6 @@ function Sidebar({ collapsed, setCollapsed }) {
       <div className="mt-auto">
         <hr />
         <button className="btn btn-outline-primary" onClick={logout}>
-          {/* todo add user name here and add modal with settings, logout, etc. */}
           <UserRound /> {collapsed ? "" : "Logout "}
         </button>
       </div>

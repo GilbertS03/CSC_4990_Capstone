@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import * as authService from "../services/auth";
 import { decodeToken } from "../utils/jwt";
 import api from "../services/api/api";
@@ -75,11 +81,11 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     authService.logout();
     setAccessToken(null);
     setUser(null);
-  };
+  }, []);
 
   //Add authorization to axios requests
   useEffect(() => {
@@ -96,34 +102,34 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (!accessToken) return;
+  useEffect(() => {
+    if (!accessToken) return;
 
-  //   const decoded = decodeToken(accessToken);
-  //   if (!decoded?.exp) return;
+    const decoded = decodeToken(accessToken);
+    if (!decoded?.exp) return;
 
-  //   const expTime = decoded.exp * 1000;
-  //   const now = Date.now();
-  //   const timeUntilExpiry = expTime - now;
+    const expTime = decoded.exp * 1000;
+    const now = Date.now();
+    let timeUntilExpiry = expTime - now;
 
-  //   //TODO fix, crashing for some reason when going to the admin pages
-  //   //If already expired -> logout immediately
-  //   if (timeUntilExpiry <= 0) {
-  //     logout();
-  //     return;
-  //   }
+    //TODO fix, crashing for some reason when going to the admin pages
+    //If already expired -> logout immediately
+    if (timeUntilExpiry <= 0) {
+      logout();
+      return;
+    }
 
-  //   //claming the timer to a min of 1ms to avoid instant logout
-  //   timeUntilExpiry = Math.max(timeUntilExpiry, 1);
+    //claming the timer to a min of 1ms to avoid instant logout
+    timeUntilExpiry = Math.max(timeUntilExpiry, 1);
 
-  //   const timer = setTimeout(() => {
-  //     logout();
-  //     alert("Session expired. You have been logged out.");
-  //   }, timeUntilExpiry);
+    const timer = setTimeout(() => {
+      logout();
+      alert("Session expired. You have been logged out.");
+    }, timeUntilExpiry);
 
-  //   //Cleanup if token changes or component unmounts
-  //   return () => clearTimeout(timer);
-  // }, [accessToken, logout]);
+    //Cleanup if token changes or component unmounts
+    return () => clearTimeout(timer);
+  }, [accessToken, logout]);
 
   //Value for components
 

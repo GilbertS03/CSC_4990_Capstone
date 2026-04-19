@@ -29,8 +29,6 @@ nav {
 
 .grid {
     display: grid;
-    /* TODO find a way to make these hardcoded pixels more dynamic so they change size as the grid grows and shrinks */
-    /* Possible way is by using the xxs, xs, s, m, l, xl, xxl, that bootstrap offers or something similar and have to base it off their screen size as well */
     grid-template-columns: repeat(var(--cols), 85px);
     grid-template-rows: repeat(var(--rows), 18px);
     gap: 10px;

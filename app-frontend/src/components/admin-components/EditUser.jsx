@@ -36,7 +36,6 @@ function EditUser() {
     fetchUserById(id);
   }, [id]);
 
-  // TODO check why handleDelete is not updating the table.
   const handleDelete = async () => {
     if (confirm(`Delete user ${id}?`)) {
       try {
