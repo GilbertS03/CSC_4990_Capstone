@@ -21,6 +21,7 @@ import AdminLayout from "./layouts/AdminLayout";
 
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
+import AdminDashboard from "./components/admin-components/DashboardComponents/AdminDashboard";
 import AdminDevices from "./components/admin-components/AdminDevices";
 import AddDeviceForm from "./components/admin-components/AddDeviceForm";
 import EditDevice from "./components/admin-components/EditDevice";
@@ -120,6 +121,7 @@ function App() {
         }
       >
         <Route index element={<AdminHome />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="devices" element={<AdminDevices />} />
         <Route path="devices/newDevice" element={<AddDeviceForm />} />
         <Route path="devices/:id" element={<EditDevice />} />

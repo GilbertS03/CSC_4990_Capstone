@@ -36,7 +36,7 @@ function Sidebar({ collapsed, setCollapsed }) {
       {/* Toggle Button */}
       <div className="container">
         {!collapsed && (
-          <span className="fs-4 pe-2">{!collapsed && "Admin Tools"}</span>
+          <span className="fs-5 pe-2">{!collapsed && "Admin Tools"}</span>
         )}
         <button
           className="btn btn-outline-light mb-2"

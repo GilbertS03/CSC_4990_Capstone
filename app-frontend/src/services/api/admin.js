@@ -124,8 +124,6 @@ export const getRoomsByBuildingId = async (id) => {
 
 export const createRoom = async (data) => {
     const {roomName, buildingId, layoutWidth, layoutHeight} = data;
-    console.log(data);
-
     try{
         const res = await api.post("/rooms/new_room", {
             roomName: String(roomName),
@@ -216,6 +214,16 @@ export const deleteUser = async(id) => {
 };
 
 // Reservation Routes
+export const getAllReservations = async() => {
+    try{
+        const res = await api.get("/reservations/all");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const deleteReservation = async (id) => {
     try{
         const res = await api.delete(`/reservations/delete/${id}`);

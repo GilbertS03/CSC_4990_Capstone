@@ -7,6 +7,7 @@ import {
   Tablet,
   Cpu,
   HelpCircle,
+  Gamepad,
   Ban,
 } from "lucide-react";
 import { getDeviceLocations } from "../../services/api/admin";
@@ -19,6 +20,7 @@ const DEVICE_ICONS = {
   server: { Icon: Server, label: "Server" },
   tablet: { Icon: Tablet, label: "Tablet" },
   cpu: { Icon: Cpu, label: "CPU" },
+  "gaming pc": { Icon: Gamepad, label: "Gaming PC" },
 };
 
 const STATUS_STYLES = {

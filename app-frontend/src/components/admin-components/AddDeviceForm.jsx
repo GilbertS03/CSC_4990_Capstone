@@ -10,7 +10,6 @@ function AddDeviceForm() {
 
   const handleChange = (e) => {
     setDeviceType(e.target.value);
-    console.log(deviceType);
   };
 
   const onCancel = () => {
@@ -24,7 +23,6 @@ function AddDeviceForm() {
       const res = await createDevice({
         deviceTypeId: deviceType,
       });
-      console.log(res.data);
     } catch (err) {
       console.error("Error creating device:", err);
     } finally {

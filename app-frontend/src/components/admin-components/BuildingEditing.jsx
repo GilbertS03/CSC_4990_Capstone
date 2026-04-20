@@ -28,7 +28,6 @@ function BuildingEditing() {
     if (confirm(`Delete room: ${id}?`)) {
       try {
         const res = await deleteRoomById(id);
-        console.log(res);
       } catch (err) {
         console.error(err);
       }

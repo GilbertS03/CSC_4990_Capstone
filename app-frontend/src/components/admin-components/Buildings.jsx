@@ -28,8 +28,7 @@ function Buildings() {
       try {
         setLoading(true);
         const res = await deleteBuilding(id);
-        setBuildings((prev) => prev.filter((b) => b.buildingId !== id)); // ← remove from state
-        console.log(res);
+        setBuildings((prev) => prev.filter((b) => b.buildingId !== id));
       } catch (err) {
         setError(true);
         console.error(err);

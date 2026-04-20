@@ -1,71 +1,100 @@
+import { useState } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import WoMM from "../../assets/WoMM.jpg";
-import "../../App.css";
+import { UserCircle, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { UserCircle } from "lucide-react";
+import "../../theme.css";
+import "./Navbar.css";
+
 function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const handleLogout = () => {
     if (!isAuthenticated) return;
     logout();
     navigate("/", { replace: true });
+    setMenuOpen(false);
   };
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <nav className="navbar navbar-expand-sm sticky-top">
-      <div className="container-fluid">
-        <NavLink id="NavImg" to="/" end>
-          <img src={WoMM} />
+    <nav className="navbar-custom">
+      {/* Main bar */}
+      <div className="navbar-inner">
+        <NavLink to="/" end className="navbar-brand" onClick={closeMenu}>
+          <img src={WoMM} alt="WoMM logo" className="navbar-logo" />
+          <span className="brand-badge">WoMM</span>
+          <span className="brand-name">Lab Reservations</span>
         </NavLink>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div className="navbar-nav">
-            <NavLink className="nav-link" to="/" end>
-              Home
+
+        {/* Desktop links — always visible on wide screens */}
+        <div className="navbar-links">
+          <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/" end>
+            Home
+          </NavLink>
+          <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/buildings" end>
+            Reserve a Computer
+          </NavLink>
+          <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/about" end>
+            About Us
+          </NavLink>
+          {!isAuthenticated && (
+            <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/login" end>
+              Login
             </NavLink>
-            <NavLink className="nav-link" to="/buildings" end>
-              Reserve a Computer
-            </NavLink>
-            <NavLink className="nav-link" to="/about" end>
-              About Us
-            </NavLink>
-            {!isAuthenticated && (
-              <NavLink className="nav-link" to="/login" end>
-                Login
-              </NavLink>
-            )}
-            {isAuthenticated && (
-              <NavLink className="nav-link" onClick={handleLogout}>
-                Logout
-              </NavLink>
-            )}
-            {/* {isAuthenticated && user.role === "admin" && (
-              <NavLink className="nav-link" to="/admin" end>
-                Admin Home
-              </NavLink>
-            )} */}
-          </div>
+          )}
+          {isAuthenticated && (
+            <button className="nav-link-custom nav-logout" onClick={handleLogout}>
+              Logout
+            </button>
+          )}
         </div>
-        <div className="float-right">
-          {/* todo Add functionality to this button and put the logout here and make a dropdown or 
-          take them to a page that displays their information such as user/information/:id or something
-          so they can know their role and such*/}
-          <div>
-            {isAuthenticated && <Link className="nav-link" to="/profile"><UserCircle /></Link>}
-          </div>
+
+        {/* Right side: profile + hamburger */}
+        <div className="navbar-right">
+          {isAuthenticated && (
+            <Link to="/profile" className="nav-profile-btn" aria-label="Profile" onClick={closeMenu}>
+              <UserCircle size={20} />
+            </Link>
+          )}
+          <button
+            className="navbar-toggler-custom"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Toggle navigation"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile dropdown — appears below the bar, never off-screen */}
+      {menuOpen && (
+        <div className="navbar-mobile-menu">
+          <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/" end onClick={closeMenu}>
+            Home
+          </NavLink>
+          <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/buildings" end onClick={closeMenu}>
+            Reserve a Computer
+          </NavLink>
+          <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/about" end onClick={closeMenu}>
+            About Us
+          </NavLink>
+          {!isAuthenticated && (
+            <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/login" end onClick={closeMenu}>
+              Login
+            </NavLink>
+          )}
+          {isAuthenticated && (
+            <button className="nav-link-mobile nav-logout" onClick={handleLogout}>
+              Logout
+            </button>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

@@ -1,0 +1,37 @@
+.fb-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 32px 24px;
+}
+
+.fb-card {
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+}
+
+.fb-code {
+  font-size: 80px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--danger);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.fb-stripe {
+  height: 4px;
+  background: var(--danger);
+  width: 48px;
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+.fb-message {
+  color: var(--text2);
+  font-size: 15px;
+  margin-bottom: 28px;
+}

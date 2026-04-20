@@ -17,7 +17,6 @@ function EditDevice() {
     if (confirm(`Delete Device ${id}?`)) {
       try {
         const res = await deleteDevice(id);
-        console.log(res);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -25,7 +24,7 @@ function EditDevice() {
         if (!error) {
           navigate(-1);
         } else {
-          console.log("Error, please try again");
+          console.error("Error, please try again");
         }
         setError(false);
       }

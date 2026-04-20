@@ -17,7 +17,6 @@ function EditUser() {
     const fetchUserById = async (id) => {
       try {
         const res = await getUserById(id);
-        console.log(res);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -40,7 +39,6 @@ function EditUser() {
     if (confirm(`Delete user ${id}?`)) {
       try {
         const res = await deleteUser(id);
-        console.log(res);
       } catch (err) {
         console.error(err);
         setError(true);
