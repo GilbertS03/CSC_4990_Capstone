@@ -1,6 +1,7 @@
 name: Front-end Deployment S3 and Cloudfront
 on:
   push:
+    branches: [production]
   workflow_dispatch:
 
 permissions:
@@ -50,7 +51,7 @@ jobs:
             CLOUDFRONT_DISTRIBUTION_ID: ${{secrets.CLOUDFRONT_DISTRIBUTION_ID}}
 
         run: |
-          aws s3 sync app-frontend/dist/ s3://$FRONTEND _S3_BUCKET/ \
+          aws s3 sync app-frontend/dist/ s3://$FRONTEND_S3_BUCKET/ \
             --delete \
             --cache-control "public, max-age=31536000, immutable" \
             --exclude "index.html"
