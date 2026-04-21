@@ -1,8 +1,9 @@
 import { NavLink, useNavigate, Link } from "react-router-dom";
-import WoMM from "../../assets/WoMM.jpg";
+import { asset } from '../../utils/assets';
 import "../../App.css";
 import { useAuth } from "../../context/AuthContext";
 import { UserCircle } from "lucide-react";
+const WoMM = asset('WoMM.jpg');
 function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
