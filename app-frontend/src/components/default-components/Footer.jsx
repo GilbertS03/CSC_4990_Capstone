@@ -12,11 +12,10 @@ function Footer() {
         <NavLink className="footer-link" to="/contact" end>
           Contact Us
         </NavLink>
-        <NavLink className="footer-link" to="/" end>
-          Something
-        </NavLink>
       </div>
-      <div className="footer-copy">© {new Date().getFullYear()} WoMM Lab System</div>
+      <div className="footer-copy">
+        © {new Date().getFullYear()} WoMM Lab System
+      </div>
     </footer>
   );
 }

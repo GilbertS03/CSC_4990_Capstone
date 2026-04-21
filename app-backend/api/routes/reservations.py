@@ -5,6 +5,7 @@ from ..db.session import SessionDep
 from ..schema.user_schema import UserPublic
 from ..services.reservations import *
 from ..services.users import fetch_user_role
+from ..emailSystem.emailsystem import *
 
 router = APIRouter (
     prefix="/reservations",
@@ -39,6 +40,7 @@ def create_new_reservation(reservation: CreateReservation, session: SessionDep, 
     new_res = create_reservation(session, reservation, user)
     if new_res is None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User does not have enough hours remaining")
+    send_email("Reservation Creation", f"Reservation Creation Successful, {user.firstName}!\nDevice: {reservation.deviceId}.\nStart Time: {reservation.startTime:%B %d, %Y - %I:%M %p}\nEnd Time: {reservation.endTime:%B %d, %Y - %I:%M %p}", user.email)
     return new_res
 
 
@@ -55,6 +57,7 @@ def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(
     drop_confirmed = drop_reservation(session, resId, user)
     if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
+    email_dropped_reservation(user.userId, resId, "Unexpected Error Occurred in this Building", session)
     return drop_confirmed
 
 
