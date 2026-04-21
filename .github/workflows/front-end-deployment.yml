@@ -1,25 +1,28 @@
-name: Front-end Deployment
+name: Front-end Deployment S3 and Cloudfront
 on:
   push:
     branches: [production]
   workflow_dispatch:
+
 permissions:
   id-token: write
   contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     env:
-      ECR_FRONT_REGISTRY: ${{secrets.ECR_FRONT_REGISTRY}}
-      ECR_FRONT_REPOSITORY: ${{secrets.ECR_FRONT_REPOSITORY}}
       IMAGE_TAG: ${{ github.sha }}
+      FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
             app-frontend
-            docker-files/front
           sparse-checkout-cone-mode: true
 
       - name: Configure AWS credentials via OIDC
@@ -28,49 +31,41 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - name: Log in to Amazon ECR
-        run: |
-          aws ecr get-login-password --region us-east-1 | \
-          docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app-frontend/package-lock.json
 
-      - name: Build Docker image
-        run: |
-          docker build \
-            --build-arg VITE_ENV=production \
-            -f docker-files/front/frontend.Dockerfile \
-            -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:latest \
-            app-frontend/
-
-      - name: Push image to ECR
-        run: |
-          docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:latest
-
-      - name: Deploy to EC2 via SSM
+      - name: Install dependencies
+        working-directory: app-frontend
+        run: npm ci
+        
+      - name: Build
+        working-directory: app-frontend
         env:
-          EC2_INSTANCE_ID: ${{ secrets.FRONT_EC2_INSTANCE_ID }}
+          VITE_ENV: production
+        run: npm run build
+
+      - name: Sync to S3
         run: |
-          CMD_ID=$(aws ssm send-command \
-          --instance-ids "$EC2_INSTANCE_ID" \
-          --document-name "AWS-RunShellScript" \
-          --query "Command.CommandId" \
-          --output text \
-          --parameters "{\"commands\":[
-          \"aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_FRONT_REGISTRY\",
-          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml pull frontend\",
-          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml down frontend\",
-          \"IMAGE_TAG=$IMAGE_TAG docker compose -f /home/ubuntu/myapp/docker-compose.yml up -d frontend\"
-          ]}") 
+          aws s3 sync app-frontend/dist/ s3://$FRONTEND_S3_BUCKET/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp app-frontend/dist/index.html s3://$FRONTEND_S3_BUCKET/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
 
-          echo "Waiting for Command ID: $CMD_ID"
-
-          aws ssm wait command-executed \
-          --command-id "$CMD_ID" \
-          --instance-id "$EC2_INSTANCE_ID"
-
-          aws ssm get-command-invocation \
-          --command-id "$CMD_ID" \
-          --instance-id "$EC2_INSTANCE_ID" \
-          --query "{Status:Status, Output:StandardOutputContent, Error:StandardErrorContent}" \
-          --output table
+      - name: Invalidate CloudFront cache
+        run: |
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --paths "/*" \
+            --query "Invalidation.Id" \
+            --output text)
+          echo "Waiting for invalidation: $INVALIDATION_ID"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
+            --id "$INVALIDATION_ID"
+          echo "Invalidation complete: $INVALIDATION_ID"
