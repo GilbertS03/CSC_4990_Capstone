@@ -23,7 +23,6 @@ function SpecificRoom() {
         const foundBuilding = buildings.find(
           (b) => Number(b.buildingId) === Number(bid),
         );
-        console.log("Building: ", foundBuilding);
         setBuilding(foundBuilding);
       } catch (err) {
         console.error(err);

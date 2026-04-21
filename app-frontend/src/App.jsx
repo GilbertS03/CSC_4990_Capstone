@@ -21,6 +21,7 @@ import AdminLayout from "./layouts/AdminLayout";
 
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
+import AdminDashboard from "./components/admin-components/DashboardComponents/AdminDashboard";
 import AdminDevices from "./components/admin-components/AdminDevices";
 import AddDeviceForm from "./components/admin-components/AddDeviceForm";
 import EditDevice from "./components/admin-components/EditDevice";
@@ -31,6 +32,8 @@ import Buildings from "./components/admin-components/Buildings";
 import BuildingEditing from "./components/admin-components/BuildingEditing";
 import RoomEditing from "./components/admin-components/RoomEditing";
 import EditCell from "./components/admin-components/EditCell";
+import CreateBuilding from "./components/admin-components/CreateBuilding";
+import CreateRoom from "./components/admin-components/CreateRoom";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -118,6 +121,7 @@ function App() {
         }
       >
         <Route index element={<AdminHome />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="devices" element={<AdminDevices />} />
         <Route path="devices/newDevice" element={<AddDeviceForm />} />
         <Route path="devices/:id" element={<EditDevice />} />
@@ -126,6 +130,8 @@ function App() {
         <Route path="system-settings" element={<AdminSettings />} />
         <Route path="buildings" element={<Buildings />} />
         {/* This will show the rooms that we can edit */}
+        <Route path="buildings/create" element={<CreateBuilding />} />
+        <Route path="buildings/:id/create-room" element={<CreateRoom />} />
         <Route path="buildings/:id" element={<BuildingEditing />} />
         <Route path="buildings/:id/:rid" element={<RoomEditing />} />
         <Route path="buildings/:id/:rid/:row/:col" element={<EditCell />} />

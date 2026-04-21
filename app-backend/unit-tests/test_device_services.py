@@ -65,6 +65,59 @@ class TestDeviceServices(unittest.TestCase):
         mockSession.add.assert_called_once()
         mockSession.commit.assert_called_once()
 
-    #TODO: Tests
-    #statuses
-    #delete devices
+    def test_fetchDevicesStatusByRoom_fetchWithRoomId_returnDevices(self):
+        mockDevices = [Mock(**data) for data in self.allDeviceValues if data["roomId"] == 101]
+        mockSession = Mock()
+
+        mockSession.exec.return_value.all.return_value = mockDevices
+
+        result = fetch_devices_status_by_room(mockSession, "available", roomId=101)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), len(mockDevices))
+        mockSession.exec.assert_called_once()
+
+    def test_fetchDevicesStatusByRoom_fetchWithoutRoomId_returnAllMatchingDevices(self):
+        mockDevices = [Mock(**data) for data in self.allDeviceValues]
+        mockSession = Mock()
+
+        mockSession.exec.return_value.all.return_value = mockDevices
+
+        result = fetch_devices_status_by_room(mockSession, "available")
+
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), len(mockDevices))
+        mockSession.exec.assert_called_once()
+
+    def test_fetchDevicesStatusByRoom_fetchNoMatches_returnEmpty(self):
+        mockSession = Mock()
+
+        mockSession.exec.return_value.all.return_value = []
+
+        result = fetch_devices_status_by_room(mockSession, "available", roomId=999)
+
+        self.assertEqual(result, [])
+        mockSession.exec.assert_called_once()
+
+    def test_deleteDevice_deleteExistingDevice_returnTrue(self):
+        mockDevice = Mock(**self.singleDeviceValue)
+        mockSession = Mock()
+
+        mockSession.get.side_effect = [mockDevice, None]
+
+        result = delete_device(mockSession, 0)
+
+        self.assertTrue(result)
+        mockSession.delete.assert_called_once_with(mockDevice)
+        mockSession.commit.assert_called_once()
+
+    def test_deleteDevice_deleteNonExistingDevice_returnFalse(self):
+        mockSession = Mock()
+
+        mockSession.get.return_value = None
+
+        result = delete_device(mockSession, 99)
+
+        self.assertIsNone(result)
+        mockSession.delete.assert_not_called()
+        mockSession.commit.assert_not_called()

@@ -32,11 +32,15 @@ def convert_res_to_db_model(session: Session, resId: int):
     return db_data
 
 def fetch_reservation_statuses(
-    session: Session, 
-    userId: int | None = None,
-    status: str | None = None
-):
-    statement = select(Reservations).join(ReservationStatuses).where(ReservationStatuses.reservationStatus == status)
+    session: Session,
+    status: str,
+    userId: int | None = None
+    ):
+    statement = (
+        select(Reservations)
+        .join(ReservationStatuses, Reservations.reservationStatusId == ReservationStatuses.reservationStatusId)
+        .where(ReservationStatuses.reservationStatus == status)
+    )
     if userId:
         statement = statement.where(Reservations.userId == userId)
     reservations = session.exec(statement).all()

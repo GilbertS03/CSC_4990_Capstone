@@ -85,3 +85,31 @@ class TestRoomServices(unittest.TestCase):
         result = fetch_available_devices_by_room(102, mockSession)
         assert result is None
         mockSession.exec.assert_called()
+
+    def test_editRoomLayout_editExistingRoom_returnUpdatedRoom(self):
+        mockRoom = Mock()
+        mockRoom.layoutWidth = 10
+        mockRoom.layoutHeight = 10
+        mockSession = Mock()
+
+        mockSession.exec.return_value.one_or_none.return_value = mockRoom
+
+        result = edit_room_layout(mockSession, 1, 20, 30)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result.layoutWidth, 20)
+        self.assertEqual(result.layoutHeight, 30)
+        mockSession.add.assert_called_once_with(mockRoom)
+        mockSession.commit.assert_called_once()
+        mockSession.refresh.assert_called_once_with(mockRoom)
+
+    def test_editRoomLayout_editNonExistingRoom_returnError(self):
+        mockSession = Mock()
+
+        mockSession.exec.return_value.one_or_none.return_value = None
+
+        result = edit_room_layout(mockSession, 99, 20, 30)
+        
+        self.assertIsNone(result)
+        mockSession.add.assert_not_called()
+        mockSession.commit.assert_not_called()
