@@ -4,12 +4,10 @@ import {SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secr
 
 async function createAPI(){
     if(import.meta.env.VITE_ENV === 'dev'){
-        const api = axios.create({baseURL: import.meta.env.VITE_API_BASE_URL});
+        const api = axios.create({baseURL: "http://localhost:5173"});
         return api;
-    } else {
-        const client = new SecretsManagerClient({region: 'us-east-1'});
-        const {SecretString} =await client.send(new GetSecretValueCommand({SecretId:"myapp/front-end"}));
-        const api = axios.create({baseURL: SecretString});
+    } else{
+        const api = axios.create({baseUrl: "http://44.203.109.104:80"});
         return api;
     }
 

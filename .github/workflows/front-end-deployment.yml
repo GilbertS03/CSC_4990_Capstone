@@ -36,6 +36,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --build-arg VITE_ENV=production \
             -f docker-files/front/frontend.Dockerfile \
             -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:$IMAGE_TAG \
             -t $ECR_FRONT_REGISTRY/$ECR_FRONT_REPOSITORY:latest \
