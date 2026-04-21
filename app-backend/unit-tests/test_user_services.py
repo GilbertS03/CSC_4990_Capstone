@@ -127,3 +127,26 @@ class TestUserServices(unittest.TestCase):
 
         self.assertIsNone(result)
         mockSession.commit.assert_not_called()
+
+    def test_deleteUser_deleteExistingUser_returnTrue(self):
+        mockUser = Mock(**self.UserValues)
+        mockSession = Mock()
+
+        mockSession.get.side_effect = [mockUser, None]
+
+        result = delete_user(mockSession, 1)
+
+        self.assertTrue(result)
+        mockSession.delete.assert_called_once_with(mockUser)
+        mockSession.commit.assert_called_once()
+
+    def test_deleteUser_deleteNonExistingUser_returnFalse(self):
+        mockSession = Mock()
+
+        mockSession.get.return_value = None
+
+        result = delete_user(mockSession, 0)
+
+        self.assertIsNone(result)
+        mockSession.delete.assert_not_called()
+        mockSession.commit.assert_not_called()
