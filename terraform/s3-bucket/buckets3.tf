@@ -43,13 +43,30 @@ resource "aws_s3_bucket_policy" "frontend" {
   bucket = aws_s3_bucket.frontend.id
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Sid       = "PublicReadGetObject"
-      Effect    = "Allow"
-      Principal = "*"
-      Action    = "s3:GetObject"
-      Resource  = "${aws_s3_bucket.frontend.arn}/*"
-    }]
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.frontend.arn}/*"
+      },
+      {
+        Sid    = "RestrictUploads"
+        Effect = "Deny"
+        NotPrincipal = {
+          AWS = [
+            "arn:aws:iam::943881661618:user/Alex",
+            "arn:aws:iam::943881661618:role/GitHubActionsRDSRole"
+          ]
+        }
+        Action = [
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Resource = "${aws_s3_bucket.frontend.arn}/*"
+      }
+    ]
   })
 }
 
