@@ -49,6 +49,7 @@ jobs:
         env:
             FRONTEND_S3_BUCKET: ${{secrets.FRONTEND_S3_BUCKET}}
             CLOUDFRONT_DISTRIBUTION_ID: ${{secrets.CLOUDFRONT_DISTRIBUTION_ID}}
+    
 
         run: |
           aws s3 sync app-frontend/dist/ s3://$FRONTEND_S3_BUCKET/ \
@@ -58,6 +59,11 @@ jobs:
 
           aws s3 cp app-frontend/dist/index.html s3://$FRONTEND_S3_BUCKET/index.html \
             --cache-control "no-cache, no-store, must-revalidate"
+            
+            - name: Debug
+          run: |
+            echo "Distribution ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+            echo "S3 Bucket: ${{ secrets.FRONTEND_S3_BUCKET }}"
 
       - name: Invalidate CloudFront cache
         run: |
