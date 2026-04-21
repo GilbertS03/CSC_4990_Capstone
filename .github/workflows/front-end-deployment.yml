@@ -1,7 +1,6 @@
 name: Front-end Deployment S3 and Cloudfront
 on:
   push:
-    branches: [production]
   workflow_dispatch:
 
 permissions:
