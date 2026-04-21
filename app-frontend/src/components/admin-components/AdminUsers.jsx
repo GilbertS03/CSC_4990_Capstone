@@ -4,9 +4,10 @@ import { NavLink } from "react-router-dom";
 import SearchBar from "./SearchBar";
 
 function AdminUsers() {
-  const [users, setUsers] = useState({});
-  const [filteredUsers, setFilteredUsers] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -16,6 +17,7 @@ function AdminUsers() {
         setFilteredUsers(data);
       } catch (error) {
         console.error(error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -25,7 +27,7 @@ function AdminUsers() {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-
+  if (error) return <p>Error loading data. Please try again</p>;
   return (
     <div className="container-fluid d-flex flex-column justify-content-center">
       <h1 className="text-center">All Users</h1>
@@ -73,10 +75,10 @@ function AdminUsers() {
                   <td>{filteredUsers[key].role}</td>
                   <td>
                     <NavLink
-                      to={`/admin/users/${key}`}
+                      to={`/admin/users/${filteredUsers[key].userId}`}
                       className="btn btn-sm btn-primary"
                     >
-                      Edit User: {key}
+                      Edit User: {filteredUsers[key].userId}
                     </NavLink>
                   </td>
                 </tr>

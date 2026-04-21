@@ -22,8 +22,8 @@ export const getRoomsByBuildingId = async (id) => {
 
 export const getAllReservations = async () => {
     try {
-        const data = await api.get('/reservations/all')
-        return data;
+        const res = await api.get('/reservations/all')
+        return res;
     }
     catch (error) {
         throw error;
@@ -42,8 +42,8 @@ export const getDevices = async () => {
 
 export const getReservationStatuses = async (resStatus, userId) => {
     try {
-        const data = await api.get(`/reservations/status/?resStatus=${resStatus}&userId=${userId}`)
-        return data;
+        const res = await api.get(`/reservations/status/?resStatus=${resStatus}&userId=${userId}`)
+        return res;
     }
     catch (error) {
         throw error;
@@ -69,8 +69,7 @@ export const getAllBuildingHours = async () => {
         throw error;
     }
 }
-//Date time object (start and end time), deviceId
-//TODO find out why this is keeps throwing an error
+
 export const createReservation = async (data) => {
     try{
         const { deviceId, startTime, endTime } = data;
@@ -94,8 +93,8 @@ export const createReservation = async (data) => {
 }
 export const getCurrentUser = async () => {
     try {
-        const data = await api.get('/users/me')
-        return data;
+        const res = await api.get('/users/me')
+        return res;
     }
     catch (error) {
         throw error;

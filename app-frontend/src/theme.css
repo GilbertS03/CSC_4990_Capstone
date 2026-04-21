@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c27;
+  --accent: #3b7fff;
+  --accent2: #5c94ff;
+  --accent-dim: #1a2d5a;
+  --text: #f0f0f8;
+  --text2: #9090b0;
+  --border: #2a2a3a;
+  --danger: #e24b4a;
+  --danger-dim: rgba(226, 75, 74, 0.1);
+  --danger-border: rgba(226, 75, 74, 0.3);
+  --success: #1d9e75;
+  --success-dim: rgba(29, 158, 117, 0.18);
+  --font: 'Space Grotesk', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --r: 10px;
+  --r-lg: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Buttons ── */
+.btn {
+  padding: 10px 22px;
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--accent2);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover {
+  border-color: var(--text2);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1.5px solid var(--danger-border);
+}
+.btn-danger:hover {
+  background: var(--danger-dim);
+}
+
+/* ── Cards ── */
+.card-dark {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.card-header-dark {
+  background: var(--accent-dim);
+  border-bottom: 2px solid var(--accent);
+  padding: 14px 20px;
+}
+
+/* ── Badges ── */
+.badge-success {
+  display: inline-block;
+  background: var(--success-dim);
+  color: var(--success);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+
+.badge-accent {
+  background: var(--accent-dim);
+  color: var(--accent2);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--mono);
+}
+
+/* ── Tables ── */
+.table-dark-custom {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-dark-custom thead tr {
+  background: var(--surface2);
+}
+.table-dark-custom th {
+  padding: 10px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+.table-dark-custom td {
+  padding: 12px 20px;
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+}
+.table-dark-custom td:first-child {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+}
+
+/* ── Stat cards ── */
+.stat-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+}
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
