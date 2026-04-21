@@ -3,7 +3,8 @@ import { NavLink, useNavigate, Link } from "react-router-dom";
 import { asset } from "../../utils/assets";
 import "../../App.css";
 import { useAuth } from "../../context/AuthContext";
-import { UserCircle } from "lucide-react";
+import { UserCircle, Menu } from "lucide-react";
+import "./Navbar.css";
 const WoMM = asset("WoMM.jpg");
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();
