@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { NavLink, useNavigate, Link } from "react-router-dom";
-import WoMM from "../../assets/WoMM.jpg";
-import { UserCircle, Menu, X } from "lucide-react";
+import { NavLink, useNavigate, Link } from "react-rou
+import { asset } from '../../utils/assets';
+import "../../App.css";
 import { useAuth } from "../../context/AuthContext";
-import "../../theme.css";
-import "./Navbar.css";
-
+import { UserCircle } from "lucide-react";
+const WoMM = asset('WoMM.jpg');
+>>>>>>> main
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();

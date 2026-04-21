@@ -3,7 +3,7 @@ from ..core.config_loader import settings
 from datetime import time
 
 from ..models.Buildings import Buildings
-from ..schema.buildings_schema import BuildingPublic, BuildingTime, BuildingCreate
+from ..schema.buildings_schema import BuildingPublic, BuildingTime, BuildingCreate, BuildingUpdate
 
 def fetch_buildings(session: Session):
     statement = select(Buildings)
@@ -42,6 +42,17 @@ def create_building(session: Session, building: BuildingCreate):
     session.refresh(newBuilding)
 
     return newBuilding
+
+def update_building_times_and_name(session: Session, buildingId: int, building: BuildingUpdate):
+    buildingData = get_building_data(session, buildingId)
+    buildingData.openTime = building.openTime.replace(second=0, microsecond=0)
+    buildingData.closeTime = building.closeTime.replace(second=0, microsecond=0)
+
+    session.add(buildingData)
+    session.commit()
+    session.refresh(buildingData)
+
+    return buildingData
 
 def get_building_data(session: Session, buildingId: int):
     buildingData = session.get(Buildings, buildingId)

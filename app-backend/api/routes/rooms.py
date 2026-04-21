@@ -27,8 +27,14 @@ def get_room_layout_by_roomId(roomId: int, session: SessionDep):
     roomLayout= fetch_room_layouts_by_id(roomId, session)
     return roomLayout
 
+@router.put("/room-layouts/{roomId}/edit", response_model=RoomLayout)
+def edit_room_layout_by_id(session: SessionDep, roomId: int, newWidth: int, newHeight: int):
+    if not fetch_room_by_id(session, roomId):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Room to edit not found: {roomId}")
+    room = edit_room_layout(session, roomId, newWidth, newHeight)
+    return room
     
-@router.post("/new_room", response_model=RoomPublic, status_code=status.HTTP_201_CREATED)
+@router.post("/new-room", response_model=RoomPublic, status_code=status.HTTP_201_CREATED)
 def create_new_room(session: SessionDep, newRoom: CreateRoom, user: UserPublic = Depends(require_roles("admin"))):
     room = create_room(session, newRoom)
     return room
