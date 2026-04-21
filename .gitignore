@@ -27,3 +27,8 @@ dist-ssr
 .venv/
 __pycache__/
 .pytest_cache
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+variables.tf
