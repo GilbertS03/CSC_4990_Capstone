@@ -12,3 +12,13 @@ class BuildingPublic(BuildingBase):
 class BuildingTime(BuildingPublic):
     openTime: time
     closeTime: time
+
+class BuildingCreate(BaseModel):
+    buildingId: int
+    buildingName: str
+    openTime: time
+    closeTime: time
+
+class BuildingUpdate(BaseModel):
+    openTime: time
+    closeTime: time

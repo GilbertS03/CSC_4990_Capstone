@@ -4,12 +4,21 @@ from ..core.config_loader import settings
 from ..models.Rooms import Rooms
 from ..models.Buildings import Buildings
 from ..models.Devices import Devices
-from ..schema.rooms_schema import RoomPublic, RoomLayout
+from ..schema.rooms_schema import RoomPublic, RoomLayout, CreateRoom
 
 def fetch_rooms(session: Session):
     statement = select(Rooms)
     rooms = session.exec(statement).all()
     return [RoomPublic.model_validate(room) for room in rooms]
+
+def convert_to_db_model(session: Session, rId: int):
+    db_obj = session.get(Devices, rId)
+    return db_obj
+
+def fetch_room_by_id(session: Session, roomId: int):
+    statement = select(Rooms).where(Rooms.roomId == roomId)
+    room = session.exec(statement).one_or_none()
+    return RoomPublic.model_validate(room) if room else None
 
 def fetch_room_layouts(session: Session, limit: int):
     statement = select(Rooms).limit(limit)
@@ -39,3 +48,34 @@ def fetch_available_devices_by_room(roomId: int, session: Session):
     )
     count = session.exec(statement).first()
     return count
+
+def create_room(session: Session, room: CreateRoom):
+    new_room = Rooms.model_validate(room)
+
+    session.add(new_room)
+    session.commit()
+    session.refresh(new_room)
+
+    return new_room
+
+def delete_room(session: Session, roomId: int):
+    room = convert_to_db_model(session, roomId)
+
+    session.delete(room)
+    session.commit()
+
+    deleted = session.get(Rooms, roomId)
+    return deleted is None
+
+def edit_room_layout(session: Session, roomId: int, width: int, height: int):
+    statement = select(Rooms).where(Rooms.roomId == roomId)
+    room = session.exec(statement).one_or_none()
+
+    room.layoutWidth = width
+    room.layoutHeight = height
+
+    session.add(room)
+    session.commit()
+    session.refresh(room)
+
+    return room

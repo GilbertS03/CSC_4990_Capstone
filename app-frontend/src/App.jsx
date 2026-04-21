@@ -5,8 +5,10 @@ import { Routes, Route, Router, BrowserRouter } from "react-router-dom";
 import Home from "./components/home-components/Home";
 import Login from "./components/login-and-signup-components/Login";
 import About from "./components/home-components/About";
-import Reserve from "./components/reservation-pages/Reserve";
-import BuildingView from "./components/reservation-pages/BuildingView";
+import BuildingsView from "./components/reservation-pages/BuildingsView";
+import BuildingRooms from "./components/reservation-pages/Room";
+import SpecificRoom from "./components/reservation-pages/SpecificRoom";
+import ViewCell from "./components/reservation-pages/ViewCell";
 import SignUp from "./components/login-and-signup-components/SignUp";
 import Contact from "./components/home-components/Contact";
 import Forbidden from "./components/default-components/Forbidden";
@@ -19,6 +21,7 @@ import AdminLayout from "./layouts/AdminLayout";
 
 //Admin components
 import AdminHome from "./components/admin-components/AdminHome";
+import AdminDashboard from "./components/admin-components/DashboardComponents/AdminDashboard";
 import AdminDevices from "./components/admin-components/AdminDevices";
 import AddDeviceForm from "./components/admin-components/AddDeviceForm";
 import EditDevice from "./components/admin-components/EditDevice";
@@ -29,6 +32,8 @@ import Buildings from "./components/admin-components/Buildings";
 import BuildingEditing from "./components/admin-components/BuildingEditing";
 import RoomEditing from "./components/admin-components/RoomEditing";
 import EditCell from "./components/admin-components/EditCell";
+import CreateBuilding from "./components/admin-components/CreateBuilding";
+import CreateRoom from "./components/admin-components/CreateRoom";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -42,22 +47,37 @@ function App() {
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route
-          path="reserve"
+          path="buildings"
           element={
             <RoleBasedRoute publicOnly={false}>
-              <Reserve />
+              <BuildingsView />
             </RoleBasedRoute>
           }
         />
         <Route
-          path="reserve/:buildingId"
+          path="buildings/:bid"
           element={
             <RoleBasedRoute publicOnly={false}>
-              <BuildingView />'
+              <BuildingRooms />
             </RoleBasedRoute>
           }
         />
-
+        <Route
+          path="buildings/:bid/:rid"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <SpecificRoom />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="buildings/:bid/:rid/:row/:col"
+          element={
+            <RoleBasedRoute publicOnly={false}>
+              <ViewCell />
+            </RoleBasedRoute>
+          }
+        />
         <Route
           path="login"
           element={
@@ -101,6 +121,7 @@ function App() {
         }
       >
         <Route index element={<AdminHome />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="devices" element={<AdminDevices />} />
         <Route path="devices/newDevice" element={<AddDeviceForm />} />
         <Route path="devices/:id" element={<EditDevice />} />
@@ -109,6 +130,8 @@ function App() {
         <Route path="system-settings" element={<AdminSettings />} />
         <Route path="buildings" element={<Buildings />} />
         {/* This will show the rooms that we can edit */}
+        <Route path="buildings/create" element={<CreateBuilding />} />
+        <Route path="buildings/:id/create-room" element={<CreateRoom />} />
         <Route path="buildings/:id" element={<BuildingEditing />} />
         <Route path="buildings/:id/:rid" element={<RoomEditing />} />
         <Route path="buildings/:id/:rid/:row/:col" element={<EditCell />} />

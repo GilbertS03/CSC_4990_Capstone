@@ -1,17 +1,26 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import "../../theme.css";
+import "./NotFound.css";
+
 function NotFound() {
   const { user } = useAuth();
-  const checkRole = () => {
-    if (!user || user.role !== "admin") return "/";
-    else return "/admin";
-  };
+
+  const homePath = user?.role === "admin" ? "/admin" : "/";
+
   return (
-    <div className="container text-center">
-      <h1>404 - Not Found</h1>
-      <NavLink className="mt-3" to={checkRole()} end>
-        Back to Home
-      </NavLink>
+    <div className="nf-container">
+      <div className="nf-card card-dark">
+        <div className="nf-code">404</div>
+        <div className="nf-stripe" />
+        <p className="nf-message">
+          This page doesn't exist or you don't have access.
+        </p>
+        <NavLink className="btn btn-primary" to={homePath} end>
+          Back to home
+        </NavLink>
+        <p className="nf-sub">or contact your lab administrator</p>
+      </div>
     </div>
   );
 }

@@ -31,3 +31,7 @@ class DevicePosition(DevicePublic):
 
 class CreateDevice(BaseModel):
     deviceTypeId: int
+
+class EditDevice(BaseModel):
+    deviceTypeId: int
+    deviceStatusId: int

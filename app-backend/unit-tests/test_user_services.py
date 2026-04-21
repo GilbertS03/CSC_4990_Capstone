@@ -1,5 +1,6 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from fastapi import HTTPException
 
 from api.schema.user_schema import UserCreate
 from api.services.users import *
@@ -34,7 +35,6 @@ class TestUserServices(unittest.TestCase):
         assert result == []
         mockSession.exec.assert_called()
         
-
     def test_fetchUserRole_fetchExistingUserRole_returnRole(self):
         mockUser = Mock(**self.UserValues)
         mockSession = Mock()
@@ -62,7 +62,6 @@ class TestUserServices(unittest.TestCase):
         assert result.firstName == "Gilbert"
         mockSession.exec.assert_called()
 
-        
     def test_userFetchId_fetchNonExistingUserId_returnNothing(self):
         userId = 0
         mockSession = Mock()
@@ -104,3 +103,50 @@ class TestUserServices(unittest.TestCase):
         result = fetch_user_by_email( mockSession,userEmail)
         assert result is None
         mockSession.exec.assert_called()
+
+    def test_updateUserRole_UpdateExistingUser_returnInfo(self):
+        mockUser = Mock(**self.UserValues)
+        mockSession = Mock()
+
+        mockSession.exec.return_value.one_or_none.return_value = mockUser
+        updatedMockUser = Mock(**{**self.UserValues, "roleId": 3})
+        mockSession.get.return_value = updatedMockUser
+
+        result = update_user_role(mockSession, 1, 3)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result.roleId, 3)
+        mockSession.exec.assert_called_once()
+        mockSession.commit.assert_called_once()
+
+    def test_updateUserRole_UpdateNonExistingUser_returnNothing(self):
+        mockSession = Mock()
+        mockSession.exec.return_value.one_or_none.return_value = None
+
+        result = update_user_role(mockSession, 1, 1)
+
+        self.assertIsNone(result)
+        mockSession.commit.assert_not_called()
+
+    def test_deleteUser_deleteExistingUser_returnTrue(self):
+        mockUser = Mock(**self.UserValues)
+        mockSession = Mock()
+
+        mockSession.get.side_effect = [mockUser, None]
+
+        result = delete_user(mockSession, 1)
+
+        self.assertTrue(result)
+        mockSession.delete.assert_called_once_with(mockUser)
+        mockSession.commit.assert_called_once()
+
+    def test_deleteUser_deleteNonExistingUser_returnFalse(self):
+        mockSession = Mock()
+
+        mockSession.get.return_value = None
+
+        result = delete_user(mockSession, 0)
+
+        self.assertIsNone(result)
+        mockSession.delete.assert_not_called()
+        mockSession.commit.assert_not_called()

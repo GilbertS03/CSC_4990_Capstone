@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from sqlmodel import select, cast, Session, Date
+from sqlmodel import select, cast, Session, Date, func
 
 from ..services.users import subtract_user_hours, add_user_hours
 from ..models.Reservations import Reservations
@@ -18,16 +18,29 @@ def fetch_reservation_by_id(session: Session, resId: int):
     reservation = session.exec(statement).first()
     return UserReservation.model_validate(reservation) if reservation else None
 
+def fetch_reservation_by_day(session: Session, deviceId: int, date: date):
+    statement = select(Reservations).where(
+        Reservations.deviceId == deviceId,
+        func.date(Reservations.startTime) == date
+    )
+    reservations = session.exec(statement).all()
+    
+    return [UserReservation.model_validate(res) for res in reservations]
+
 def convert_res_to_db_model(session: Session, resId: int):
     db_data = session.get(Reservations, resId)
     return db_data
 
 def fetch_reservation_statuses(
-    session: Session, 
-    userId: int | None = None,
-    status: str | None = None
-):
-    statement = select(Reservations).join(ReservationStatuses).where(ReservationStatuses.reservationStatus == status)
+    session: Session,
+    status: str,
+    userId: int | None = None
+    ):
+    statement = (
+        select(Reservations)
+        .join(ReservationStatuses, Reservations.reservationStatusId == ReservationStatuses.reservationStatusId)
+        .where(ReservationStatuses.reservationStatus == status)
+    )
     if userId:
         statement = statement.where(Reservations.userId == userId)
     reservations = session.exec(statement).all()

@@ -1,0 +1,187 @@
+.navbar-custom {
+  background: var(--surface);
+  border-bottom: 2px solid var(--accent);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 60px;
+  gap: 8px;
+}
+
+/* ── Brand ── */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+
+.navbar-logo {
+  height: 32px;
+  width: auto;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.brand-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-family: var(--mono);
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+/* ── Desktop links ── */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;           /* take remaining space */
+}
+
+.nav-link-custom {
+  padding: 8px 14px;
+  border-radius: var(--r);
+  color: var(--text2);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.nav-link-custom:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.nav-link-custom.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.nav-logout {
+  color: var(--danger);
+}
+
+.nav-logout:hover {
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+/* ── Right side (profile + burger) ── */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.nav-profile-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.nav-profile-btn:hover {
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+
+/* Hamburger — hidden on desktop */
+.navbar-toggler-custom {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  color: var(--text2);
+  flex-shrink: 0;
+}
+
+/* ── Mobile dropdown ── */
+.navbar-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  gap: 4px;
+}
+
+.nav-link-mobile {
+  padding: 10px 14px;
+  border-radius: var(--r);
+  color: var(--text2);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  text-align: left;
+  width: 100%;
+}
+
+.nav-link-mobile:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.nav-link-mobile.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ── Responsive breakpoint ── */
+@media (max-width: 640px) {
+  /* Hide desktop links, show burger */
+  .navbar-links {
+    display: none;
+  }
+  .navbar-toggler-custom {
+    display: flex;
+  }
+  .brand-name {
+    display: none;
+  }
+}
