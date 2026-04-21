@@ -70,6 +70,8 @@ def delete_room(session: Session, roomId: int):
 def edit_room_layout(session: Session, roomId: int, width: int, height: int):
     statement = select(Rooms).where(Rooms.roomId == roomId)
     room = session.exec(statement).one_or_none()
+    if room is None:
+        return None
 
     room.layoutWidth = width
     room.layoutHeight = height

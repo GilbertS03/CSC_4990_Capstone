@@ -108,8 +108,8 @@ class TestRoomServices(unittest.TestCase):
 
         mockSession.exec.return_value.one_or_none.return_value = None
 
-        with self.assertRaises(AttributeError):
-            edit_room_layout(mockSession, 99, 20, 30)
-
+        result = edit_room_layout(mockSession, 99, 20, 30)
+        
+        self.assertIsNone(result)
         mockSession.add.assert_not_called()
         mockSession.commit.assert_not_called()
