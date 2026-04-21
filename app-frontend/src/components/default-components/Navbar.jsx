@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { NavLink, useNavigate, Link } from "react-rou
-import { asset } from '../../utils/assets';
+import { NavLink, useNavigate, Link } from "react-router-dom";
+import { asset } from "../../utils/assets";
 import "../../App.css";
 import { useAuth } from "../../context/AuthContext";
 import { UserCircle } from "lucide-react";
-const WoMM = asset('WoMM.jpg');
->>>>>>> main
+const WoMM = asset("WoMM.jpg");
 function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -32,22 +31,49 @@ function Navbar() {
 
         {/* Desktop links — always visible on wide screens */}
         <div className="navbar-links">
-          <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/" end>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link-custom" + (isActive ? " active" : "")
+            }
+            to="/"
+            end
+          >
             Home
           </NavLink>
-          <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/buildings" end>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link-custom" + (isActive ? " active" : "")
+            }
+            to="/buildings"
+            end
+          >
             Reserve a Computer
           </NavLink>
-          <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/about" end>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link-custom" + (isActive ? " active" : "")
+            }
+            to="/about"
+            end
+          >
             About Us
           </NavLink>
           {!isAuthenticated && (
-            <NavLink className={({ isActive }) => "nav-link-custom" + (isActive ? " active" : "")} to="/login" end>
+            <NavLink
+              className={({ isActive }) =>
+                "nav-link-custom" + (isActive ? " active" : "")
+              }
+              to="/login"
+              end
+            >
               Login
             </NavLink>
           )}
           {isAuthenticated && (
-            <button className="nav-link-custom nav-logout" onClick={handleLogout}>
+            <button
+              className="nav-link-custom nav-logout"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           )}
@@ -56,7 +82,12 @@ function Navbar() {
         {/* Right side: profile + hamburger */}
         <div className="navbar-right">
           {isAuthenticated && (
-            <Link to="/profile" className="nav-profile-btn" aria-label="Profile" onClick={closeMenu}>
+            <Link
+              to="/profile"
+              className="nav-profile-btn"
+              aria-label="Profile"
+              onClick={closeMenu}
+            >
               <UserCircle size={20} />
             </Link>
           )}
@@ -74,22 +105,53 @@ function Navbar() {
       {/* Mobile dropdown — appears below the bar, never off-screen */}
       {menuOpen && (
         <div className="navbar-mobile-menu">
-          <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/" end onClick={closeMenu}>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link-mobile" + (isActive ? " active" : "")
+            }
+            to="/"
+            end
+            onClick={closeMenu}
+          >
             Home
           </NavLink>
-          <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/buildings" end onClick={closeMenu}>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link-mobile" + (isActive ? " active" : "")
+            }
+            to="/buildings"
+            end
+            onClick={closeMenu}
+          >
             Reserve a Computer
           </NavLink>
-          <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/about" end onClick={closeMenu}>
+          <NavLink
+            className={({ isActive }) =>
+              "nav-link-mobile" + (isActive ? " active" : "")
+            }
+            to="/about"
+            end
+            onClick={closeMenu}
+          >
             About Us
           </NavLink>
           {!isAuthenticated && (
-            <NavLink className={({ isActive }) => "nav-link-mobile" + (isActive ? " active" : "")} to="/login" end onClick={closeMenu}>
+            <NavLink
+              className={({ isActive }) =>
+                "nav-link-mobile" + (isActive ? " active" : "")
+              }
+              to="/login"
+              end
+              onClick={closeMenu}
+            >
               Login
             </NavLink>
           )}
           {isAuthenticated && (
-            <button className="nav-link-mobile nav-logout" onClick={handleLogout}>
+            <button
+              className="nav-link-mobile nav-logout"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           )}
