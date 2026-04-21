@@ -4,7 +4,7 @@ from ..auth.services.auth_service import require_roles, get_current_active_user
 from ..db.session import SessionDep
 from ..schema.user_schema import UserPublic
 from ..services.reservations import *
-from ..services.users import fetch_user_role
+from ..services.devices import fetch_device_by_id
 
 router = APIRouter (
     prefix="/reservations",
@@ -41,7 +41,12 @@ def create_new_reservation(reservation: CreateReservation, session: SessionDep, 
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User does not have enough hours remaining")
     return new_res
 
-
+@router.get("/search", response_model=list[UserReservation])
+def fetch_reservation_by_day_and_device(session: SessionDep, deviceId: int, date: date):
+    if not fetch_device_by_id(session, deviceId):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Device {deviceId} not found")
+    reservations = fetch_reservation_by_day(session, deviceId, date)
+    return reservations
 
 @router.put("/drop_reservation/{resId}")
 def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
