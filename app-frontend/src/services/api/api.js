@@ -2,10 +2,10 @@ import axios from 'axios';
 
 async function createAPI(){
     if(import.meta.env.VITE_ENV === 'dev'){
-        const api = axios.create({baseURL: "http://localhost:5173"});
+        const api = axios.create({baseURL: "http://127.0.0.1:8000"});
         return api;
     } else{
-        const api = axios.create({baseUrl: "http://44.203.109.104:80"});
+        const api = axios.create({baseUrl: "http://100.31.89.76:8000/"});
         return api;
     }
 
