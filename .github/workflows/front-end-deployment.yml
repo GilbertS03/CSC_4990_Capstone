@@ -11,8 +11,11 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     env:
       IMAGE_TAG: ${{ github.sha }}
+      FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
     steps:
       - name: Checkout code
@@ -38,7 +41,7 @@ jobs:
       - name: Install dependencies
         working-directory: app-frontend
         run: npm ci
-
+        
       - name: Build
         working-directory: app-frontend
         env:
@@ -46,36 +49,23 @@ jobs:
         run: npm run build
 
       - name: Sync to S3
-        env:
-            FRONTEND_S3_BUCKET: ${{secrets.FRONTEND_S3_BUCKET}}
-            CLOUDFRONT_DISTRIBUTION_ID: ${{secrets.CLOUDFRONT_DISTRIBUTION_ID}}
-    
-
         run: |
           aws s3 sync app-frontend/dist/ s3://$FRONTEND_S3_BUCKET/ \
             --delete \
             --cache-control "public, max-age=31536000, immutable" \
             --exclude "index.html"
-
           aws s3 cp app-frontend/dist/index.html s3://$FRONTEND_S3_BUCKET/index.html \
             --cache-control "no-cache, no-store, must-revalidate"
-
-      - name: Debug
-        run: |
-            echo "Distribution ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
-            echo "S3 Bucket: ${{ secrets.FRONTEND_S3_BUCKET }}"
 
       - name: Invalidate CloudFront cache
         run: |
           INVALIDATION_ID=$(aws cloudfront create-invalidation \
-            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
             --paths "/*" \
             --query "Invalidation.Id" \
             --output text)
-
           echo "Waiting for invalidation: $INVALIDATION_ID"
           aws cloudfront wait invalidation-completed \
-            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" \
             --id "$INVALIDATION_ID"
-
           echo "Invalidation complete: $INVALIDATION_ID"
