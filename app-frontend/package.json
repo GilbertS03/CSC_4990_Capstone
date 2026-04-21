@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@aws-sdk/client-secrets-manager": "^3.1030.0",
     "axios": "^1.13.6",
     "bootstrap": "^5.3.8",
     "dotenv": "^17.3.1",

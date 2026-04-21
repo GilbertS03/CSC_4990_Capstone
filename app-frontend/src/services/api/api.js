@@ -1,6 +1,4 @@
 import axios from 'axios';
-import {SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
-
 
 async function createAPI(){
     if(import.meta.env.VITE_ENV === 'dev'){
