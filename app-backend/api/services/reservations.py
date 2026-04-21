@@ -2,7 +2,9 @@ from datetime import datetime, date
 from sqlmodel import select, cast, Session, Date, func
 
 from ..services.users import subtract_user_hours, add_user_hours
+from ..services.rooms import Rooms
 from ..models.Reservations import Reservations
+from ..models.Devices import Devices
 from ..models.ReservationStatuses import ReservationStatuses
 from ..schema.user_schema import UserPublic
 from ..schema.reservation_schema import UserReservation, CreateReservation
@@ -118,3 +120,16 @@ def drop_reservation(session: Session, resId: int, user: UserPublic):
 
     dropped = session.get(Reservations, resId)
     return dropped
+
+def fetch_reservations_by_building(session: Session, bId: int, resStart: datetime, resEnd: datetime):
+    subqRoom = select(Rooms.roomId).where(Rooms.buildingId == bId)
+    subqDev = select(Devices.deviceId).where(Devices.roomId.in_(subqRoom))
+    
+    statement = select(Reservations.reservationId).where(
+        Reservations.deviceId.in_(subqDev),
+        Reservations.startTime < resEnd,
+        Reservations.endTime > resStart
+    )
+
+    reservations = session.exec(statement).all()
+    return reservations

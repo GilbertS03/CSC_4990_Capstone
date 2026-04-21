@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-
+from datetime import datetime
 from ..auth.services.auth_service import require_roles
 from ..schema.user_schema import UserPublic
 from ..db.session import SessionDep
 from..services.buildings import *
+from ..services.reservations import fetch_reservations_by_building
 
 router = APIRouter(
     prefix="/buildings",
@@ -46,3 +47,8 @@ def delete_building(session: SessionDep, buildingId: int, user: UserPublic = Dep
     if not del_confirmed:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting building: {building.buildingId}")
     return building
+
+@router.get("/{buildingId}/reservations")
+def get_reservations_by_building_and_times(session: SessionDep, buildingId: int, resStart: datetime, resEnd: datetime):
+    reservations = fetch_reservations_by_building(session, buildingId, resStart, resEnd)
+    return reservations
