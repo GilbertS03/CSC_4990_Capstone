@@ -81,7 +81,8 @@ def create_device(session: Session, device: CreateDevice):
 
 def delete_device(session: Session, deviceId: int):
     device = convert_to_db_model(session, deviceId)
-
+    if device is None:
+        return None
     session.delete(device)
     session.commit()
 

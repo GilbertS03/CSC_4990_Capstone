@@ -28,10 +28,9 @@ def get_reservation_statuses(
     resStatus: str,
     userId: int | None = None
 ):
-    return fetch_reservation_statuses(session, userId, resStatus)
+    return fetch_reservation_statuses(session, status=resStatus, userId=userId)
 
 
-#TODO: add logic to ensure reservation stays within building hours
 @router.post("/create")
 def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
