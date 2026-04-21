@@ -4,12 +4,9 @@ from ..auth.services.auth_service import require_roles, get_current_active_user
 from ..db.session import SessionDep
 from ..schema.user_schema import UserPublic
 from ..services.reservations import *
-<<<<<<< Pages/implementing-routes
 from ..services.users import fetch_user_role
-from ..emailSystem.emailsystem import *
-=======
 from ..services.devices import fetch_device_by_id
->>>>>>> main
+from ..emailSystem.emailsystem import *
 
 router = APIRouter (
     prefix="/reservations",
@@ -31,10 +28,9 @@ def get_reservation_statuses(
     resStatus: str,
     userId: int | None = None
 ):
-    return fetch_reservation_statuses(session, userId, resStatus)
+    return fetch_reservation_statuses(session, status=resStatus, userId=userId)
 
 
-#TODO: add logic to ensure reservation stays within building hours
 @router.post("/create")
 def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):

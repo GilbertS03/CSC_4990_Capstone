@@ -103,6 +103,8 @@ def update_user_role(session: Session, userId: int, roleId: int):
 
 def delete_user(session: Session, userId: int):
     modeledUser = convert_user_to_db_model(session, userId)
+    if modeledUser is None:
+        return None
     session.delete(modeledUser)
     session.commit()
 
