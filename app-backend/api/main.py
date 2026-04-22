@@ -9,6 +9,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173"
+    "https://dvlybc03nsv3j.cloudfront.net"
 ]
 
 app.add_middleware(
