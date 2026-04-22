@@ -8,7 +8,7 @@ from .auth.routes import auth_router
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
     "https://dvlybc03nsv3j.cloudfront.net"
 ]
 
