@@ -103,6 +103,14 @@ def calc_hour_diff(resStart: datetime, resEnd: datetime):
     diffInHrs = (resLength.total_seconds() / 3600)
     return diffInHrs
 
+def all_res_exist(session: Session, reservations: list[int]):
+    for resId in reservations:
+        statement = select(Reservations).where(Reservations.reservationId == resId)
+        if session.exec(statement).one_or_none() is None:
+            return {"status": False, "resId": resId}
+    return {"status": True, "resId": 0}
+        
+
 def drop_reservation(session: Session, resId: int, user: UserPublic):
     statement = select(Reservations).where(Reservations.reservationId == resId)
     res = session.exec(statement).one()
