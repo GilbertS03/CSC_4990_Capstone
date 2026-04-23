@@ -6,6 +6,7 @@ from ..schema.building_closure_schema import CreateClosure
 from ..db.session import SessionDep
 from..services.buildings import *
 from ..services.building_closures import *
+from ..services.reservations import fetch_reservations_by_building
 
 router = APIRouter(
     prefix="/buildings",
@@ -61,3 +62,11 @@ def create_building_closure(session: SessionDep, buildingClose: CreateClosure):
     if not closeBuilding:
          raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error closing building")
     return closeBuilding
+  
+  
+@router.get("/{buildingId}/reservations")
+def get_reservations_by_building_and_times(session: SessionDep, buildingId: int, resStart: datetime, resEnd: datetime):
+    reservations = fetch_reservations_by_building(session, buildingId, resStart, resEnd)
+    if len(reservations) == 0:
+         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No reservations found for building {buildingId}")
+    return reservations

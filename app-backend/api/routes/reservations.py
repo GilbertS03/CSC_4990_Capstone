@@ -50,7 +50,17 @@ def fetch_reservation_by_day_and_device(session: SessionDep, deviceId: int, date
     reservations = fetch_reservation_by_day(session, deviceId, date)
     return reservations
 
-@router.put("/drop_reservation/{resId}")
+@router.put("/drop-reservations")
+def drop_multiple_active_reservations(reservations: list[int], session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
+    exists = all_res_exist(session, reservations)
+    if not exists["status"]:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An reservation was not found {exists["resId"]}")
+    dropRes = drop_reservations(session, reservations)
+    if len(dropRes) == 0:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error dropping reservations")
+    return dropRes
+
+@router.put("/drop-reservation/{resId}")
 def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     res = fetch_reservation_by_id(session, resId)
     if not res:
@@ -76,4 +86,3 @@ def delete_active_reservation(resId: int, session: SessionDep, user: UserPublic 
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting reservation: {res.reservationId}")
     return res
 
-    

@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from "react";
+import { asset } from "../../utils/assets";
+const friends = asset("Friends.jpg");
 import "./pages.css";
 
 const TEAM = [
@@ -110,23 +112,17 @@ export default function AboutUs() {
       {/* Team photo placeholder */}
       <section className="section photo-section fade-up">
         <div className="photo-frame">
-          <div className="photo-inner">
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ color: "var(--text3)", marginBottom: "12px" }}
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg>
-            <span className="photo-label">Team photo goes here</span>
+          <div className="photo-inner" style={{ background: "none" }}>
+            <span className="photo-label">
+              <img
+                src={friends}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
+            </span>
             <span className="photo-hint">Landscape · 16:9 recommended</span>
           </div>
         </div>
