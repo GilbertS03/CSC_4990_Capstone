@@ -5,10 +5,7 @@ from ..db.session import SessionDep
 from ..schema.user_schema import UserPublic
 from ..services.reservations import *
 from ..services.users import fetch_user_role
-<<<<<<< HEAD
 from ..services.devices import fetch_device_by_id
-=======
->>>>>>> ece1190460bb83a99dbf4cce101d08217cf1aff3
 from ..emailSystem.emailsystem import *
 
 router = APIRouter (
