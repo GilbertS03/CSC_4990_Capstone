@@ -25,7 +25,7 @@ function Reservations() {
     <div className="container">
       <p>
         <NavLink to="/admin" end>
-          &larr; Go back
+          &larr; Go back!
         </NavLink>
       </p>
       <table>
