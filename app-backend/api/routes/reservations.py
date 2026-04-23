@@ -61,7 +61,7 @@ def drop_multiple_active_reservations(reservations: list[int], session: SessionD
     return dropRes
 
 @router.put("/drop-reservation/{resId}")
-def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
+def drop_active_res(resId: int, session: SessionDep, reason: str, user: UserPublic = Depends(get_current_active_user)):
     res = fetch_reservation_by_id(session, resId)
     if not res:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Reservation not found")
@@ -72,7 +72,7 @@ def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(
     drop_confirmed = drop_reservation(session, resId, user)
     if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
-    email_dropped_reservation(user.userId, resId, "Unexpected Error Occurred in this Building", session)
+    email_dropped_reservation(user.userId, resId, reason, session)
     return drop_confirmed
 
 
