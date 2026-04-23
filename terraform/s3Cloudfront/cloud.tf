@@ -79,6 +79,24 @@ resource "aws_cloudfront_cache_policy" "frontend" {
 resource "aws_cloudfront_response_headers_policy" "frontend" {
   name = "${var.app_name}-response-headers"
 
+  cors_config {
+    access_control_allow_credentials = false
+
+    access_control_allow_headers {
+      items = ["*"]
+    }
+
+    access_control_allow_methods {
+      items = ["GET", "HEAD", "OPTIONS"]
+    }
+
+    access_control_allow_origins {
+      items = ["*"]  
+    }
+
+    origin_override = true
+  }
+
   security_headers_config {
     strict_transport_security {
       access_control_max_age_sec = 31536000
