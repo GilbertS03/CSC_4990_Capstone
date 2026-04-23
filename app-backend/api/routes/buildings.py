@@ -51,4 +51,6 @@ def delete_building(session: SessionDep, buildingId: int, user: UserPublic = Dep
 @router.get("/{buildingId}/reservations")
 def get_reservations_by_building_and_times(session: SessionDep, buildingId: int, resStart: datetime, resEnd: datetime):
     reservations = fetch_reservations_by_building(session, buildingId, resStart, resEnd)
+    if len(reservations) == 0:
+         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No reservations found for building {buildingId}")
     return reservations
