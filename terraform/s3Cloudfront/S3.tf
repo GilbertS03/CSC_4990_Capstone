@@ -64,6 +64,5 @@ resource "aws_s3_bucket_policy" "frontend" {
   bucket = aws_s3_bucket.frontend.id
   policy = data.aws_iam_policy_document.frontend_bucket.json
 
-  # Policy references the distribution, so it must exist first
   depends_on = [aws_cloudfront_distribution.frontend]
 }
