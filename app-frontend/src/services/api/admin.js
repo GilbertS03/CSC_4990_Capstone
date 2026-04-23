@@ -233,3 +233,32 @@ export const deleteReservation = async (id) => {
         throw error;
     }
 };
+
+// Settings routes
+export const getSettings = async() => {
+    try{
+        const res = await api.get("/settings");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const setSettingsById = async(id, data) => {
+    const {newValue} = data;
+    try {
+        const res = await api.put(`/settings/edit/${id}`, 
+        {
+            newValue : String(newValue),
+        },
+        {
+            headers: {
+                "Content-Type" : "application/json",
+            },
+        });
+    }
+    catch(error){
+        throw error;
+    }
+}
