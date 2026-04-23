@@ -3,12 +3,14 @@ from sqlmodel import select, cast, Session, Date, func
 
 from ..services.users import subtract_user_hours, add_user_hours
 from ..services.rooms import Rooms
+from ..services.users import fetch_users_by_id
 from ..models.Reservations import Reservations
 from ..models.Devices import Devices
 from ..models.ReservationStatuses import ReservationStatuses
 from ..schema.user_schema import UserPublic
 from ..schema.reservation_schema import UserReservation, CreateReservation
 
+STATUS_PENDING = 3
 
 def fetch_all_reservations(session: Session):
     statement = select(Reservations)
@@ -110,6 +112,13 @@ def all_res_exist(session: Session, reservations: list[int]):
             return {"status": False, "resId": resId}
     return {"status": True, "resId": 0}
         
+def drop_reservations(session: Session, resList: list[int]):
+    dropped_list = []
+    for resId in resList:
+        res = session.get(Reservations, resId)
+        user = fetch_users_by_id(res.userId, session)
+        dropped_list.append(drop_reservation(session, resId, user).reservationId)
+    return dropped_list
 
 def drop_reservation(session: Session, resId: int, user: UserPublic):
     statement = select(Reservations).where(Reservations.reservationId == resId)

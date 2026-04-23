@@ -55,8 +55,10 @@ def drop_multiple_active_reservations(reservations: list[int], session: SessionD
     exists = all_res_exist(session, reservations)
     if not exists["status"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An reservation was not found {exists["resId"]}")
-    
-
+    dropRes = drop_reservations(session, reservations)
+    if len(dropRes) == 0:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error dropping reservations")
+    return dropRes
 
 @router.put("/drop-reservation/{resId}")
 def drop_active_res(resId: int, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
