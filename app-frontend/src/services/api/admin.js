@@ -246,17 +246,9 @@ export const getSettings = async() => {
 }
 
 export const setSettingsById = async(id, data) => {
-    const {newValue} = data;
     try {
-        const res = await api.put(`/settings/edit/${id}`, 
-        {
-            newValue : String(newValue),
-        },
-        {
-            headers: {
-                "Content-Type" : "application/json",
-            },
-        });
+        const res = await api.put(`/settings/edit/${id}?newValue=${data}`)
+        return res;
     }
     catch(error){
         throw error;
