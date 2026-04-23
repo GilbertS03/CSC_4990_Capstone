@@ -183,12 +183,13 @@ export const getUserById = async(id) => {
     }
 };
 
-export const updateUserRole = async(id, data) => {
-    const {roleId} = data;
+export const updateUser = async(id, data) => {
+    const {role, weeklyHours} = data;
     try{
-        const res = await api.put(`/users/update-role/${id}`,
+        const res = await api.put(`/users/edit/${id}`,
             {
-                roleId: Number(roleId),
+                role: String(role),
+                weeklyHours: Number(weeklyHours)
             },
             {
                 headers: {
@@ -217,6 +218,16 @@ export const deleteUser = async(id) => {
 export const getAllReservations = async() => {
     try{
         const res = await api.get("/reservations/all");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const dropReservation = async(id) => {
+    try{
+        const res = await api.put(`/reservations/drop-reservation/${id}`);
         return res;
     }
     catch(error){
