@@ -254,3 +254,14 @@ export const setSettingsById = async(id, data) => {
         throw error;
     }
 }
+
+export const getAllReservationsFromBuildingById = async(id) => {
+    try {
+        const res = await api.get(`buildings/${id}/reservations`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
