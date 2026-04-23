@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-function createAPI(){
+async function createAPI(){
     if(import.meta.env.VITE_ENV === 'dev'){
-        const api = axios.create({baseURL: "http://localhost:8000"});
+        const api = axios.create({baseURL: "http://127.0.0.1:8000"});
         return api;
     } else{
         const api = axios.create({baseURL: "https://api.womm.space"});
@@ -11,5 +11,4 @@ function createAPI(){
 
 }
 
-export default createAPI();
-    
+export default await createAPI();
