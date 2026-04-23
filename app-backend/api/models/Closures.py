@@ -5,6 +5,6 @@ class Closures(SQLModel, table=True):
     __tablename__ = "Closures"
 
     closureId: int = Field(default=None, primary_key=True)
-    buidlingId: int = Field(index=True, foreign_key="Buildings.buildingId")
+    buildingId: int = Field(index=True, foreign_key="Buildings.buildingId")
     openTime: datetime
     closeTime: datetime

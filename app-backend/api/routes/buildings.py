@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-
+from datetime import datetime
 from ..auth.services.auth_service import require_roles
 from ..schema.user_schema import UserPublic
+from ..schema.building_closure_schema import CreateClosure
 from ..db.session import SessionDep
 from..services.buildings import *
+from ..services.building_closures import *
 
 router = APIRouter(
     prefix="/buildings",
@@ -46,3 +48,16 @@ def delete_building(session: SessionDep, buildingId: int, user: UserPublic = Dep
     if not del_confirmed:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error deleting building: {building.buildingId}")
     return building
+
+@router.post("/close/{buildingId}")
+def create_building_closure(session: SessionDep, buildingClose: CreateClosure):
+    building = fetch_building_by_id(session, buildingClose.buildingId)
+    if not building:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Building not found")
+    currClosedBuilding = closure_exists(session, buildingClose.buildingId, buildingClose.closeTime, buildingClose.openTime)
+    if currClosedBuilding:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Building is already closed during these times")
+    closeBuilding = close_building(session, buildingClose)
+    if not closeBuilding:
+         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error closing building")
+    return closeBuilding
