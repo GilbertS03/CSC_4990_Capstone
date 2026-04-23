@@ -54,7 +54,7 @@ def create_building_closure(session: SessionDep, buildingClose: CreateClosure):
     building = fetch_building_by_id(session, buildingClose.buildingId)
     if not building:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Building not found")
-    currClosedBuilding = closure_exists(session, buildingClose.buildingId, buildingClose.closeTime, buildingClose.openTime)
+    currClosedBuilding = closure_exists(session, buildingClose.buildingId, buildingClose.openTime, buildingClose.closeTime)
     if currClosedBuilding:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Building is already closed during these times")
     closeBuilding = close_building(session, buildingClose)

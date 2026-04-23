@@ -13,8 +13,8 @@ def fetch_building_closures(session: Session):
 def closure_exists(session: Session, buildingId: int, startClose: datetime, endClose: datetime):
     statement = select(Closures).where(
         Closures.buildingId == buildingId,
-        Closures.closeTime < endClose,
-        Closures.openTime > startClose
+        Closures.openTime < endClose,
+        Closures.closeTime > startClose
     )
     closure = session.exec(statement).one_or_none()
     return closure
