@@ -5,7 +5,7 @@ async function createAPI(){
         const api = axios.create({baseURL: "http://127.0.0.1:8000"});
         return api;
     } else{
-        const api = axios.create({baseURL: "http://100.31.89.76:8000/"});
+        const api = axios.create({baseURL: "https://34.202.2.180:8000"});
         return api;
     }
 
