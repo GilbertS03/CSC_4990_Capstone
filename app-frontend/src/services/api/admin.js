@@ -21,10 +21,59 @@ export const getDeviceLocations = async (id) => {
     }
 }
 
+export const getDeviceTypes = async() => {
+    try{
+        const res = await api.get("/device-types");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const getDeviceStatuses = async() => {
+    try{
+        const res = await api.get("/device-statuses");
+        return res;
+    }
+    catch(error) {
+        throw error;
+    }
+}
+
+export const editDevice = async(id, data) => {
+    const {deviceTypeId, deviceStatusId} = data;
+    try{
+        const res = await api.put(`devices/edit/${id}`, {
+            deviceTypeId: Number(deviceTypeId),
+            deviceStatusId: Number(deviceStatusId)
+        }, 
+        {
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+        });
+    }
+    catch(error){
+        throw error;
+    }
+    
+} 
+
+export const getDeviceById = async(id) => {
+    try{
+        const res = await api.get(`/devices/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const createDevice = async (data) => {
     try{
         const {deviceTypeId} = data;
-        const res = api.post("/devices/create", {
+        const res = await api.post("/devices/create", {
             deviceTypeId: Number(deviceTypeId),
         },
         {

@@ -1,5 +1,11 @@
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { deleteDevice } from "../../services/api/admin";
+import {
+  deleteDevice,
+  getDeviceStatuses,
+  deviceTypes,
+  editDevice,
+  getDeviceById,
+} from "../../services/api/admin";
 import { useState } from "react";
 //todo enforce validation on fields
 //TODO fix the form now because it asks for a room id and make sure the user change it here, this is what the grid is for
@@ -8,10 +14,20 @@ function EditDevice() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [deviceTypes, setDeviceTypes] = useState([]);
+  const [deviceStatuses, setDeviceStatuses] = useState([]);
+
   const onSubmit = (e) => {
     e.preventDefault();
     return;
   };
+
+  // useEffect(() => {
+  //   try{
+
+  //   }
+  // }, [])
 
   const handleDelete = async () => {
     if (confirm(`Delete Device ${id}?`)) {
