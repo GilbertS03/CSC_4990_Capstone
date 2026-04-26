@@ -54,7 +54,7 @@ def fetch_reservation_by_day_and_device(session: SessionDep, deviceId: int, date
 def drop_multiple_active_reservations(reservations: list[int], session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):
     exists = all_res_exist(session, reservations)
     if not exists["status"]:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An reservation was not found {exists["resId"]}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"An reservation was not found {exists['resId']}")
     dropRes = drop_reservations(session, reservations)
     if len(dropRes) == 0:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error dropping reservations")
