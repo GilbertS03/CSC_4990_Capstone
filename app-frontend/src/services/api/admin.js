@@ -72,7 +72,7 @@ export const deleteDevice = async(id) => {
 // Building Routes
 export const getAllBuildings = async () => {
     try{
-        const res = await api.get('/buildings');
+        const res = await api.get('/buildings/');
         return res;
     }
     catch(error){
@@ -237,7 +237,7 @@ export const deleteReservation = async (id) => {
 // Settings routes
 export const getSettings = async() => {
     try{
-        const res = await api.get("/settings");
+        const res = await api.get("/settings/");
         return res;
     }
     catch(error){
