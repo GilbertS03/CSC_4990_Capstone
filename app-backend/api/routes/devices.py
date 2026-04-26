@@ -82,3 +82,9 @@ def edit_existing_device(session: SessionDep, deviceId: int, device: EditDevice,
     updatedDevice = edit_device(session, deviceId, device)
     return updatedDevice
     
+@router.get("/{deviceId}", response_model=DevicePublic)
+def get_device_by_id(session: SessionDep, deviceId: int):
+    device = fetch_device_by_id(session, deviceId)
+    if not device:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Device not found: {deviceId}")
+    return device

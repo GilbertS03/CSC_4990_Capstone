@@ -98,7 +98,7 @@ function Navbar() {
             aria-label="Toggle navigation"
             aria-expanded={menuOpen}
           >
-            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            {menuOpen ? <Menu size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </div>

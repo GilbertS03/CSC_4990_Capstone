@@ -126,7 +126,7 @@
 .photo-section { padding-top: 0; }
 .photo-frame {
   width: 100%;
-  aspect-ratio: 16 / 6;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius);
   border: 1.5px dashed var(--border2);
   background: var(--bg1);

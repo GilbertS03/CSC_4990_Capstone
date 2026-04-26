@@ -72,7 +72,7 @@ export const deleteDevice = async(id) => {
 // Building Routes
 export const getAllBuildings = async () => {
     try{
-        const res = await api.get('/buildings');
+        const res = await api.get('/buildings/');
         return res;
     }
     catch(error){
@@ -233,3 +233,24 @@ export const deleteReservation = async (id) => {
         throw error;
     }
 };
+
+// Settings routes
+export const getSettings = async() => {
+    try{
+        const res = await api.get("/settings/");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const setSettingsById = async(id, data) => {
+    try {
+        const res = await api.put(`/settings/edit/${id}?newValue=${data}`)
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}

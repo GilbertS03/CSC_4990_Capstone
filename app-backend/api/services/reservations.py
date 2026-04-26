@@ -2,11 +2,15 @@ from datetime import datetime, date
 from sqlmodel import select, cast, Session, Date, func
 
 from ..services.users import subtract_user_hours, add_user_hours
+from ..services.rooms import Rooms
+from ..services.users import fetch_users_by_id
 from ..models.Reservations import Reservations
+from ..models.Devices import Devices
 from ..models.ReservationStatuses import ReservationStatuses
 from ..schema.user_schema import UserPublic
 from ..schema.reservation_schema import UserReservation, CreateReservation
 
+STATUS_PENDING = 3
 
 def fetch_all_reservations(session: Session):
     statement = select(Reservations)
@@ -101,6 +105,21 @@ def calc_hour_diff(resStart: datetime, resEnd: datetime):
     diffInHrs = (resLength.total_seconds() / 3600)
     return diffInHrs
 
+def all_res_exist(session: Session, reservations: list[int]):
+    for resId in reservations:
+        statement = select(Reservations).where(Reservations.reservationId == resId)
+        if session.exec(statement).one_or_none() is None:
+            return {"status": False, "resId": resId}
+    return {"status": True, "resId": 0}
+        
+def drop_reservations(session: Session, resList: list[int]):
+    dropped_list = []
+    for resId in resList:
+        res = session.get(Reservations, resId)
+        user = fetch_users_by_id(res.userId, session)
+        dropped_list.append(drop_reservation(session, resId, user).reservationId)
+    return dropped_list
+
 def drop_reservation(session: Session, resId: int, user: UserPublic):
     statement = select(Reservations).where(Reservations.reservationId == resId)
     res = session.exec(statement).one()
@@ -118,3 +137,16 @@ def drop_reservation(session: Session, resId: int, user: UserPublic):
 
     dropped = session.get(Reservations, resId)
     return dropped
+
+def fetch_reservations_by_building(session: Session, bId: int, resStart: datetime, resEnd: datetime):
+    subqRoom = select(Rooms.roomId).where(Rooms.buildingId == bId)
+    subqDev = select(Devices.deviceId).where(Devices.roomId.in_(subqRoom))
+    
+    statement = select(Reservations.reservationId).where(
+        Reservations.deviceId.in_(subqDev),
+        Reservations.startTime < resEnd,
+        Reservations.endTime > resStart
+    )
+
+    reservations = session.exec(statement).all()
+    return reservations
