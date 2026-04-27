@@ -125,7 +125,7 @@ export const getRoomsByBuildingId = async (id) => {
 export const createRoom = async (data) => {
     const {roomName, buildingId, layoutWidth, layoutHeight} = data;
     try{
-        const res = await api.post("/rooms/new_room", {
+        const res = await api.post("/rooms/new-room", {
             roomName: String(roomName),
             buildingId : Number(buildingId),
             layoutWidth : Number(layoutWidth),
