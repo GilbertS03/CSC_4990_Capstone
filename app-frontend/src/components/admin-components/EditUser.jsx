@@ -20,7 +20,6 @@ function EditUser() {
     e.preventDefault();
     const role = e.target.userRole.value;
     const weeklyHours = Number(e.target.weeklyHours.value);
-    console.log(role, weeklyHours);
     const errors = validateValues(role, weeklyHours);
     if (Object.keys(errors).length !== 0) {
       printErrors(errors);
@@ -30,7 +29,6 @@ function EditUser() {
       setLoading(true);
       const data = { role: role, weeklyHours: weeklyHours };
       const res = await updateUser(id, data);
-      console.log(res);
     } catch (error) {
       console.error(error);
       setError(true);

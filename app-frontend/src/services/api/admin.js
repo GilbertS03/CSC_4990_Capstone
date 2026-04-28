@@ -89,18 +89,13 @@ export const createDevice = async (data) => {
 }
 
 export const moveDevice = async (id, data) => {
+    const {xPosition, yPosition, roomId} = data;
+    let url = `/devices/device-positions/edit/${id}?newXPos=${xPosition}&newYPos=${yPosition}`;
+    if(roomId){
+        url += `&roomId=${roomId}`;
+    }
     try{
-        const {xPosition, yPosition} = data;
-        const res = api.post(`/devices/device-positions/edit/${id}`, {
-            newXPos : xPosition,
-            newYPos : yPosition,
-        },
-        {
-            headers : {
-                'Content-Type' : 'application/json',
-            },
-        },
-        );
+        const res = api.put(url);
         return res;
     }
     catch(error){

@@ -31,7 +31,6 @@ function Buildings() {
       try {
         setLoading(true);
         const res = await getAllReservationsFromBuildingById(id);
-        console.log(res);
       } catch (err) {
         setError(true);
         console.error(err);
