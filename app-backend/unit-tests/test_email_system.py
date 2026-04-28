@@ -1,6 +1,7 @@
 import unittest
 import imaplib
 import email
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 from api.emailSystem.emailsystem import email_dropped_reservation
 from dotenv import load_dotenv
@@ -38,7 +39,8 @@ class TestDeviceServices(unittest.TestCase):
             fake_user.email = os.getenv('GMAIL_TEST_EMAIL')
             mock_fetch_user.return_value = fake_user
 
-            fake_reservation = {"startTime": "2025-04-01T10:00:00Z"}
+            fake_reservation = MagicMock()
+            fake_reservation.startTime = datetime(2025, 4, 1, 14, 30)
             mock_fetch_res.return_value = fake_reservation
 
             email_dropped_reservation(userId=1, resId=1, reason="building closure", session=MagicMock())
