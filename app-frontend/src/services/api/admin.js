@@ -3,7 +3,7 @@ import api from './api';
 // Device Routes
 export const getAllDevices = async () => {
     try{
-        const res = await api.get('/devices');
+        const res = await api.get('/devices/');
         return res.data;
     }
     catch(error){
