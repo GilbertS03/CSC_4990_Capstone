@@ -111,7 +111,14 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     try {
       await onReserve(payload);
     } catch (err) {
-      console.error("Reservation failed:", err);
+      if (err.response?.status === 409) {
+        alert(
+          "You already have a reservation for this device on the selected day or someone has already reserved this device",
+        );
+      } else {
+        alert("Reservation failed. Please try again.");
+      }
+      console.error("Reservation failed:");
     } finally {
       setLoading(false);
     }

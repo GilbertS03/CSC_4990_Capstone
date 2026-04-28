@@ -38,7 +38,7 @@ def get_reservation_by_id(session: SessionDep, userId: int):
 @router.post("/create")
 def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"You have an existing reservation for this day: {reservation.startTime.date()}")
     if has_conflict(session, reservation):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Reservation Conflict")
     new_res = create_reservation(session, reservation, user)

@@ -2,7 +2,6 @@ import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { deleteUser, getUserById, updateUser } from "../../services/api/admin";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-//todo enforce validation on fields
 function EditUser() {
   const { id } = useParams();
   const navigate = useNavigate();

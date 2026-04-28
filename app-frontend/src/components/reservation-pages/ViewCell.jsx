@@ -12,7 +12,9 @@ function ViewCell() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [device, setDevice] = useState(location.state?.device || null);
+  const [device, setDevice] = useState(
+    location.state?.device || { deviceStatus: "unavailable" },
+  );
   const [building, setBuilding] = useState(null);
   const { bid, rid, row, col } = useParams();
 
@@ -50,7 +52,11 @@ function ViewCell() {
       alert("Reservation Confirmed");
       navigate(-1);
     } catch (err) {
-      alert(err.message || "Failed to create reservation. Please try again.");
+      if (err.response?.status === 409) {
+        alert(err.response.data.detail);
+      } else {
+        alert("Reservation failed. Please try again.");
+      }
     }
   };
 
