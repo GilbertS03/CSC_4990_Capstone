@@ -6,7 +6,7 @@ from ..schema.user_schema import UserPublic
 from ..services.reservations import *
 from ..services.users import fetch_user_role
 from ..services.devices import fetch_device_by_id
-from ..emailSystem.emailsystem import *
+from ..emailSystem.emailsystem import EmailService
 
 router = APIRouter (
     prefix="/reservations",
@@ -40,7 +40,7 @@ def create_new_reservation(reservation: CreateReservation, session: SessionDep, 
     new_res = create_reservation(session, reservation, user)
     if new_res is None:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User does not have enough hours remaining")
-    send_email("Reservation Creation", f"Reservation Creation Successful, {user.firstName}!\nDevice: {reservation.deviceId}.\nStart Time: {reservation.startTime:%B %d, %Y - %I:%M %p}\nEnd Time: {reservation.endTime:%B %d, %Y - %I:%M %p}", user.email)
+    EmailService.create_reservation(user, reservation)
     return new_res
 
 @router.get("/search", response_model=list[UserReservation])
@@ -72,7 +72,7 @@ def drop_active_res(resId: int, session: SessionDep, reason: str, user: UserPubl
     drop_confirmed = drop_reservation(session, resId, user)
     if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
-    email_dropped_reservation(user.userId, resId, reason, session)
+    EmailService.email_dropped_reservation
     return drop_confirmed
 
 
