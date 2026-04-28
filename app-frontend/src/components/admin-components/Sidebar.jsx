@@ -9,6 +9,7 @@ import {
   MonitorSmartphone,
   UserRound,
   Building,
+  NotepadText,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -65,6 +66,13 @@ function Sidebar({ collapsed, setCollapsed }) {
           <NavLink to="/admin/devices" className={linkClass}>
             <MonitorSmartphone size={iconSize} className="me-2" />
             {!collapsed && "All Devices"}
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink to="/admin/reservations" className={linkClass}>
+            <NotepadText size={iconSize} className="me-2" />
+            {!collapsed && "All Reservations"}
           </NavLink>
         </li>
 

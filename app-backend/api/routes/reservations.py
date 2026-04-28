@@ -30,11 +30,15 @@ def get_reservation_statuses(
 ):
     return fetch_reservation_statuses(session, status=resStatus, userId=userId)
 
+@router.get("/{userId}", response_model=list[UserReservation])
+def get_reservation_by_id(session: SessionDep, userId: int):
+    return fetch_reservations_by_user_id(session, userId)
+
 
 @router.post("/create")
 def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
     if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"You have an existing reservation for this day: {reservation.startTime.date()}")
     if has_conflict(session, reservation):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Reservation Conflict")
     new_res = create_reservation(session, reservation, user)
@@ -72,9 +76,8 @@ def drop_active_res(resId: int, session: SessionDep, reason: str, user: UserPubl
     drop_confirmed = drop_reservation(session, resId, user)
     if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
-    email_dropped_reservation(user.userId, resId, reason, session)
+    email_dropped_reservation(res.userId, resId, reason, session)
     return drop_confirmed
-
 
 @router.delete("/delete/{resId}")
 def delete_active_reservation(resId: int, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):

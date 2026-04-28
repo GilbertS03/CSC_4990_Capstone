@@ -50,6 +50,16 @@ export const getReservationStatuses = async (resStatus, userId) => {
     }
 }
 
+export const getReservationsById = async (userId) => {
+    try{
+        const res = await api.get(`/reservations/${userId}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const getRoomLayoutById = async (id) => {
     try{
         const res = await api.get(`/rooms/room-layouts/${id}`);
@@ -91,6 +101,17 @@ export const createReservation = async (data) => {
         throw error;
     }
 }
+
+export const dropReservation = async(id) => {
+    try{
+        const res = await api.put(`/reservations/drop-reservation/${id}?reason=Dropped By User`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const getCurrentUser = async () => {
     try {
         const res = await api.get('/users/me')

@@ -38,8 +38,6 @@ function SpecificRoom() {
     navigate(`/buildings/${bid}/${rid}/${row}/${col}`, {
       state: { device },
     });
-
-    console.log(device, row, col);
   };
   if (loading) return <p>Loading...</p>;
   if (error) return <p>An error has occurred, try again please</p>;

@@ -63,7 +63,7 @@ export async function signup(firstName, lastName, email, password){
         return data;
     }
     catch(error){
-        console.log(error)
+        console.error(error)
         if(error.response){
             if(error.response.status === 401){
                 throw new Error('Invalid email or password');

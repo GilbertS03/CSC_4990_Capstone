@@ -8,26 +8,26 @@ function EditCell() {
   const navigate = useNavigate();
 
   const [device, setDevice] = useState(location.state?.device || null);
-  const [loading, setLoading] = useState(!location.state?.device);
+
+  useEffect(() => {
+    console.log(device);
+  }, []);
 
   const onCancel = () => {
     navigate(-1);
   };
-
-  //todo find out what to do here
   const onSave = () => {
-    console.log("Saved!");
+    navigate(-1);
   };
-
-  if (loading) return <p>Loading...</p>;
 
   return (
     <EditCellForm
       device={device}
       row={Number(row)}
       col={Number(col)}
-      onSave={onSave}
       onCancel={onCancel}
+      onSave={onSave}
+      roomId={rid}
     />
   );
 }

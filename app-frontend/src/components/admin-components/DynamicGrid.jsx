@@ -10,7 +10,7 @@ import {
   Gamepad,
   Ban,
 } from "lucide-react";
-import { getDeviceLocations } from "../../services/api/admin";
+import { getDeviceLocations, getBuildingById } from "../../services/api/admin";
 
 const DEVICE_ICONS = {
   laptop: { Icon: Laptop, label: "Laptop" },
@@ -30,11 +30,11 @@ const STATUS_STYLES = {
 };
 
 function DeviceCell({ device, row, col, onCellClick }) {
-  const status = device.deviceStatus ?? "unavailable";
-  const typeKey = device.deviceType?.toLowerCase();
+  const status = device?.deviceStatus ?? "unavailable";
+  const typeKey = device?.deviceType?.toLowerCase();
   const { Icon = HelpCircle, label = typeKey ?? "" } =
     DEVICE_ICONS[typeKey] ?? {};
-  const isUnavailable = status === "unavailable";
+  const isUnavailable = !device || status === "unavailable";
 
   return (
     <button
@@ -55,20 +55,50 @@ function DeviceCell({ device, row, col, onCellClick }) {
   );
 }
 
-function DynamicGrid({ height, width, rid, building, onCellClick }) {
+function DynamicGrid({
+  height,
+  width,
+  rid,
+  building,
+  onCellClick,
+  buildingId,
+}) {
   const [deviceObjs, setDeviceObjs] = useState([]);
+  const [buildingObj, setBuildingObj] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getDeviceLocations(rid)
-      .then((res) => setDeviceObjs(res.data))
-      .catch((err) => {
+    const fetchDeviceLocations = async (id) => {
+      try {
+        const res = await getDeviceLocations(id);
+        setDeviceObjs(res.data);
+      } catch (err) {
         console.error(err);
         setError(true);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDeviceLocations(rid);
   }, [rid]);
+
+  useEffect(() => {
+    const fetchBuilding = async (id) => {
+      setLoading(true);
+      if (building) return;
+      try {
+        const res = await getBuildingById(id);
+        setBuildingObj(res.data);
+      } catch (error) {
+        console.error(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBuilding(buildingId);
+  }, [buildingId]);
 
   if (loading) return <p className="text-secondary">Loading…</p>;
   if (error)
@@ -82,14 +112,14 @@ function DynamicGrid({ height, width, rid, building, onCellClick }) {
   return (
     <div className="container py-3">
       {/* Hours */}
-      {building ? (
+      {buildingObj ? (
         <p className="text-secondary small mb-3">
           <span className="badge bg-secondary-subtle text-secondary border me-1">
-            {building.openTime}
+            {buildingObj.openTime}
           </span>
           –
           <span className="badge bg-secondary-subtle text-secondary border ms-1">
-            {building.closeTime}
+            {buildingObj.closeTime}
           </span>
         </p>
       ) : (
@@ -123,13 +153,15 @@ function DynamicGrid({ height, width, rid, building, onCellClick }) {
         {[...Array(height)].map((_, row) =>
           [...Array(width)].map((_, col) => {
             const key = `${row}-${col}`;
-            const device = deviceMap[key] ?? { deviceStatus: "unavailable" };
+            const device = deviceMap[key] ?? null;
             return (
               <DeviceCell
                 key={key}
                 device={device}
                 row={row}
                 col={col}
+                maxRowSize={height}
+                maxColSize={width}
                 onCellClick={onCellClick}
               />
             );
