@@ -87,7 +87,8 @@ def has_conflict(session: Session, reservation: UserReservation):
 def has_existing_res(session: Session, userId: int, newResDate: date):
     statement = select(Reservations).where(
         Reservations.userId == userId,
-        cast(Reservations.startTime, Date) == newResDate
+        cast(Reservations.startTime, Date) == newResDate,
+        Reservations.reservationStatusId == STATUS_PENDING
     )
     res = session.exec(statement).first()
     return res is not None
