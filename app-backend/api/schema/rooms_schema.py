@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
 
 class RoomBase(BaseModel):
@@ -6,7 +8,7 @@ class RoomBase(BaseModel):
     roomName: str
 
 class RoomPublic(RoomBase):
-    buildingId: int
+    buildingId: Optional[int] = None
     roomId:int
     
 class RoomLayout(RoomBase):

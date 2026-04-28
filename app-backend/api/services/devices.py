@@ -61,7 +61,7 @@ def device_in_position(session: Session, roomId: int, posX: int, posY: int):
         Devices.positionY == posY
     )
 
-    hasDevice = session.exec(statement).one()
+    hasDevice = session.exec(statement).one_or_none()
 
     return hasDevice is not None
 
