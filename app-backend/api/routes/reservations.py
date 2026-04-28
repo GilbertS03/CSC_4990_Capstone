@@ -30,6 +30,10 @@ def get_reservation_statuses(
 ):
     return fetch_reservation_statuses(session, status=resStatus, userId=userId)
 
+@router.get("/{userId}", response_model=list[UserReservation])
+def get_reservation_by_id(session: SessionDep, userId: int):
+    return fetch_reservations_by_user_id(session, userId)
+
 
 @router.post("/create")
 def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
