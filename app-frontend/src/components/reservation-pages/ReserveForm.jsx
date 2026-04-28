@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import DeviceInfo from "./ReserveFormComponents/DeviceInfo";
 import Calendar from "./ReserveFormComponents/Calendar";
-import Time from "./ReserveFormComponents/Time";
 import { getCurrentUser } from "../../services/api/user";
+import Time from "../admin-components/Time";
 
 function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
   const [formData, setFormData] = useState({
@@ -58,6 +58,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -171,12 +172,32 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
                   </div>
                   <Calendar handleChange={handleChange} formData={formData} />
 
-                  <Time
-                    handleChange={handleChange}
-                    formData={formData}
-                    building={building}
-                  />
+                  <div className="mb-3">
+                    <Time
+                      handleChange={handleChange}
+                      formData={formData}
+                      building={building}
+                    />
+                  </div>
 
+                  <div className="mb-3">
+                    <label className="form-label">Duration</label>
+                    <select
+                      className="form-select"
+                      name="duration"
+                      value={formData.duration}
+                      onChange={handleChange}
+                    >
+                      <option value={0.25}>15 Minutes</option>
+                      <option value={0.5}>30 Minutes</option>
+                      <option value={0.75}>45 Minutes</option>
+                      <option value={1.0}>60 Minutes</option>
+                      <option value={1.25}>75 Minutes</option>
+                      <option value={1.5}>90 Minutes</option>
+                      <option value={1.75}>105 Minutes</option>
+                      <option value={2.0}>120 Minutes</option>
+                    </select>
+                  </div>
                   {/* Buttons */}
                   <div className="d-flex justify-content-between mt-4">
                     <button

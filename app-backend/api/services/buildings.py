@@ -10,6 +10,11 @@ def fetch_buildings(session: Session):
     buildings = session.exec(statement).all()
     return [BuildingPublic.model_validate(building) for building in buildings]
 
+def fetch_building_time_by_id(session: Session, buildingId: int):
+    statement = select(Buildings).where(buildingId == Buildings.buildingId)
+    building = session.exec(statement).first()
+    return BuildingTime.model_validate(building)
+
 def fetch_building_by_id(session: Session, buildingId: int):
     statement = select(Buildings).where(Buildings.buildingId == buildingId)
     building = session.exec(statement).first()

@@ -17,10 +17,14 @@ router = APIRouter(
 @router.get("/", response_model=list[BuildingPublic])
 def get_buildings(session: SessionDep):
         return fetch_buildings(session)
-    
+
 @router.get("/all-hours", response_model=list[BuildingTime])
 def get_all_building_hours(session: SessionDep, limit: int = 100):
         return fetch_building_times(session, limit)
+
+@router.get("/{bid}", response_model=BuildingTime)
+def get_building_by_id(session: SessionDep, bid: int):
+        return fetch_building_time_by_id(session, bid)
     
 @router.post("/create")
 def create_new_building(session: SessionDep, building: BuildingCreate, user: UserPublic = Depends(require_roles("admin"))):

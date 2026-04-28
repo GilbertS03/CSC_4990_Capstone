@@ -145,6 +145,33 @@ export const createBuilding = async (data) => {
     }
 };
 
+export const editBuildingHoursById = async(id, data) => {
+    const {openTime, closeTime} = data;
+    try {
+        const res = await api.put(`buildings/edit/${id}`, {
+            openTime: openTime,
+            closeTime: closeTime
+        }, {
+            headers : {
+                'Content-Type' : 'application/json',
+            }
+        });
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const getBuildingById = async(id) => {
+    try{
+        const res = await api.get(`/buildings/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const deleteBuilding = async (id) => {
     try{
         const res = await api.delete(`/buildings/delete/${id}`);
@@ -196,6 +223,17 @@ export const getRoomLayoutById = async (id) => {
     }
 };
 
+export const editRoomLayoutById = async(id, data) => {
+    const {newWidth, newHeight} = data;
+    try{
+        const res = await api.put(`rooms/room-layouts/${id}/edit?newWidth=${newWidth}&newHeight=${newHeight}`)
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const deleteRoomById = async (id) => {
     try{
         const res = await api.delete(`/rooms/delete-room/${id}`);
@@ -230,17 +268,7 @@ export const getUserById = async(id) => {
 export const updateUser = async(id, data) => {
     const {role, weeklyHours} = data;
     try{
-        const res = await api.put(`/users/edit/${id}`,
-            {
-                role: String(role),
-                weeklyHours: Number(weeklyHours)
-            },
-            {
-                headers: {
-                    'Content-Type' : 'application/json',
-                }
-            }
-        );
+        const res = await api.put(`/users/edit/${id}?role=${role}&weeklyHours=${weeklyHours}`);
         return res;
     }
     catch(error){
@@ -269,9 +297,9 @@ export const getAllReservations = async() => {
     }
 }
 
-export const dropReservation = async(id) => {
+export const dropReservation = async(id, reason) => {
     try{
-        const res = await api.put(`/reservations/drop-reservation/${id}`);
+        const res = await api.put(`/reservations/drop-reservation/${id}?reason=${reason}`);
         return res;
     }
     catch(error){
