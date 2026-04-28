@@ -1,55 +1,87 @@
 import { useState, useEffect } from "react";
-import { getDeviceLocations } from "../../services/api/admin";
-function EditCellForm({ device, row, col, onSave, onCancel }) {
-  const [hasDevice, setHasDevice] = useState(!!device);
+import { NavLink } from "react-router-dom";
+import { moveDevice, getDeviceLocations } from "../../services/api/admin";
 
+function EditCellForm({
+  device,
+  row,
+  col,
+  onCancel,
+  maxRowSize,
+  maxColSize,
+  roomId,
+}) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [unplacedDevices, setUnplacedDevices] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const [formData, setFormData] = useState({
-    deviceType: "",
-    deviceStatus: "available",
+    xPosition: col,
+    yPosition: row,
   });
 
-  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    if (device) {
-      setHasDevice(true);
-      setFormData({
-        deviceType: device.deviceType || "",
-        deviceStatus: device.deviceStatus || "available",
-      });
-    } else {
-      setHasDevice(false);
-      setFormData({
-        deviceType: "",
-        deviceStatus: "available",
-      });
+    setFormData({ xPosition: col, yPosition: row });
+  }, [row, col]);
+
+  // Fetch unplaced devices only when cell is empty
+  useEffect(() => {
+    if (!device) {
+      const fetchUnplaced = async () => {
+        setLoading(true);
+        try {
+          const res = await getDeviceLocations(0);
+          setUnplacedDevices(res.data);
+        } catch (err) {
+          console.error("Error fetching unplaced devices:", err);
+          setError(true);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchUnplaced();
     }
   }, [device]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: Number(value) }));
   };
 
-  const handleSubmit = async (e) => {
+  // Move an existing device to new coordinates
+  const handleMoveSubmit = async (e) => {
     e.preventDefault();
-    // setLoading(true);
+    setLoading(true);
+    setError(false);
+    try {
+      await moveDevice(device.deviceId, formData);
+    } catch (err) {
+      console.error("Error moving device:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // try {
-    //   await onSave({
-    //     row,
-    //     col,
-    //     hasDevice,
-    //     ...formData,
-    //   });
-    // } catch (err) {
-    //   console.error("Error saving cell:", err);
-    // } finally {
-    //   setLoading(false);
-    // }
+  // Place an unplaced device into this cell
+  const handlePlaceSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedDeviceId) return;
+    setLoading(true);
+    setError(false);
+    try {
+      await moveDevice(selectedDeviceId, {
+        xPosition: col,
+        yPosition: row,
+        roomId: roomId,
+      });
+      onSave();
+    } catch (err) {
+      console.error("Error placing device:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,98 +89,151 @@ function EditCellForm({ device, row, col, onSave, onCancel }) {
       <div className="row justify-content-center">
         <div className="col-lg-6 col-md-8">
           <div className="card shadow-sm">
-            <div className="card-header bg-dark text-white">
+            <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
               <h5 className="mb-0">
-                Edit Cell ({row}, {col})
+                {device
+                  ? `Move Device — ${device.deviceType}`
+                  : `Place Device at (${col}, ${row})`}
               </h5>
+              {device && (
+                <NavLink
+                  to={`/admin/devices/edit/${device.deviceId}`}
+                  className="btn btn-sm btn-outline-light"
+                >
+                  Edit device details →
+                </NavLink>
+              )}
             </div>
 
             <div className="card-body">
-              {/* Cell Type */}
-              <div className="mb-3">
-                <label className="form-label fw-semibold">Cell Type</label>
+              {error && (
+                <div className="alert alert-danger">
+                  Something went wrong. Please try again.
+                </div>
+              )}
 
-                <select
-                  className="form-select"
-                  value={hasDevice ? "device" : "empty"}
-                  onChange={(e) => setHasDevice(e.target.value === "device")}
-                >
-                  <option value="empty">Empty</option>
-                  <option value="device">Device</option>
-                </select>
-              </div>
+              {/* Cell has a device — show move form */}
+              {device ? (
+                <form onSubmit={handleMoveSubmit}>
+                  <div className="mb-4">
+                    <p className="mb-1">
+                      <span className="fw-semibold">Type: </span>
+                      {device.deviceType}
+                    </p>
+                    <p className="mb-0 text-muted">
+                      <small>
+                        Current position: ({col}, {row})
+                      </small>
+                    </p>
+                  </div>
 
-              {/* Device Fields */}
-              {hasDevice && (
-                <>
                   <div className="mb-3">
-                    <label className="form-label">Device Type</label>
+                    <label className="form-label fw-semibold">
+                      New X Position
+                    </label>
                     <input
-                      type="text"
-                      name="deviceType"
-                      value={formData.deviceType}
+                      type="number"
+                      name="xPosition"
+                      value={formData.xPosition}
                       onChange={handleChange}
                       className="form-control"
-                      placeholder="Gaming PC, Console, etc."
+                      min={0}
+                      max={maxColSize}
                       required
                     />
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label">Status</label>
-                    <select
-                      name="deviceStatus"
-                      value={formData.deviceStatus}
+                    <label className="form-label fw-semibold">
+                      New Y Position
+                    </label>
+                    <input
+                      type="number"
+                      name="yPosition"
+                      value={formData.yPosition}
                       onChange={handleChange}
-                      className="form-select"
+                      className="form-control"
+                      min={0}
+                      max={maxRowSize}
+                      required
+                    />
+                  </div>
+
+                  <div className="d-flex justify-content-between mt-4">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={onCancel}
                     >
-                      <option value="available">Available</option>
-                      <option value="reserved">Reserved</option>
-                      <option value="unavailable">Unavailable</option>
-                    </select>
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          Moving...
+                        </>
+                      ) : (
+                        "Move Device"
+                      )}
+                    </button>
                   </div>
-
-                  {/* Status Preview */}
-                  <div
-                    className={`alert mt-3 ${
-                      formData.deviceStatus === "available"
-                        ? "alert-success"
-                        : formData.deviceStatus === "reserved"
-                          ? "alert-danger"
-                          : "alert-dark"
-                    }`}
-                  >
-                    Preview: {formData.deviceStatus}
-                  </div>
-                </>
-              )}
-
-              {/* Buttons */}
-              <div className="d-flex justify-content-between mt-4">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={onCancel}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  onClick={handleSubmit}
-                  disabled={loading}
-                >
+                </form>
+              ) : (
+                /* Cell is empty — show unplaced device picker */
+                <form onSubmit={handlePlaceSubmit}>
                   {loading ? (
-                    <>
+                    <div className="text-center py-3">
                       <span className="spinner-border spinner-border-sm me-2"></span>
-                      Saving...
-                    </>
+                      Loading available devices...
+                    </div>
+                  ) : unplacedDevices.length === 0 ? (
+                    <div className="alert alert-secondary">
+                      No unplaced devices available.
+                    </div>
                   ) : (
-                    "Save Changes"
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold">
+                        Select a Device to Place Here
+                      </label>
+                      <select
+                        className="form-select"
+                        value={selectedDeviceId}
+                        onChange={(e) => setSelectedDeviceId(e.target.value)}
+                        required
+                      >
+                        <option value="">-- Select a device --</option>
+                        {unplacedDevices.map((d) => (
+                          <option key={d.deviceId} value={d.deviceId}>
+                            #{d.deviceId} — {d.deviceType}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   )}
-                </button>
-              </div>
+
+                  <div className="d-flex justify-content-between mt-4">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={onCancel}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-success"
+                      disabled={loading || !selectedDeviceId}
+                    >
+                      Place Device Here
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </div>

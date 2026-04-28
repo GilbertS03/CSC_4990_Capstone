@@ -21,10 +21,59 @@ export const getDeviceLocations = async (id) => {
     }
 }
 
+export const getDeviceTypes = async() => {
+    try{
+        const res = await api.get("/device-types");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const getDeviceStatuses = async() => {
+    try{
+        const res = await api.get("/device-statuses");
+        return res;
+    }
+    catch(error) {
+        throw error;
+    }
+}
+
+export const editDevice = async(id, data) => {
+    const {deviceTypeId, deviceStatusId} = data;
+    try{
+        const res = await api.put(`devices/edit/${id}`, {
+            deviceTypeId: Number(deviceTypeId),
+            deviceStatusId: Number(deviceStatusId)
+        }, 
+        {
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+        });
+    }
+    catch(error){
+        throw error;
+    }
+    
+} 
+
+export const getDeviceById = async(id) => {
+    try{
+        const res = await api.get(`/devices/${id}`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
 export const createDevice = async (data) => {
     try{
         const {deviceTypeId} = data;
-        const res = api.post("/devices/create", {
+        const res = await api.post("/devices/create", {
             deviceTypeId: Number(deviceTypeId),
         },
         {
@@ -40,18 +89,13 @@ export const createDevice = async (data) => {
 }
 
 export const moveDevice = async (id, data) => {
+    const {xPosition, yPosition, roomId} = data;
+    let url = `/devices/device-positions/edit/${id}?newXPos=${xPosition}&newYPos=${yPosition}`;
+    if(roomId){
+        url += `&roomId=${roomId}`;
+    }
     try{
-        const {xPosition, yPosition} = data;
-        const res = api.post(`/devices/device-positions/edit/${id}`, {
-            newXPos : xPosition,
-            newYPos : yPosition,
-        },
-        {
-            headers : {
-                'Content-Type' : 'application/json',
-            },
-        },
-        );
+        const res = api.put(url);
         return res;
     }
     catch(error){
@@ -183,12 +227,13 @@ export const getUserById = async(id) => {
     }
 };
 
-export const updateUserRole = async(id, data) => {
-    const {roleId} = data;
+export const updateUser = async(id, data) => {
+    const {role, weeklyHours} = data;
     try{
-        const res = await api.put(`/users/update-role/${id}`,
+        const res = await api.put(`/users/edit/${id}`,
             {
-                roleId: Number(roleId),
+                role: String(role),
+                weeklyHours: Number(weeklyHours)
             },
             {
                 headers: {
@@ -217,6 +262,16 @@ export const deleteUser = async(id) => {
 export const getAllReservations = async() => {
     try{
         const res = await api.get("/reservations/all");
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+
+export const dropReservation = async(id) => {
+    try{
+        const res = await api.put(`/reservations/drop-reservation/${id}`);
         return res;
     }
     catch(error){
@@ -254,3 +309,14 @@ export const setSettingsById = async(id, data) => {
         throw error;
     }
 }
+
+export const getAllReservationsFromBuildingById = async(id) => {
+    try {
+        const res = await api.get(`buildings/${id}/reservations`);
+        return res;
+    }
+    catch(error){
+        throw error;
+    }
+}
+

@@ -30,11 +30,11 @@ const STATUS_STYLES = {
 };
 
 function DeviceCell({ device, row, col, onCellClick }) {
-  const status = device.deviceStatus ?? "unavailable";
-  const typeKey = device.deviceType?.toLowerCase();
+  const status = device?.deviceStatus ?? "unavailable";
+  const typeKey = device?.deviceType?.toLowerCase();
   const { Icon = HelpCircle, label = typeKey ?? "" } =
     DEVICE_ICONS[typeKey] ?? {};
-  const isUnavailable = status === "unavailable";
+  const isUnavailable = !device || status === "unavailable";
 
   return (
     <button
@@ -61,13 +61,18 @@ function DynamicGrid({ height, width, rid, building, onCellClick }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getDeviceLocations(rid)
-      .then((res) => setDeviceObjs(res.data))
-      .catch((err) => {
+    const fetchDeviceLocations = async (id) => {
+      try {
+        const res = await getDeviceLocations(id);
+        setDeviceObjs(res.data);
+      } catch (err) {
         console.error(err);
         setError(true);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDeviceLocations(rid);
   }, [rid]);
 
   if (loading) return <p className="text-secondary">Loading…</p>;
@@ -123,13 +128,15 @@ function DynamicGrid({ height, width, rid, building, onCellClick }) {
         {[...Array(height)].map((_, row) =>
           [...Array(width)].map((_, col) => {
             const key = `${row}-${col}`;
-            const device = deviceMap[key] ?? { deviceStatus: "unavailable" };
+            const device = deviceMap[key] ?? null;
             return (
               <DeviceCell
                 key={key}
                 device={device}
                 row={row}
                 col={col}
+                maxRowSize={height}
+                maxColSize={width}
                 onCellClick={onCellClick}
               />
             );

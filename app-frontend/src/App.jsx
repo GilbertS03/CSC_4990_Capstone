@@ -34,6 +34,7 @@ import RoomEditing from "./components/admin-components/RoomEditing";
 import EditCell from "./components/admin-components/EditCell";
 import CreateBuilding from "./components/admin-components/CreateBuilding";
 import CreateRoom from "./components/admin-components/CreateRoom";
+import Reservations from "./components/admin-components/Reservations";
 
 //Role based protection of routes
 import RoleBasedRoute from "./components/route-types/RoleBasedRoute";
@@ -121,6 +122,7 @@ function App() {
         }
       >
         <Route index element={<AdminHome />} />
+        <Route path="reservations" element={<Reservations></Reservations>} />
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="devices" element={<AdminDevices />} />
         <Route path="devices/newDevice" element={<AddDeviceForm />} />

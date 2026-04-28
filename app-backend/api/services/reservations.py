@@ -150,3 +150,8 @@ def fetch_reservations_by_building(session: Session, bId: int, resStart: datetim
 
     reservations = session.exec(statement).all()
     return reservations
+
+def fetch_reservations_by_user_id(session: Session, userId: int):
+    statement = select(Reservations).where(userId == Reservations.userId)
+    reservations = session.exec(statement).all()
+    return reservations

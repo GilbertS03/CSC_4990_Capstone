@@ -1,22 +1,62 @@
 import { useParams, useNavigate, NavLink } from "react-router-dom";
-import { deleteUser, getUserById } from "../../services/api/admin";
+import { deleteUser, getUserById, updateUser } from "../../services/api/admin";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 //todo enforce validation on fields
 function EditUser() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const onSubmit = (e) => {
+  const printErrors = (errors) => {
+    Object.keys(errors).forEach((key) => {
+      alert(errors[key]);
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    return;
+    const role = e.target.userRole.value;
+    const weeklyHours = Number(e.target.weeklyHours.value);
+    const errors = validateValues(role, weeklyHours);
+    if (Object.keys(errors).length !== 0) {
+      printErrors(errors);
+      return;
+    }
+    try {
+      setLoading(true);
+      const data = { role: role, weeklyHours: weeklyHours };
+      const res = await updateUser(id, data);
+    } catch (error) {
+      console.error(error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validateValues = (role, weeklyHours) => {
+    const errors = {};
+    if (
+      !role ||
+      role === "" ||
+      !["admin", "faculty", "student"].includes(role)
+    ) {
+      errors["roles"] = "Not a valid role";
+    }
+    if (!weeklyHours || isNaN(weeklyHours) || weeklyHours < 0) {
+      errors["hours"] = "Not a valid number of hours";
+    }
+    return errors;
   };
 
   useEffect(() => {
     const fetchUserById = async (id) => {
       try {
         const res = await getUserById(id);
+        setUser(res.data);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -46,7 +86,7 @@ function EditUser() {
         if (!error) {
           navigate(-1);
         } else {
-          console.log("Error, please try again");
+          console.error("Error, please try again");
         }
         setError(false);
       }
@@ -56,17 +96,16 @@ function EditUser() {
   };
 
   if (loading) return <p>Loading...</p>;
-  // TODO finish user editing
   return (
     <div className="container">
       <h2>User ID: {id} </h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="form-group mb-3">
           <label>Role:</label>
           <select id="userRole" className="form-control">
-            <option value={3}>Student</option>
-            <option value={2}>Faculty</option>
-            <option value={1}>Admin</option>
+            <option value={"student"}>Student</option>
+            <option value={"faculty"}>Faculty</option>
+            <option value={"admin"}>Admin</option>
           </select>
         </div>
         <div className="form-group mb-3">
@@ -80,7 +119,9 @@ function EditUser() {
             placeholder="10"
           />{" "}
         </div>
-        <button className="btn btn-primary">Submit</button>
+        <button className="btn btn-primary" type="submit">
+          Submit
+        </button>
       </form>
       <div className="container mt-5 text-center">
         <button onClick={handleDelete} className="btn btn-danger">

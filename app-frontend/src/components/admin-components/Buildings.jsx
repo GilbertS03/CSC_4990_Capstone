@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAllBuildings, deleteBuilding } from "../../services/api/admin";
+import {
+  getAllBuildings,
+  getAllReservationsFromBuildingById,
+} from "../../services/api/admin";
 import { NavLink } from "react-router-dom";
 
 function Buildings() {
@@ -23,12 +26,11 @@ function Buildings() {
     fetchBuildings();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (confirm(`Delete Building: ${id}?`)) {
+  const handleDrop = async (id) => {
+    if (confirm(`Drop all reservations from building: ${id}?`)) {
       try {
         setLoading(true);
-        const res = await deleteBuilding(id);
-        setBuildings((prev) => prev.filter((b) => b.buildingId !== id));
+        const res = await getAllReservationsFromBuildingById(id);
       } catch (err) {
         setError(true);
         console.error(err);
@@ -72,9 +74,9 @@ function Buildings() {
               <td>
                 <button
                   className="btn btn-danger"
-                  onClick={() => handleDelete(buildings[key].buildingId)}
+                  onClick={() => handleDrop(buildings[key].buildingId)}
                 >
-                  Delete: {buildings[key].buildingId}
+                  Drop Reservations from: {buildings[key].buildingId}
                 </button>
               </td>
             </tr>
