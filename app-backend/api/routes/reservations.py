@@ -37,8 +37,16 @@ def get_reservation_by_id(session: SessionDep, userId: int):
 
 @router.post("/create")
 def create_new_reservation(reservation: CreateReservation, session: SessionDep, user: UserPublic = Depends(get_current_active_user)):
-    if has_existing_res(session, user.userId, reservation.startTime.date()) and (user.role == "student"):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()}")
+    existingRes = has_existing_res(session, user.userId, reservation.startTime.date())
+    if existingRes is not None and (user.role == "student"):
+        currResLength = calc_hour_diff(existingRes.startTime, existingRes.endTime)
+        newResLength = calc_hour_diff(reservation.startTime, reservation.endTime)
+        if (currResLength + user.weeklyHoursRemaining) < newResLength:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"User {user.userId} has an existing reservation for this day: {reservation.startTime.date()} and insuffecient hours remaining.")
+        droppedRes = drop_reservation(session, existingRes.reservationId, user)
+        if droppedRes.reservationStatusId != STATUS_DROPPED_NUM:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {existingRes.reservationId}")
+    
     if has_conflict(session, reservation):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Reservation Conflict")
     new_res = create_reservation(session, reservation, user)

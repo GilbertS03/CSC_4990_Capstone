@@ -90,8 +90,8 @@ def has_existing_res(session: Session, userId: int, newResDate: date):
         cast(Reservations.startTime, Date) == newResDate,
         Reservations.reservationStatusId == STATUS_PENDING
     )
-    res = session.exec(statement).first()
-    return res is not None
+    res = session.exec(statement).one_or_none()
+    return res
 
 def delete_reservation(session: Session, resId: int):
     res = convert_res_to_db_model(session, resId)
