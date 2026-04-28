@@ -10,7 +10,7 @@ import {
   Gamepad,
   Ban,
 } from "lucide-react";
-import { getDeviceLocations } from "../../services/api/admin";
+import { getDeviceLocations, getBuildingById } from "../../services/api/admin";
 
 const DEVICE_ICONS = {
   laptop: { Icon: Laptop, label: "Laptop" },
@@ -55,8 +55,16 @@ function DeviceCell({ device, row, col, onCellClick }) {
   );
 }
 
-function DynamicGrid({ height, width, rid, building, onCellClick }) {
+function DynamicGrid({
+  height,
+  width,
+  rid,
+  building,
+  onCellClick,
+  buildingId,
+}) {
   const [deviceObjs, setDeviceObjs] = useState([]);
+  const [buildingObj, setBuildingObj] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -75,6 +83,23 @@ function DynamicGrid({ height, width, rid, building, onCellClick }) {
     fetchDeviceLocations(rid);
   }, [rid]);
 
+  useEffect(() => {
+    const fetchBuilding = async (id) => {
+      setLoading(true);
+      if (building) return;
+      try {
+        const res = await getBuildingById(id);
+        setBuildingObj(res.data);
+      } catch (error) {
+        console.error(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBuilding(buildingId);
+  }, [buildingId]);
+
   if (loading) return <p className="text-secondary">Loading…</p>;
   if (error)
     return <p className="text-danger">Error loading data, try again.</p>;
@@ -87,14 +112,14 @@ function DynamicGrid({ height, width, rid, building, onCellClick }) {
   return (
     <div className="container py-3">
       {/* Hours */}
-      {building ? (
+      {buildingObj ? (
         <p className="text-secondary small mb-3">
           <span className="badge bg-secondary-subtle text-secondary border me-1">
-            {building.openTime}
+            {buildingObj.openTime}
           </span>
           –
           <span className="badge bg-secondary-subtle text-secondary border ms-1">
-            {building.closeTime}
+            {buildingObj.closeTime}
           </span>
         </p>
       ) : (

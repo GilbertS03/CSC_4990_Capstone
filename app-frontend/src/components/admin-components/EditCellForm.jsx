@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { moveDevice, getDeviceLocations } from "../../services/api/admin";
+import {
+  moveDevice,
+  getDeviceLocations,
+  editDevice,
+  getDeviceStatuses,
+  getDeviceTypes,
+} from "../../services/api/admin";
 
 function EditCellForm({
   device,
   row,
   col,
   onCancel,
+  onSave,
   maxRowSize,
   maxColSize,
   roomId,
@@ -19,6 +26,8 @@ function EditCellForm({
     xPosition: col,
     yPosition: row,
   });
+  const [deviceStatuses, setDeviceStatuses] = useState([]);
+  const [deviceTypes, setDeviceTypes] = useState([]);
 
   useEffect(() => {
     setFormData({ xPosition: col, yPosition: row });
@@ -31,6 +40,10 @@ function EditCellForm({
         setLoading(true);
         try {
           const res = await getDeviceLocations(0);
+          const res1 = await getDeviceStatuses();
+          setDeviceStatuses(res1.data);
+          const res2 = await getDeviceTypes();
+          setDeviceTypes(res2.data);
           setUnplacedDevices(res.data);
         } catch (err) {
           console.error("Error fetching unplaced devices:", err);
@@ -69,7 +82,20 @@ function EditCellForm({
     if (!selectedDeviceId) return;
     setLoading(true);
     setError(false);
+    const selectedDevice = unplacedDevices.find(
+      (d) => d.deviceId == selectedDeviceId,
+    );
+    const matchedType = deviceTypes.find(
+      (dt) => dt.deviceType === selectedDevice.deviceType,
+    );
+    const matchedStatus = deviceStatuses.find(
+      (ds) => ds.deviceStatus === "available",
+    );
     try {
+      await editDevice(selectedDeviceId, {
+        deviceTypeId: matchedType.deviceTypeId,
+        deviceStatusId: matchedStatus.deviceStatusId,
+      });
       await moveDevice(selectedDeviceId, {
         xPosition: col,
         yPosition: row,

@@ -10,18 +10,19 @@ function Reservations() {
   const [error, setError] = useState(false);
   const [reservations, setReservations] = useState([]);
 
+  const fetchAllReservations = async () => {
+    try {
+      const res = await getAllReservations();
+      setReservations(res.data);
+    } catch (err) {
+      console.error(err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAllReservations = async () => {
-      try {
-        const res = await getAllReservations();
-        setReservations(res.data);
-      } catch (err) {
-        console.error(err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAllReservations();
   }, []);
 
@@ -46,7 +47,8 @@ function Reservations() {
     if (confirm(`Drop Reservation ${id}?`)) {
       try {
         setLoading(true);
-        const res = await dropReservation(id);
+        const res = await dropReservation(id, "Admin Dropped reservation");
+        fetchAllReservations();
       } catch (error) {
         console.error(error);
         setError(true);

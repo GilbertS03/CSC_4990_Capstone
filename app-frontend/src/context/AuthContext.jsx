@@ -112,8 +112,6 @@ export function AuthProvider({ children }) {
     const now = Date.now();
     let timeUntilExpiry = expTime - now;
 
-    //TODO fix, crashing for some reason when going to the admin pages
-    //If already expired -> logout immediately
     if (timeUntilExpiry <= 0) {
       logout();
       return;
