@@ -46,7 +46,7 @@ def create_new_reservation(reservation: CreateReservation, session: SessionDep, 
         droppedRes = drop_reservation(session, existingRes.reservationId, user)
         if droppedRes.reservationStatusId != STATUS_DROPPED_NUM:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {existingRes.reservationId}")
-    
+        user = fetch_users_by_id(user.userId, session)
     if has_conflict(session, reservation):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"Reservation Conflict")
     new_res = create_reservation(session, reservation, user)
