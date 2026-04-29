@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getRoomLayoutById } from "../../services/api/admin";
 import { useEffect, useState } from "react";
 import DynamicGrid from "./DynamicGrid";
+import BuildingHoursForm from "./BuildingHoursForm";
+import RoomDimensionsForm from "./RoomDimensionsForm";
 import "../../App.css";
 
 function RoomEditing() {
@@ -11,10 +13,11 @@ function RoomEditing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchRoomLayoutById = async (id) => {
+    const fetchRoomLayoutById = async () => {
       try {
-        const res = await getRoomLayoutById(id);
+        const res = await getRoomLayoutById(rid);
         const data = res.data;
         setRoomHeight(data.layoutHeight);
         setRoomWidth(data.layoutWidth);
@@ -25,8 +28,8 @@ function RoomEditing() {
         setLoading(false);
       }
     };
-    fetchRoomLayoutById(rid);
-  }, []);
+    fetchRoomLayoutById();
+  }, [rid]);
 
   const handleCellClick = (device, row, col) => {
     navigate(`/admin/buildings/${id}/${rid}/${row}/${col}`, {
@@ -34,21 +37,31 @@ function RoomEditing() {
     });
   };
 
+  const handleDimensionsUpdate = (newWidth, newHeight) => {
+    setRoomWidth(newWidth);
+    setRoomHeight(newHeight);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error Loading Data</p>;
+
   return (
     <div className="container">
+      <BuildingHoursForm buildingId={id} />
       <DynamicGrid
         height={roomHeight}
         width={roomWidth}
         rid={rid}
+        buildingId={id}
         onCellClick={handleCellClick}
       />
       <div className="legend">
-        green = available, black = not available (any reason besides reserved),
-        red = reserved
-        {/* Todo add a way to change the dimensions of the room by allowing them to access a form that will ask and validate the number */}
-        <div className="edit-form">Change dimensions of room?</div>
+        <RoomDimensionsForm
+          roomId={rid}
+          currentWidth={roomWidth}
+          currentHeight={roomHeight}
+          onSuccess={handleDimensionsUpdate}
+        />
       </div>
     </div>
   );

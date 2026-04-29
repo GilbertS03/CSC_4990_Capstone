@@ -84,9 +84,8 @@ def drop_active_res(resId: int, session: SessionDep, reason: str, user: UserPubl
     drop_confirmed = drop_reservation(session, resId, user)
     if drop_confirmed.reservationStatusId != STATUS_DROPPED_NUM:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error cancelling reservation {resId}")
-    email_dropped_reservation(user.userId, resId, reason, session)
+    email_dropped_reservation(res.userId, resId, reason, session)
     return drop_confirmed
-
 
 @router.delete("/delete/{resId}")
 def delete_active_reservation(resId: int, session: SessionDep, user: UserPublic = Depends(require_roles("admin"))):

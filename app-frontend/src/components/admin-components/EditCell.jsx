@@ -26,6 +26,7 @@ function EditCell() {
       row={Number(row)}
       col={Number(col)}
       onCancel={onCancel}
+      onSave={onSave}
       roomId={rid}
     />
   );

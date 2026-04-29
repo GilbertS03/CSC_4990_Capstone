@@ -2,7 +2,6 @@ import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { deleteUser, getUserById, updateUser } from "../../services/api/admin";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-//todo enforce validation on fields
 function EditUser() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,6 +28,7 @@ function EditUser() {
       setLoading(true);
       const data = { role: role, weeklyHours: weeklyHours };
       const res = await updateUser(id, data);
+      navigate(-1);
     } catch (error) {
       console.error(error);
       setError(true);
@@ -98,6 +98,11 @@ function EditUser() {
   if (loading) return <p>Loading...</p>;
   return (
     <div className="container">
+      <p>
+        <NavLink to={"/admin/users"} end>
+          &larr; Back
+        </NavLink>{" "}
+      </p>
       <h2>User ID: {id} </h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group mb-3">
