@@ -11,6 +11,7 @@ from ..schema.user_schema import UserPublic
 from ..schema.reservation_schema import UserReservation, CreateReservation
 
 STATUS_PENDING = 3
+STATUS_DROPPED_NUM = 2
 
 def fetch_all_reservations(session: Session):
     statement = select(Reservations)
@@ -79,7 +80,8 @@ def has_conflict(session: Session, reservation: UserReservation):
     statement = select(Reservations).where(
         Reservations.deviceId == reservation.deviceId,
         Reservations.startTime < new_res_end,
-        Reservations.endTime > new_res_start
+        Reservations.endTime > new_res_start,
+        Reservations.reservationStatusId != STATUS_DROPPED_NUM
     )
     overlap = session.exec(statement).first()
     return overlap is not None
@@ -90,8 +92,8 @@ def has_existing_res(session: Session, userId: int, newResDate: date):
         cast(Reservations.startTime, Date) == newResDate,
         Reservations.reservationStatusId == STATUS_PENDING
     )
-    res = session.exec(statement).first()
-    return res is not None
+    res = session.exec(statement).one_or_none()
+    return res
 
 def delete_reservation(session: Session, resId: int):
     res = convert_res_to_db_model(session, resId)
