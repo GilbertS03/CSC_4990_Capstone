@@ -23,7 +23,7 @@ export const getDeviceLocations = async (id) => {
 
 export const getDeviceTypes = async() => {
     try{
-        const res = await api.get("/device-types");
+        const res = await api.get("/device-types/");
         return res;
     }
     catch(error){
@@ -33,7 +33,7 @@ export const getDeviceTypes = async() => {
 
 export const getDeviceStatuses = async() => {
     try{
-        const res = await api.get("/device-statuses");
+        const res = await api.get("/device-statuses/");
         return res;
     }
     catch(error) {
