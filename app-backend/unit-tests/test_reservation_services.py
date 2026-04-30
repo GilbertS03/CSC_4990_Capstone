@@ -121,3 +121,23 @@ class TestReservationServices(unittest.TestCase):
         assert result is False
         mock_session.delete.assert_called_once_with(mock_reservation)
         mock_session.commit.assert_called_once()
+
+    def test_fetchReservationsByUserId_fetchExistingReservations_returnReservations(self):
+        mockReservations = [Mock(userId=1, reservationId=1), Mock(userId=1, reservationId=2)]
+        mockSession = Mock()
+
+        mockSession.exec.return_value.all.return_value = mockReservations
+
+        result = fetch_reservations_by_user_id(mockSession, 1)
+
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), 2)
+        mockSession.exec.assert_called_once()
+
+    def test_fetchReservationsByUserId_fetchNonExistingReservations_returnEmpty(self):
+        mockSession = Mock()
+        mockSession.exec.return_value.all.return_value = []
+
+        result = fetch_reservations_by_user_id(mockSession, 99)
+        self.assertEqual(result, [])
+        mockSession.exec.assert_called_once()
