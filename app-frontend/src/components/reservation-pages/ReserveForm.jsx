@@ -98,12 +98,6 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
       );
       return;
     }
-    if (currentUser.weeklyHoursRemaining < durationHours) {
-      alert(
-        `Not enough remaining hours: ${currentUser.weeklyHoursRemaining} hours`,
-      );
-      return;
-    }
     if (start < today) {
       alert("Cannot reserve a time in the past.");
       return;
@@ -118,9 +112,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
       await onReserve(payload);
     } catch (err) {
       if (err.response?.status === 409) {
-        alert(
-          "You already have a reservation for this device on the selected day or someone has already reserved this device",
-        );
+        alert(err.response?.detail);
       } else {
         alert("Reservation failed. Please try again.");
       }
