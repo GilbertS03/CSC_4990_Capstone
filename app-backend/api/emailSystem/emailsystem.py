@@ -3,10 +3,9 @@ from .. services import reservations
 import smtplib
 from sqlmodel import Session
 import ssl
-from dotenv import load_dotenv
+from ..core.config_loader import settings
 from email.message import EmailMessage
 import os
-from datetime import datetime
 load_dotenv()
 
 def email_dropped_reservation(userId: int, resId:int, reason: str, session:Session):
