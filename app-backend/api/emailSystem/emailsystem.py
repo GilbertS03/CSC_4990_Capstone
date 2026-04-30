@@ -6,7 +6,6 @@ import ssl
 from ..core.config_loader import settings
 from email.message import EmailMessage
 import os
-load_dotenv()
 
 def email_dropped_reservation(userId: int, resId:int, reason: str, session:Session):
     userInfo = users.fetch_users_by_id(userId, session)
