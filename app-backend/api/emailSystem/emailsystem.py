@@ -5,7 +5,6 @@ from sqlmodel import Session
 import ssl
 from ..core.config_loader import settings
 from email.message import EmailMessage
-import os
 
 def email_dropped_reservation(userId: int, resId:int, reason: str, session:Session):
     userInfo = users.fetch_users_by_id(userId, session)
@@ -20,9 +19,9 @@ def email_dropped_reservation(userId: int, resId:int, reason: str, session:Sessi
     send_email(subject, body, receiverEmail)
 
 def send_email(subject: str, body: str, receiverEmail: str):
-    senderEmail = os.getenv('LIBRARY_EMAIL')
-    password = os.getenv('LIBRARY_EMAIL_PASSWORD')
-    message = EmailMessage()
+    senderEmail = settings.LIBRARY_EMAIL
+    password = settings.LIBRARY_EMAIL_PASSWORD
+    message = EmailMessage() 
     message.set_content(body)
     message['Subject'] = subject
     message['From'] = senderEmail
