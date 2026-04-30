@@ -10,6 +10,8 @@ def fetch_settings(session: Session):
 def fetch_settingValue_by_name(session: Session, name: str):
     statement = select(DefaultSettings).where(DefaultSettings.settingName == name)
     setting = session.exec(statement).one_or_none()
+    if setting is None:
+        return None
     return setting.settingValue
 
 def update_settingValue(session: Session, name: str, newValue: int):
