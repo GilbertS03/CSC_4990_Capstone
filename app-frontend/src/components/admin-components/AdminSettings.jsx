@@ -7,7 +7,7 @@ function AdminSettings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const MIN_VALUE = 10;
+  const MIN_VALUE = 0;
 
   const validateValue = (value) => {
     if (value < MIN_VALUE) {
