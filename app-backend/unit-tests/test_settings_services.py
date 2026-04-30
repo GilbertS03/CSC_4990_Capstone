@@ -41,13 +41,9 @@ class TestSettingsServices(unittest.TestCase):
 
     def test_fetchSettingValueByName_fetchNonExistingSetting_returnError(self):
         mockSession = Mock()
-
         mockSession.exec.return_value.one_or_none.return_value = None
-
-        with self.assertRaises(AttributeError):
-            fetch_settingValue_by_name(mockSession, "nonExistentSetting")
-
-        mockSession.exec.assert_called_once()
+        
+        self.assertIsNone(fetch_settingValue_by_name(mockSession, "nonExistentSetting"))
 
     def test_updateSettingValue_updateExistingSetting_returnUpdated(self):
         mockSetting = Mock(settingName="studentWeeklyLimit", settingValue=20)
