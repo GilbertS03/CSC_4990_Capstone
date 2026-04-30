@@ -9,7 +9,7 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
   const [formData, setFormData] = useState({
     email: "",
     duration: "1",
-    startTime: "",
+    startTime: building?.openTime ?? "",
     reservationDate: "",
   });
   const [currentUser, setCurrentUser] = useState(null);
@@ -58,7 +58,6 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -76,6 +75,12 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
       const [h, m] = timeStr.split(":").map(Number);
       const d = new Date(dateStr);
       return new Date(year, month - 1, day, h, m, 0, 0);
+    };
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const toOffsetISO = (date) => {
+      const offsetMs = date.getTimezoneOffset() * 60 * 1000;
+      return new Date(date.getTime() - offsetMs).toISOString();
     };
 
     const start = buildDateTime(formData.reservationDate, formData.startTime);
@@ -105,8 +110,8 @@ function ReserveForm({ device, row, col, building, onReserve, onCancel }) {
     }
     const payload = {
       deviceId: Number(device.deviceId),
-      startTime: start.toISOString(),
-      endTime: end.toISOString(),
+      startTime: toOffsetISO(start),
+      endTime: toOffsetISO(end),
     };
     setLoading(true);
     try {

@@ -37,8 +37,8 @@ export function validateSignUp( { firstName, lastName, emailAddress, password })
         errors.password = 'Password is required';
     }
 
-    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)){
-        errors.password = `Password must be at least ${MIN_CHARS_PW} characters, one upper, one lower and one special`;
+    else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#\-_+=|:;'",.<>~/`\\()[\]{}])[A-Za-z\d@$!%*?&^#\-_+=|:;'",.<>~/`\\()[\]{}]{8,}$/.test(password)){
+        errors.password = `Password must be at least ${MIN_CHARS_PW} characters, one upper, one lower, one number and one special`;
     }
 
     return errors;
